@@ -4,7 +4,7 @@ AutoUpdate-Essential-Module: false
 OpenIDE-Module-Java-Dependencies: Java > 11
 OpenIDE-Module-Display-Category: EOMasters
 OpenIDE-Module-Layer: layer.xml
-OpenIDE-Module-Long-Description: <p>Project Description</p>
+OpenIDE-Module-Long-Description: <p>EOMasters GPT Test-Environment provides a test environment for operators you have developed.</p>
  <p><b>Vendor: </b>EOMasters</p>
  <p><b>Web: </b><a href="https://www.eomasters.org">www.eomasters.org</a></p>
  <p><b>Contact address: </b> <a href="mailto:info@eomasters.org">info@eomasters.org</a></p>
