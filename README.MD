@@ -1,5 +1,5 @@
-SNAP Template Project
+EOMasters GPT Testenvironment
 =============================
 -----------------------------
 
-Describe the project here.
+Environment for testing operators and graphs.
