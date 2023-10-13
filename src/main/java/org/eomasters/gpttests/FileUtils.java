@@ -23,26 +23,31 @@
 
 package org.eomasters.gpttests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.StringReader;
-import java.util.List;
-import org.eomasters.gpttests.res.Resource;
-import org.junit.jupiter.api.Test;
+public class FileUtils {
 
-class GptTestEnvTest {
+  private FileUtils() {
+  }
 
-  @Test
-  void jsonConversion() {
-    String json = new Gson().toJson(List.of(new Resource("abc", "path1"), new Resource("def", "path2")));
-    List<Resource> resourceList = new Gson().fromJson(new StringReader(json), new TypeToken<List<Resource>>() {
-    }.getType());
-    assertEquals(2, resourceList.size());
-    assertEquals("abc", resourceList.get(0).getId());
-    assertEquals("path1", resourceList.get(0).getRelPath());
-    assertEquals("def", resourceList.get(1).getId());
-    assertEquals("path2", resourceList.get(1).getRelPath());
+  public static Path getOptionalFile(Path envPath, String configFileName) throws IOException {
+    Path configFile = envPath.resolve(configFileName);
+    if (!Files.exists(configFile)) {
+      return null;
+    }
+    if (!Files.isReadable(configFile)) {
+      throw new IOException("Config file is not readable: " + configFile);
+    }
+    return configFile;
+  }
+
+  public static Path getMandatoryFile(Path envPath, String configFileName) throws IOException {
+    Path configFile = envPath.resolve(configFileName);
+    if (!Files.isReadable(configFile)) {
+      throw new IOException("Config file does not exist or is not readable: " + configFile);
+    }
+    return configFile;
   }
 }

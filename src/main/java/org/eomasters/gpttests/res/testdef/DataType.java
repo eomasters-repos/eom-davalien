@@ -21,28 +21,42 @@
  * =========================LICENSE_END==================================
  */
 
-package org.eomasters.gpttests;
+package org.eomasters.gpttests.res.testdef;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.esa.snap.core.datamodel.ProductData;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.StringReader;
-import java.util.List;
-import org.eomasters.gpttests.res.Resource;
-import org.junit.jupiter.api.Test;
+public enum DataType {
 
-class GptTestEnvTest {
+  INT8(ProductData.TYPE_INT8),
+  INT16(ProductData.TYPE_INT16),
+  INT32(ProductData.TYPE_INT32),
+  INT64(ProductData.TYPE_UINT8),
+  UINT8(ProductData.TYPE_INT16),
+  UINT16(ProductData.TYPE_UINT16),
+  UINT32(ProductData.TYPE_UINT32),
+  UINT64(ProductData.TYPE_UINT64),
+  FLOAT32(ProductData.TYPE_FLOAT32),
+  FLOAT64(ProductData.TYPE_FLOAT64),
+  ASCII(ProductData.TYPE_ASCII),
+  UTC(ProductData.TYPE_UTC);
 
-  @Test
-  void jsonConversion() {
-    String json = new Gson().toJson(List.of(new Resource("abc", "path1"), new Resource("def", "path2")));
-    List<Resource> resourceList = new Gson().fromJson(new StringReader(json), new TypeToken<List<Resource>>() {
-    }.getType());
-    assertEquals(2, resourceList.size());
-    assertEquals("abc", resourceList.get(0).getId());
-    assertEquals("path1", resourceList.get(0).getRelPath());
-    assertEquals("def", resourceList.get(1).getId());
-    assertEquals("path2", resourceList.get(1).getRelPath());
+  private final int typeValue;
+
+  DataType(int typeValue) {
+    this.typeValue = typeValue;
+  }
+
+  public static DataType fromTypeValue(int typeValue) {
+    DataType[] values = DataType.values();
+    for (DataType value : values) {
+      if (value.typeValue == typeValue) {
+        return value;
+      }
+    }
+    return null;
+  }
+
+  public int getTypeValue() {
+    return typeValue;
   }
 }

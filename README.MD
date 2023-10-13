@@ -6,15 +6,19 @@ This projects provides a test environment for operators you have developed. You 
 commandline call and the expected result. The test environment will then execute the command and compare the result with
 the expected result.
 The environment can be executed from your IDE where you develop your operator or from an installed SNAP to test all the
-installed operators. The expected result can be defined in 2 ways. Either by providing a path to a file containing the
+installed operators. Even the processing results of external processors can be tested, and it can be ensured that the
+result does not change accidentally while improving the processor. For doing this only a read operator needs to be used
+with the output of the external processor. The test environment will then compare the result with the expected result.
+The expected result can be defined in 2 ways. Either by providing a path to a file containing the
 expected result or by providing a list of expected results.
 
-There are only 2 mandatory resource files and 3 optional which need to be provided for the test environment to work.
-Mandatory are the list of tests and the list of test products which are defined in simple JSON files named
-`test-definitions.json` and `test-products.json`.
-The optional files define the relative paths to optional data. Like auxiliary data used by the GPT tests, the paths to
-expected target products, and paths to graph XML files if they are used instead of a single operator. Those files are
-named `test-auxiliary-data.json`, `test-target-products.json` and `test-graphs.json`.
+The test environment must be setup following some rules.
+Within the test environment directory there must be a directory named `tests` which contains the test definition files.
+Those files are JSON files which define the tests to be executed. They must be named like `test-<test-name>.json`.
+In the base directory of the test environment there must be a file named `test-products.json` which defines the list of
+test products.
+Beside this there can be optional files which define auxiliary data used by the tests or paths to graph XML files.
+if they are used instead of a single operator. Those files are named `auxiliary-data.json` and `test-graphs.json`.
 
 The test environment will execute the GPT commandline call and compare the result with the expected result and will
 generate a report.
@@ -42,7 +46,11 @@ snap --gpttests <envPath> `[tests=<TestNameList>]` `[tags=<TagList>]`
 
 ### Test Definitions
 
-THe `test-definitions.json`
+The `test-definitions.json`
+The test name must be usable a file name.
+The GPT call should not specify a target product, this is up to the testing environment. The output format can be
+specified,
+otherwise the ZNAP format is used.
 
 ### Other Resource Files
 

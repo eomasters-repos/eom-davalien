@@ -21,28 +21,53 @@
  * =========================LICENSE_END==================================
  */
 
-package org.eomasters.gpttests;
+package org.eomasters.gpttests.res.testdef;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+public class Coding {
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.StringReader;
-import java.util.List;
-import org.eomasters.gpttests.res.Resource;
-import org.junit.jupiter.api.Test;
+  private String name;
+  private Sample[] samples;
 
-class GptTestEnvTest {
+  public Coding(String name, Sample[] samples) {
+    this.name = name;
+    this.samples = samples;
+  }
 
-  @Test
-  void jsonConversion() {
-    String json = new Gson().toJson(List.of(new Resource("abc", "path1"), new Resource("def", "path2")));
-    List<Resource> resourceList = new Gson().fromJson(new StringReader(json), new TypeToken<List<Resource>>() {
-    }.getType());
-    assertEquals(2, resourceList.size());
-    assertEquals("abc", resourceList.get(0).getId());
-    assertEquals("path1", resourceList.get(0).getRelPath());
-    assertEquals("def", resourceList.get(1).getId());
-    assertEquals("path2", resourceList.get(1).getRelPath());
+  private Coding() {
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public Sample[] getSamples() {
+    return samples;
+  }
+
+  public static class Sample {
+    private String name;
+    private String description;
+    private long sampleValue;
+
+    public Sample(String name, String description, long sampleValue) {
+      this.name = name;
+      this.description = description;
+      this.sampleValue = sampleValue;
+    }
+
+    private Sample() {
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public String getDescription() {
+      return description;
+    }
+
+    public long getSampleValue() {
+      return sampleValue;
+    }
   }
 }

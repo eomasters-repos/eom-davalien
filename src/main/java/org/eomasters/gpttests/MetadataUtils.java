@@ -23,26 +23,32 @@
 
 package org.eomasters.gpttests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Arrays;
+import org.esa.snap.core.datamodel.MetadataElement;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.StringReader;
-import java.util.List;
-import org.eomasters.gpttests.res.Resource;
-import org.junit.jupiter.api.Test;
+public class MetadataUtils {
 
-class GptTestEnvTest {
+  public static MetadataWrapper wrap(MetadataElement root) {
+    return new MetadataWrapper(root);
+  }
 
-  @Test
-  void jsonConversion() {
-    String json = new Gson().toJson(List.of(new Resource("abc", "path1"), new Resource("def", "path2")));
-    List<Resource> resourceList = new Gson().fromJson(new StringReader(json), new TypeToken<List<Resource>>() {
-    }.getType());
-    assertEquals(2, resourceList.size());
-    assertEquals("abc", resourceList.get(0).getId());
-    assertEquals("path1", resourceList.get(0).getRelPath());
-    assertEquals("def", resourceList.get(1).getId());
-    assertEquals("path2", resourceList.get(1).getRelPath());
+  public static class MetadataWrapper {
+
+    private final MetadataElement root;
+
+    public MetadataWrapper(MetadataElement root) {
+      this.root = root;
+    }
+
+    public String get(String path) {
+      String[] tokens = path.split("//");
+      String[] elemtokens = Arrays.copyOf(tokens, tokens.length - 1);
+      String attrToken = tokens[tokens.length - 1];
+      MetadataElement elem = root;
+      for (String token : elemtokens) {
+        elem = elem.getElement(token);
+      }
+      return elem.getAttributeString(attrToken);
+    }
   }
 }

@@ -21,28 +21,32 @@
  * =========================LICENSE_END==================================
  */
 
-package org.eomasters.gpttests;
+package org.eomasters.gpttests.asserts;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.assertj.core.api.AbstractAssert;
+import org.eomasters.gpttests.MetadataUtils;
+import org.eomasters.gpttests.MetadataUtils.MetadataWrapper;
+import org.eomasters.gpttests.res.testdef.Metadata;
+import org.esa.snap.core.datamodel.MetadataElement;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.StringReader;
-import java.util.List;
-import org.eomasters.gpttests.res.Resource;
-import org.junit.jupiter.api.Test;
+public class MetadataAssert extends AbstractAssert<MetadataAssert, MetadataElement> {
 
-class GptTestEnvTest {
+  private final MetadataWrapper wrap;
 
-  @Test
-  void jsonConversion() {
-    String json = new Gson().toJson(List.of(new Resource("abc", "path1"), new Resource("def", "path2")));
-    List<Resource> resourceList = new Gson().fromJson(new StringReader(json), new TypeToken<List<Resource>>() {
-    }.getType());
-    assertEquals(2, resourceList.size());
-    assertEquals("abc", resourceList.get(0).getId());
-    assertEquals("path1", resourceList.get(0).getRelPath());
-    assertEquals("def", resourceList.get(1).getId());
-    assertEquals("path2", resourceList.get(1).getRelPath());
+  public MetadataAssert(MetadataElement actual) {
+    super(actual, MetadataAssert.class);
+    isNotNull();
+    wrap = MetadataUtils.wrap(actual);
+  }
+
+  public void has(Metadata metadata) {
+    if (metadata != null) {
+      String path = metadata.getPath();
+      String value = metadata.getValue();
+      String s = wrap.get(path);
+      if (!value.equals(s)) {
+        failWithMessage("Expected metadata <%s> to be <%s> but was <%s>", path, value, s);
+      }
+    }
   }
 }

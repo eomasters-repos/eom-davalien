@@ -21,28 +21,27 @@
  * =========================LICENSE_END==================================
  */
 
-package org.eomasters.gpttests;
+package org.eomasters.gpttests.res.testdef;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.esa.snap.core.datamodel.RasterDataNode;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.StringReader;
-import java.util.List;
-import org.eomasters.gpttests.res.Resource;
-import org.junit.jupiter.api.Test;
+public enum RasterType {
+  BAND, TIE_POINT, MASK, VIRTUAL, FILTER;
 
-class GptTestEnvTest {
-
-  @Test
-  void jsonConversion() {
-    String json = new Gson().toJson(List.of(new Resource("abc", "path1"), new Resource("def", "path2")));
-    List<Resource> resourceList = new Gson().fromJson(new StringReader(json), new TypeToken<List<Resource>>() {
-    }.getType());
-    assertEquals(2, resourceList.size());
-    assertEquals("abc", resourceList.get(0).getId());
-    assertEquals("path1", resourceList.get(0).getRelPath());
-    assertEquals("def", resourceList.get(1).getId());
-    assertEquals("path2", resourceList.get(1).getRelPath());
+  public static RasterType get(RasterDataNode raster) {
+    if (raster instanceof org.esa.snap.core.datamodel.TiePointGrid) {
+      return TIE_POINT;
+    } else if (raster instanceof org.esa.snap.core.datamodel.Mask) {
+      return MASK;
+    } else if (raster instanceof org.esa.snap.core.datamodel.VirtualBand) {
+      return VIRTUAL;
+    } else if (raster instanceof org.esa.snap.core.datamodel.FilterBand) {
+      return FILTER;
+    } else if (raster instanceof org.esa.snap.core.datamodel.Band) {
+      return BAND;
+    } else {
+      throw new IllegalArgumentException(
+          String.format("Unknown type [%s] of raster '%s':", raster.getClass(), raster.getName()));
+    }
   }
 }

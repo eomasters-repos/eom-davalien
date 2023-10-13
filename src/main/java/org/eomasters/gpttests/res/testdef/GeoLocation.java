@@ -21,28 +21,33 @@
  * =========================LICENSE_END==================================
  */
 
-package org.eomasters.gpttests;
+package org.eomasters.gpttests.res.testdef;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.esa.snap.core.datamodel.GeoPos;
+import org.esa.snap.core.datamodel.PixelPos;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.StringReader;
-import java.util.List;
-import org.eomasters.gpttests.res.Resource;
-import org.junit.jupiter.api.Test;
+public class GeoLocation {
 
-class GptTestEnvTest {
+  private PixelPos pixel;
+  private GeoPos geo;
+  private double eps = 1.0e-8;
 
-  @Test
-  void jsonConversion() {
-    String json = new Gson().toJson(List.of(new Resource("abc", "path1"), new Resource("def", "path2")));
-    List<Resource> resourceList = new Gson().fromJson(new StringReader(json), new TypeToken<List<Resource>>() {
-    }.getType());
-    assertEquals(2, resourceList.size());
-    assertEquals("abc", resourceList.get(0).getId());
-    assertEquals("path1", resourceList.get(0).getRelPath());
-    assertEquals("def", resourceList.get(1).getId());
-    assertEquals("path2", resourceList.get(1).getRelPath());
+  public GeoLocation(PixelPos pos, GeoPos geoPos) {
+    pixel = pos;
+    geo = geoPos;
+  }
+  private GeoLocation() {
+  }
+
+  public PixelPos getPixelPos() {
+    return pixel;
+  }
+
+  public GeoPos getGeoPos() {
+    return geo;
+  }
+
+  public double getEps() {
+    return eps;
   }
 }
