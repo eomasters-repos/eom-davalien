@@ -36,6 +36,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.eomasters.gpttests.res.JsonHelper;
 import org.eomasters.gpttests.res.testdef.ProductContent;
+import org.eomasters.gpttests.res.testdef.ProductContentFactory;
 import org.eomasters.gpttests.res.testdef.TestDefinition;
 import org.esa.snap.core.datamodel.Product;
 import org.esa.snap.rcp.SnapApp;
@@ -47,7 +48,7 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 
 @ActionID(category = "Testing", id = "org.eomasters.gpttests.gui.CreateJsonExpectationAction")
-@ActionRegistration(displayName = "Creates an test expectation file for the selected product")
+@ActionRegistration(displayName = "Create EOM Validation Expectation")
 @ActionReferences({
     @ActionReference(path = "Menu/Tools/Testing"),
     @ActionReference(path = "Context/Product/Product", position = 9001, separatorBefore = 9000)
@@ -76,12 +77,13 @@ public class CreateJsonExpectationAction implements ActionListener {
       protected Void doInBackground(ProgressMonitor pm) {
         pm.beginTask("Collecting data...", ProgressMonitor.UNKNOWN);
         try {
-          ProductContent content = ProductContent.create(product, new Random(123546));
+          ProductContent content = ProductContentFactory.create(product, new Random(123546));
           TestDefinition testDefinition = new TestDefinition(testName, content);
           String jsonString = JsonHelper.toJson(testDefinition);
           Files.writeString(file, jsonString);
         } catch (Exception e) {
-          Dialogs.showError(e.getMessage());
+          e.printStackTrace();
+          Dialogs.showError(e.getClass().getSimpleName() + ": " + e.getMessage());
         } finally {
           pm.done();
         }

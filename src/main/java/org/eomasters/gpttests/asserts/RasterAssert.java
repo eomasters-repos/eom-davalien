@@ -102,7 +102,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
 
   public RasterAssert hasPixels(Pixel[] pixels) {
     assertThat(pixels).allSatisfy(pixel -> {
-      PixelPos location = pixel.getLocation();
+      PixelPos location = pixel.getPosition();
       double[] pixelValue = actual.readPixels((int) location.getX(), (int) location.getY(), 1, 1, new double[1]);
       assertThat(pixelValue[0]).isEqualTo(pixel.getValue(), offset(pixel.getEps()));
     });

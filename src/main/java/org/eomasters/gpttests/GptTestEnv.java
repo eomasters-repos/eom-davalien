@@ -120,7 +120,7 @@ public class GptTestEnv {
       String[] tags) {
     List<String> testNameList = Arrays.asList(testNames);
     return allTestDefinitions.stream().filter(testDefinition -> {
-      if (testNameList.contains(testDefinition.getName())) {
+      if (testNameList.contains(testDefinition.getTestName())) {
         List<String> defTags = Arrays.asList(testDefinition.getTags());
         return Arrays.stream(tags).anyMatch(defTags::contains);
       }

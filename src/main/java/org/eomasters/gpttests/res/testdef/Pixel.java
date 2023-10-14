@@ -27,20 +27,20 @@ import org.esa.snap.core.datamodel.PixelPos;
 
 public class Pixel {
 
-  PixelPos location;
+  PixelPos position;
   double value;
   double eps = 1.0e-8;
 
-  public Pixel(PixelPos location, double value) {
-    this.location = location;
+  public Pixel(PixelPos position, double value) {
+    this.position = position;
     this.value = value;
   }
 
   private Pixel() {
   }
 
-  public PixelPos getLocation() {
-    return location;
+  public PixelPos getPosition() {
+    return position;
   }
 
   public double getEps() {

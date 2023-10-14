@@ -25,20 +25,20 @@ package org.eomasters.gpttests.res.testdef;
 
 public class TestDefinition {
 
-  private String name;
+  private String testName;
   private String[] tags;
-  private String gptCall;
-  private ProductContent expectedContent;
+  private String gptCall = "";
+  private ProductContent productContent;
 
   private TestDefinition() {
   }
-  public TestDefinition(String name, ProductContent expectedContent) {
-    this.name = name;
-    this.expectedContent = expectedContent;
+  public TestDefinition(String name, ProductContent productContent) {
+    this.testName = name;
+    this.productContent = productContent;
   }
 
-  public String getName() {
-    return name;
+  public String getTestName() {
+    return testName;
   }
 
   public String[] getTags() {
@@ -49,7 +49,7 @@ public class TestDefinition {
     return gptCall;
   }
 
-  public ProductContent getExpectedContent() {
-    return expectedContent;
+  public ProductContent getProductContent() {
+    return productContent;
   }
 }

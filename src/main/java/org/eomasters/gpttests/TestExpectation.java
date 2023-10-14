@@ -33,8 +33,8 @@ public class TestExpectation {
 
   public static TestExpectation create(TestDefinition def) {
     TestExpectation expectation = new TestExpectation();
-    expectation.testName = def.getName();
-    expectation.productContent = def.getExpectedContent();
+    expectation.testName = def.getTestName();
+    expectation.productContent = def.getProductContent();
     return expectation;
   }
 

@@ -40,8 +40,12 @@ public class Test {
   private List<String> paramList;
 
   public static Test create(TestDefinition testDef, Resources resources, Path resultProductDir1) {
-    String expandedGptCall = expandVariables(testDef.getGptCall(), resources);
-    Test test = new Test(testDef.getName());
+    String gptCall = testDef.getGptCall();
+    if(gptCall == null || gptCall.isEmpty()) {
+      throw new IllegalArgumentException("gptCall must not be null or empty");
+    }
+    String expandedGptCall = expandVariables(gptCall, resources);
+    Test test = new Test(testDef.getTestName());
     List<String> paramList = parseCommandline(expandedGptCall);
     String format = ensureFormat(paramList);
     Path targetPath = createTargetPath(test, resultProductDir1, format);

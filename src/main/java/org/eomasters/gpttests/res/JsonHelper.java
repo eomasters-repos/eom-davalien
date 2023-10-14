@@ -82,9 +82,9 @@ public class JsonHelper {
             }.getType()));
         for (TestDefinition testDefinition : testDefinitions) {
           try {
-            Paths.get(testDefinition.getName());
+            Paths.get(testDefinition.getTestName());
           } catch (Exception e) {
-            throw new IOException("Invalid test name. Name must be a valid filename: " + testDefinition.getName(), e);
+            throw new IOException("Invalid test name. Name must be a valid filename: " + testDefinition.getTestName(), e);
           }
         }
       } catch (Exception e) {
