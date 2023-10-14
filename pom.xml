@@ -4,7 +4,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <name>EOMasters GPT Test Environment</name>
+  <name>EOMasters Validation Environment</name>
   <description>This projects provides a test environment for operators you have developed.</description>
   <url>https://www.eomasters.org/</url>
   <inceptionYear>2023</inceptionYear>
@@ -14,7 +14,7 @@
   </organization>
 
   <groupId>org.eomasters</groupId>
-  <artifactId>eom-gpt-testenv</artifactId>
+  <artifactId>eom-validation-env</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>nbm</packaging>
 
