@@ -56,6 +56,11 @@
     </dependency>
     <dependency>
       <groupId>org.esa.snap</groupId>
+      <artifactId>ceres-ui</artifactId>
+      <version>${snap.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.esa.snap</groupId>
       <artifactId>snap-core</artifactId>
       <version>${snap.version}</version>
     </dependency>
@@ -68,10 +73,27 @@
       <groupId>org.esa.snap</groupId>
       <artifactId>snap-rcp</artifactId>
       <version>${snap.version}</version>
+      <exclusions>
+        <!--
+        Excluding the bootstrap dependency because causes an issue.
+        It defines java.lang.Module which is also defined in Java 9+. This leads to an error.
+        Fixed in later NB versions.
+        https://github.com/apache/netbeans/issues/4243
+        -->
+        <exclusion>
+          <groupId>org.netbeans.modules</groupId>
+          <artifactId>org-netbeans-bootstrap</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.netbeans.api</groupId>
       <artifactId>org-openide-util</artifactId>
+      <version>RELEASE113</version>
+    </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
+      <artifactId>org-netbeans-libs-asm</artifactId>
       <version>RELEASE113</version>
     </dependency>
     <dependency>
