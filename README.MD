@@ -1,10 +1,10 @@
-EOMasters GPT Test Environment
-==============================
-------------------------------
+EOMasters Product Validation Environment
+========================================
+----------------------------------------
 
-This projects provides a test environment for operators you have developed. You can define a test by specifying the GPT
-commandline call and the expected result. The test environment will then execute the command and compare the result with
-the expected result.
+This projects provides a validation or test environment for products which are generated SNAP GPT operators/graphs. You
+can define a test by specifying the GPT commandline call and the expected product content. The test environment will then
+execute the command and compare the result with the expected result.
 The environment can be executed from your IDE where you develop your operator or from an installed SNAP to test all the
 installed operators. Even the processing results of external processors can be tested, and it can be ensured that the
 result does not change accidentally while improving the processor. For doing this only a read operator needs to be used
