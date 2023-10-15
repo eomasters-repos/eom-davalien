@@ -63,6 +63,7 @@ public class JsonHelper {
     builder.registerTypeAdapter(PixelPos.class, new PixelPosTypeAdapter());
     builder.registerTypeAdapter(GeoPos.class, new GeoPosTypeAdapter());
     builder.registerTypeAdapter(ProductData.UTC.class, new UtcAdapter());
+    builder.serializeSpecialFloatingPointValues();
     builder.setPrettyPrinting();
     gson = builder.create();
   }
