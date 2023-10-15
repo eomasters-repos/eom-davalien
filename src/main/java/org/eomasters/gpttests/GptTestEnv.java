@@ -27,10 +27,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.eomasters.gpttests.res.JsonHelper;
 import org.eomasters.gpttests.res.Resources;
 import org.eomasters.gpttests.res.testdef.ProductContent;
 import org.eomasters.gpttests.res.testdef.TestDefinition;
@@ -40,6 +40,9 @@ import org.esa.snap.core.gpf.main.CommandLineTool;
 
 public class GptTestEnv {
 
+  protected static final String TESTS_DIR = "tests";
+  protected static final String RESULTS_DIR = "results";
+  protected static final String PRODUCTS_DIR = "products";
   private final Path envPath;
   private final String[] testNames;
   private final String[] tags;
@@ -55,20 +58,36 @@ public class GptTestEnv {
   }
 
   public void init() throws IOException {
-    allTestDefinitions = JsonHelper.getTestDefinitions(FileUtils.getMandatoryFile(envPath, "test-definitions.json"));
     resources = Resources.create(envPath);
-    resultsDir = envPath.resolve("results");
-    resultProductDir = resultsDir.resolve("products");
+    allTestDefinitions = resources.getTestDefinitions(envPath.resolve(TESTS_DIR));
+    resultsDir = envPath.resolve(RESULTS_DIR);
+    resultProductDir = resultsDir.resolve(PRODUCTS_DIR);
     Files.createDirectories(resultProductDir);
   }
 
   public void execute() {
     List<TestDefinition> selectedTestDefs = filterTestDefinitions(allTestDefinitions, testNames, tags);
-    List<Test> activeTests = createTests(selectedTestDefs);
-    List<TestExpectation> expectations = createTestExpectations(selectedTestDefs);
-    List<TestResult> testResults = runGptTests(activeTests);
-    compareResults(testResults, expectations);
-    // reportResults(testResults);
+    List<TestResult> testResults;
+    if(selectedTestDefs.isEmpty()) {
+      testResults = new ArrayList<>();
+    } else {
+      List<Test> activeTests = createTests(selectedTestDefs);
+      List<TestExpectation> expectations = createTestExpectations(selectedTestDefs);
+      testResults = runGptTests(activeTests);
+      compareResults(testResults, expectations);
+    }
+    reportResults(testResults);
+  }
+
+  private void reportResults(List<TestResult> testResults) {
+    if(testResults.isEmpty()) {
+      System.out.println("No tests selected");
+    } else {
+      System.out.println("Test Results:");
+      for (TestResult testResult : testResults) {
+        System.out.println(testResult);
+      }
+    }
   }
 
   private void compareResults(List<TestResult> testResults, List<TestExpectation> expectations) {

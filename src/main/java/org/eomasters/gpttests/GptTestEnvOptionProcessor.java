@@ -88,11 +88,14 @@ public class GptTestEnvOptionProcessor extends OptionProcessor {
         } catch (IOException e) {
           CommandException exception = new CommandException(80010, "GPT Test Environment cannot be started");
           exception.initCause(e);
+          e.printStackTrace(env.getOutputStream());
           throw exception;
         }
         gptTestEnv.execute();
       } finally {
-        System.setProperty(PROP_PLUGIN_MANAGER_CHECK_INTERVAL, actualUpdateInterval);
+        if (actualUpdateInterval != null) {
+          System.setProperty(PROP_PLUGIN_MANAGER_CHECK_INTERVAL, actualUpdateInterval);
+        }
       }
       System.exit(0);
     }

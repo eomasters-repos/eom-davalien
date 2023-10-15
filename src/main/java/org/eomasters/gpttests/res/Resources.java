@@ -23,23 +23,26 @@
 
 package org.eomasters.gpttests.res;
 
-import static org.eomasters.gpttests.FileUtils.getMandatoryFile;
 import static org.eomasters.gpttests.FileUtils.getOptionalFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+import org.eomasters.gpttests.res.testdef.TestDefinition;
 
 public class Resources {
 
+  private static Path envPath;
   private Map<String, Resource> sourceProducts;
   private Map<String, Resource> expectedProducts;
   private Map<String, Resource> graphFiles;
   private Map<String, Resource> auxdataFiles;
 
   public static Resources create(Path envPath) throws IOException {
+    Resources.envPath = envPath;
     Resources resources = new Resources();
-    resources.sourceProducts = JsonHelper.getResources(getMandatoryFile(envPath, "test-products.json"));
+    resources.sourceProducts = JsonHelper.getResources(getOptionalFile(envPath, "test-products.json"));
     resources.expectedProducts = JsonHelper.getResources(getOptionalFile(envPath, "expected-products.json"));
     resources.graphFiles = JsonHelper.getResources(getOptionalFile(envPath, "test-graphs.json"));
     resources.auxdataFiles = JsonHelper.getResources(getOptionalFile(envPath, "auxiliary-data.json"));
@@ -86,5 +89,9 @@ public class Resources {
       throw new IllegalArgumentException(String.format("Unknown resource id: %s:%s", category, id));
     }
     return resource;
+  }
+
+  public List<TestDefinition> getTestDefinitions(Path testsDir) throws IOException {
+    return JsonHelper.getTestDefinitions(envPath.resolve(testsDir));
   }
 }

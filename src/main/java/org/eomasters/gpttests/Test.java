@@ -124,7 +124,7 @@ public class Test {
       String tokenName = token.substring(1, token.length() - 1);
       // split category and id
       String[] split = tokenName.split(":");
-      String value = resources.getResource(split[0], split[1]).getRelPath();
+      String value = resources.getResource(split[0], split[1]).getPath();
       ref.expandedGptCall = ref.expandedGptCall.replace(token, value);
     });
     return ref.expandedGptCall;

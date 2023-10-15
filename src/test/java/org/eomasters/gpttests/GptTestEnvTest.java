@@ -36,13 +36,15 @@ class GptTestEnvTest {
 
   @Test
   void jsonConversion() {
-    String json = new Gson().toJson(List.of(new Resource("abc", "path1"), new Resource("def", "path2")));
+    String json = new Gson().toJson(List.of(new Resource("abc", "path1"), new Resource("def", "path2",
+        "some descriptive text")));
     List<Resource> resourceList = new Gson().fromJson(new StringReader(json), new TypeToken<List<Resource>>() {
     }.getType());
     assertEquals(2, resourceList.size());
     assertEquals("abc", resourceList.get(0).getId());
-    assertEquals("path1", resourceList.get(0).getRelPath());
+    assertEquals("path1", resourceList.get(0).getPath());
     assertEquals("def", resourceList.get(1).getId());
-    assertEquals("path2", resourceList.get(1).getRelPath());
+    assertEquals("some descriptive text", resourceList.get(1).getDescription());
+    assertEquals("path2", resourceList.get(1).getPath());
   }
 }
