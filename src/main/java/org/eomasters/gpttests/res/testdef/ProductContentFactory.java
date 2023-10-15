@@ -112,11 +112,14 @@ public class ProductContentFactory {
   }
 
   private static Vector[] create(ProductNodeGroup<VectorDataNode> vectorDataGroup) throws IOException {
-    Vector[] vectors = new Vector[vectorDataGroup.getNodeCount()];
-    for (int i = 0; i < vectors.length; i++) {
-      VectorDataNode vectorDataNode = vectorDataGroup.get(i);
-      vectors[i] = new Vector(vectorDataNode.getName(), vectorDataNode.getDescription(),
-          vectorDataNode.getFeatureCollection().getCount());
+    Vector[] vectors = null;
+    if (vectorDataGroup.getNodeCount() > 0) {
+      vectors = new Vector[vectorDataGroup.getNodeCount()];
+      for (int i = 0; i < vectors.length; i++) {
+        VectorDataNode vectorDataNode = vectorDataGroup.get(i);
+        vectors[i] = new Vector(vectorDataNode.getName(), vectorDataNode.getDescription(),
+            vectorDataNode.getFeatureCollection().getCount());
+      }
     }
     return vectors;
   }
