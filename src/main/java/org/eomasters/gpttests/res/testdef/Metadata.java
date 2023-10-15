@@ -23,6 +23,8 @@
 
 package org.eomasters.gpttests.res.testdef;
 
+import java.util.Objects;
+
 public class Metadata {
 
   private String path;
@@ -44,4 +46,21 @@ public class Metadata {
     return value;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Metadata metadata = (Metadata) o;
+    return Objects.equals(getPath(), metadata.getPath()) && Objects.equals(getValue(),
+        metadata.getValue());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getPath(), getValue());
+  }
 }

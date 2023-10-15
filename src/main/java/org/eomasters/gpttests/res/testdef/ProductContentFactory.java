@@ -26,8 +26,10 @@ package org.eomasters.gpttests.res.testdef;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import org.eomasters.gpttests.res.testdef.Coding.Sample;
 import org.esa.snap.core.datamodel.FlagCoding;
 import org.esa.snap.core.datamodel.GeoCoding;
@@ -82,18 +84,19 @@ public class ProductContentFactory {
   }
 
   private static Metadata[] create(MetadataElement metadataRoot, Random random) {
-    Metadata[] metadata = new Metadata[2];
     if (metadataRoot.getNumElements() > 0 || metadataRoot.getNumAttributes() > 0) {
-      for (int i = 0; i < metadata.length; i++) {
-        metadata[i] = findRandomMetadata(metadataRoot, random);
+      Set<Metadata> metadataList = new HashSet<>();
+      for (int i = 0; i < 3; i++) {
+        metadataList.add(findRandomMetadata(metadataRoot, random));
       }
+      return metadataList.toArray(new Metadata[0]);
     }
-    return metadata;
+    return null;
   }
 
   private static Metadata findRandomMetadata(MetadataElement element, Random random) {
     if (element.getNumElements() > 0) {
-      findRandomMetadata(element.getElementAt(random.nextInt(element.getNumElements())), random);
+      return findRandomMetadata(element.getElementAt(random.nextInt(element.getNumElements())), random);
     } else if (element.getNumAttributes() > 0) {
       MetadataAttribute attributeAt = element.getAttributeAt(random.nextInt(element.getNumAttributes()));
       String path = createPath(element, attributeAt);
