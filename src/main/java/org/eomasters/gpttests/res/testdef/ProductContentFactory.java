@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -65,15 +65,18 @@ public class ProductContentFactory {
     List<SampleCoding> sampleCodingList = new ArrayList<>();
     sampleCodingList.addAll(List.of(flagCodingGroup.toArray(new FlagCoding[0])));
     sampleCodingList.addAll(List.of(indexCodingGroup.toArray(new IndexCoding[0])));
-    Coding[] codings = new Coding[sampleCodingList.size()];
-    for (int i = 0; i < sampleCodingList.size(); i++) {
-      SampleCoding sampleCoding = sampleCodingList.get(i);
-      Sample[] samples = new Sample[sampleCoding.getSampleCount()];
-      for (int j = 0; j < samples.length; j++) {
-        String description = sampleCoding.getAttribute(sampleCoding.getSampleName(j)).getDescription();
-        samples[j] = new Sample(sampleCoding.getSampleName(j), description, sampleCoding.getSampleValue(j));
+    Coding[] codings = null;
+    if (!sampleCodingList.isEmpty()) {
+      codings = new Coding[sampleCodingList.size()];
+      for (int i = 0; i < sampleCodingList.size(); i++) {
+        SampleCoding sampleCoding = sampleCodingList.get(i);
+        Sample[] samples = new Sample[sampleCoding.getSampleCount()];
+        for (int j = 0; j < samples.length; j++) {
+          String description = sampleCoding.getAttribute(sampleCoding.getSampleName(j)).getDescription();
+          samples[j] = new Sample(sampleCoding.getSampleName(j), description, sampleCoding.getSampleValue(j));
+        }
+        codings[i] = new Coding(sampleCoding.getName(), samples);
       }
-      codings[i] = new Coding(sampleCoding.getName(), samples);
     }
     return codings;
   }
