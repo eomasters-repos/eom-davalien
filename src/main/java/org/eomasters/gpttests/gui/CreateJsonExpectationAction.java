@@ -32,6 +32,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
+import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.eomasters.gpttests.res.JsonHelper;
@@ -41,7 +42,6 @@ import org.eomasters.gpttests.res.testdef.TestDefinition;
 import org.esa.snap.core.datamodel.Product;
 import org.esa.snap.rcp.SnapApp;
 import org.esa.snap.rcp.util.Dialogs;
-import org.geotools.util.DefaultFileFilter;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -55,6 +55,7 @@ import org.openide.awt.ActionRegistration;
 })
 public class CreateJsonExpectationAction implements ActionListener {
 
+  protected static final String LAST_VALIDATION_ENV_DIR = "eom.lastValidationEnvDir";
   private final Product product;
 
   public CreateJsonExpectationAction(Product product) {
@@ -66,11 +67,10 @@ public class CreateJsonExpectationAction implements ActionListener {
     final Window window = SnapApp.getDefault().getMainFrame();
     String testName = JOptionPane.showInputDialog(window, "Name of Test: ", "Give the Test a Name",
         JOptionPane.QUESTION_MESSAGE);
-    JFileChooser fileChooser = createFileChooser(testName);
-    if (fileChooser.showDialog(window, "Save") != JFileChooser.APPROVE_OPTION) {
+    Path targetDir = getValidationEnvDir(window);
+    if (targetDir == null) {
       return;
     }
-    Path file = fileChooser.getSelectedFile().toPath();
     final ProgressMonitorSwingWorker<Void, Void> worker = new ProgressMonitorSwingWorker<>(window,
         "Creating Test Expectation") {
       @Override
@@ -80,7 +80,7 @@ public class CreateJsonExpectationAction implements ActionListener {
           ProductContent content = ProductContentFactory.create(product, new Random(123546));
           TestDefinition testDefinition = new TestDefinition(testName, content);
           String jsonString = JsonHelper.toJson(testDefinition);
-          Files.writeString(file, jsonString);
+          Files.writeString(targetDir.resolve("test-" + testName + ".json"), jsonString);
         } catch (Exception e) {
           e.printStackTrace();
           Dialogs.showError(e.getClass().getSimpleName() + ": " + e.getMessage());
@@ -94,14 +94,21 @@ public class CreateJsonExpectationAction implements ActionListener {
 
   }
 
-  private JFileChooser createFileChooser(String testName) {
-    JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setDialogTitle("Select File");
-    fileChooser.setAcceptAllFileFilterUsed(false);
-    fileChooser.addChoosableFileFilter(new DefaultFileFilter("*.json", "JSON Files"));
-    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    fileChooser.setSelectedFile(new File(fileChooser.getCurrentDirectory(), "test-" + testName + ".json"));
-    return fileChooser;
+  private Path getValidationEnvDir(Window window) {
+    Preferences preferences = SnapApp.getDefault().getPreferences();
+    String lastDir = preferences.get(LAST_VALIDATION_ENV_DIR, "");
+    if(lastDir.isEmpty()) {
+      lastDir = System.getProperty("user.home");
+    }
+    JFileChooser dirChooser = new JFileChooser(lastDir);
+    dirChooser.setDialogTitle("Select Target Directory");
+    dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    if (dirChooser.showDialog(window, "Select") != JFileChooser.APPROVE_OPTION) {
+      return null;
+    }
+    File currentDirectory = dirChooser.getSelectedFile();
+    preferences.put(LAST_VALIDATION_ENV_DIR, currentDirectory.getAbsolutePath());
+    return currentDirectory.toPath();
   }
 
 }

@@ -27,7 +27,7 @@ public class TestDefinition {
 
   private String testName;
   private String[] tags;
-  private String gptCall = "";
+  private String gptCall = "{Define the GPT Call here}";
   private ProductContent productContent;
 
   private TestDefinition() {
