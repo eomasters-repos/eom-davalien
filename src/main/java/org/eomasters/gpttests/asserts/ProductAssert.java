@@ -61,42 +61,42 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
 
   public ProductAssert hasName(String name) {
     if (name != null && !actual.getName().equals(name)) {
-      failWithMessage("Expected product name to be <%s> but was <%s>", name, actual.getName());
+      failWithMessage("Expected product name to be {%s} but was {%s}", name, actual.getName());
     }
     return this;
   }
 
   public ProductAssert hasProductType(String productType) {
     if (productType != null && !actual.getProductType().equals(productType)) {
-      failWithMessage("Expected product type to be <%s> but was <%s>", productType, actual.getProductType());
+      failWithMessage("Expected product type to be {%s} but was {%s}", productType, actual.getProductType());
     }
     return this;
   }
 
   public ProductAssert hasDescription(String description) {
     if (description != null && !actual.getDescription().equals(description)) {
-      failWithMessage("Expected product description to be <%s> but was <%s>", description, actual.getDescription());
+      failWithMessage("Expected product description to be {%s} but was {%s}", description, actual.getDescription());
     }
     return this;
   }
 
   public ProductAssert hasSceneSize(Dimension sceneSize) {
     if (sceneSize != null && !actual.getSceneRasterSize().equals(sceneSize)) {
-      failWithMessage("Expected product scene size to be <%s> but was <%s>", sceneSize, actual.getSceneRasterSize());
+      failWithMessage("Expected product scene size to be {%s} but was {%s}", sceneSize, actual.getSceneRasterSize());
     }
     return this;
   }
 
   public ProductAssert hasStartTime(UTC startTime) {
-    if (startTime != null && !actual.getStartTime().equals(startTime)) {
-      failWithMessage("Expected product start time to be <%s> but was <%s>", startTime, actual.getStartTime());
+    if (startTime != null && !actual.getStartTime().format().equals(startTime.format())) {
+      failWithMessage("Expected product start time to be {%s} but was {%s}", startTime, actual.getStartTime());
     }
     return this;
   }
 
   public ProductAssert hasEndTime(UTC endTime) {
-    if (endTime != null && !actual.getEndTime().equals(endTime)) {
-      failWithMessage("Expected product end time to be <%s> but was <%s>", endTime, actual.getEndTime());
+    if (endTime != null && !actual.getEndTime().format().equals(endTime.format())) {
+      failWithMessage("Expected product end time to be {%s} but was {%s}", endTime, actual.getEndTime());
     }
     return this;
   }
@@ -112,21 +112,21 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
       assertThat(codings).allSatisfy(coding -> {
         SampleCoding sampleCoding = sampleCodingMap.get(coding.getName());
         if (sampleCoding == null) {
-          failWithMessage("Expected product to have sample coding <%s> but was not found", coding.getName());
+          failWithMessage("Expected product to have sample coding {%s} but was not found", coding.getName());
         } else {
           Sample[] samples = coding.getSamples();
           for (Sample sample : samples) {
             MetadataAttribute attribute = sampleCoding.getAttribute(sample.getName());
             if (attribute == null) {
-              failWithMessage("Expected sample <%s> to be found in sample coding <%s> but was not found",
+              failWithMessage("Expected sample {%s} to be found in sample coding {%s} but was not found",
                   sample.getName(), coding.getName());
             } else {
               if (!Objects.equals(attribute.getDescription(), sample.getDescription())) {
-                failWithMessage("Expected sample <%s> to have description <%s> but was <%s>", sample.getName(),
+                failWithMessage("Expected sample {%s} to have description {%s} but was {%s}", sample.getName(),
                     sample.getDescription(), attribute.getDescription());
               }
               if (attribute.getData().getElemInt() != sample.getSampleValue()) {
-                failWithMessage("Expected sample <%s> to have value <%s> but was <%s>", sample.getName(),
+                failWithMessage("Expected sample {%s} to have value {%s} but was {%s}", sample.getName(),
                     sample.getSampleValue(), attribute.getData().getElemInt());
               }
             }
@@ -158,7 +158,7 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
       return this;
     }
     if (actual.getRasterDataNodes().size() != expRasterList.size()) {
-      failWithMessage("Expected product to have <%s> rasters but were <%s>", expRasterList.size(),
+      failWithMessage("Expected product to have {%s} rasters but were {%s}", expRasterList.size(),
           actual.getRasterDataNodes().size());
     }
 

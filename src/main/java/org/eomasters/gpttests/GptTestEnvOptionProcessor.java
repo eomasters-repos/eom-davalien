@@ -25,13 +25,10 @@ package org.eomasters.gpttests;
 
 import com.bc.ceres.jai.operator.ReinterpretDescriptor;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import javax.media.jai.JAI;
-import javax.media.jai.OperationRegistry;
-import javax.media.jai.RegistryElementDescriptor;
-import org.esa.snap.core.gpf.main.GPT;
 import org.esa.snap.core.util.SystemUtils;
 import org.netbeans.api.sendopts.CommandException;
 import org.netbeans.spi.sendopts.Env;
@@ -98,12 +95,22 @@ public class GptTestEnvOptionProcessor extends OptionProcessor {
         try {
           gptTestEnv.init();
         } catch (IOException e) {
-          CommandException exception = new CommandException(80010, "GPT Test Environment cannot be started");
+          CommandException exception = new CommandException(80010, "GPT Test Environment cannot be started.");
           exception.initCause(e);
           e.printStackTrace(env.getOutputStream());
           throw exception;
         }
-        gptTestEnv.execute();
+        List<TestResult> testResults = gptTestEnv.execute();
+
+        try {
+          gptTestEnv.createReports(testResults);
+        } catch (IOException e) {
+          CommandException exception = new CommandException(80020, "Error while creating reports.");
+          exception.initCause(e);
+          e.printStackTrace(env.getOutputStream());
+          throw exception;
+        }
+
       } finally {
         if (actualUpdateInterval != null) {
           System.setProperty(PROP_PLUGIN_MANAGER_CHECK_INTERVAL, actualUpdateInterval);

@@ -110,7 +110,7 @@ public class JsonHelper {
     return Collections.emptyMap();
   }
 
-  public static String toJson(TestDefinition content) {
+  public static String toJson(Object content) {
     return gson.toJson(content);
   }
 
