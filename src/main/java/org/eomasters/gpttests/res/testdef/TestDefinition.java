@@ -23,11 +23,16 @@
 
 package org.eomasters.gpttests.res.testdef;
 
+import java.util.List;
+import java.util.Objects;
+
 public class TestDefinition {
+
+  public static final String GPT_CALL_REMINDER = "{Define the GPT Call here}";
 
   private String testName;
   private String[] tags;
-  private String gptCall = "{Define the GPT Call here}";
+  private String gptCall = GPT_CALL_REMINDER;
   private ProductContent productContent;
 
   private TestDefinition() {
@@ -41,8 +46,8 @@ public class TestDefinition {
     return testName;
   }
 
-  public String[] getTags() {
-    return tags;
+  public List<String> getTags() {
+    return List.of(tags);
   }
 
   public String getGptCall() {
@@ -51,5 +56,22 @@ public class TestDefinition {
 
   public ProductContent getProductContent() {
     return productContent;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    TestDefinition that = (TestDefinition) o;
+    return Objects.equals(getTestName(), that.getTestName());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getTestName());
   }
 }

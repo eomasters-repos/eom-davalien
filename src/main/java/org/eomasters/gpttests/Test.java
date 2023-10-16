@@ -41,8 +41,8 @@ public class Test {
 
   public static Test create(TestDefinition testDef, Resources resources, Path resultProductDir1) {
     String gptCall = testDef.getGptCall();
-    if(gptCall == null || gptCall.isEmpty()) {
-      throw new IllegalArgumentException("gptCall must not be null or empty");
+    if(gptCall == null || gptCall.isEmpty() || TestDefinition.GPT_CALL_REMINDER.equals(gptCall)) {
+      throw new IllegalArgumentException("gptCall must be defined");
     }
     String expandedGptCall = expandVariables(gptCall, resources);
     Test test = new Test(testDef.getTestName());
@@ -118,7 +118,7 @@ public class Test {
     var ref = new Object() {
       String expandedGptCall = gptCall;
     };
-    Pattern.compile("\\{.*?}").matcher(gptCall).results().forEach(matchResult -> {
+    Pattern.compile("\\{.*:.*?}").matcher(gptCall).results().forEach(matchResult -> {
       String token = matchResult.group();
       // remove enclosing {}
       String tokenName = token.substring(1, token.length() - 1);

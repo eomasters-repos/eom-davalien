@@ -23,9 +23,16 @@
 
 package org.eomasters.gpttests;
 
+import com.bc.ceres.jai.operator.ReinterpretDescriptor;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import javax.media.jai.JAI;
+import javax.media.jai.OperationRegistry;
+import javax.media.jai.RegistryElementDescriptor;
+import org.esa.snap.core.gpf.main.GPT;
+import org.esa.snap.core.util.SystemUtils;
 import org.netbeans.api.sendopts.CommandException;
 import org.netbeans.spi.sendopts.Env;
 import org.netbeans.spi.sendopts.Option;
@@ -82,6 +89,11 @@ public class GptTestEnvOptionProcessor extends OptionProcessor {
         if (optionValues.containsKey(tagNamesOpt)) {
           tags = argumentToArray(getArgument(optionValues, tagNamesOpt));
         }
+
+        Locale.setDefault(Locale.ENGLISH); // Force usage of english locale
+        // need to use a class from ceres-jai in order to get the defined JAI descriptors loaded
+        SystemUtils.init3rdPartyLibs(ReinterpretDescriptor.class);
+
         GptTestEnv gptTestEnv = new GptTestEnv(envPath, testNames, tags);
         try {
           gptTestEnv.init();

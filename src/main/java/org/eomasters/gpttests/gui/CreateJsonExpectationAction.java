@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -80,7 +80,17 @@ public class CreateJsonExpectationAction implements ActionListener {
           ProductContent content = ProductContentFactory.create(product, new Random(123546));
           TestDefinition testDefinition = new TestDefinition(testName, content);
           String jsonString = JsonHelper.toJson(testDefinition);
-          Files.writeString(targetDir.resolve("test-" + testName + ".json"), jsonString);
+          Path outputFile = targetDir.resolve("test-" + testName + ".json");
+          boolean doWrite = true;
+          if (Files.exists(outputFile)) {
+            if (JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(window, "File already exists. Overwrite?",
+                "File exists", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)) {
+              doWrite = false;
+            }
+          }
+          if (doWrite) {
+            Files.writeString(outputFile, jsonString);
+          }
         } catch (Exception e) {
           e.printStackTrace();
           Dialogs.showError(e.getClass().getSimpleName() + ": " + e.getMessage());
@@ -97,7 +107,7 @@ public class CreateJsonExpectationAction implements ActionListener {
   private Path getValidationEnvDir(Window window) {
     Preferences preferences = SnapApp.getDefault().getPreferences();
     String lastDir = preferences.get(LAST_VALIDATION_ENV_DIR, "");
-    if(lastDir.isEmpty()) {
+    if (lastDir.isEmpty()) {
       lastDir = System.getProperty("user.home");
     }
     JFileChooser dirChooser = new JFileChooser(lastDir);

@@ -26,6 +26,7 @@ package org.eomasters.gpttests.res.testdef;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -108,7 +109,11 @@ public class ProductContentFactory {
   private static String createPath(MetadataElement element, MetadataAttribute attributeAt) {
     StringBuilder stringBuilder = new StringBuilder(attributeAt.getName());
     do {
-      stringBuilder.insert(0, element.getName() + "/");
+      int elementIndex = element.getParentElement().getElementIndex(element);
+      String[] elementNames = element.getParentElement().getElementNames();
+      final String currentName = element.getName();
+      int count = (int) Arrays.stream(elementNames).filter(name -> name.equals(currentName)).count();
+      stringBuilder.insert(0, element.getName() + (count > 1 ? "[" + elementIndex + "]" : "") + "/");
       element = element.getParentElement();
     } while (!element.getName().equals("metadata"));
     return stringBuilder.toString();

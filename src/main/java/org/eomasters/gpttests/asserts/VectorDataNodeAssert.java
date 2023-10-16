@@ -32,7 +32,7 @@ import org.esa.snap.core.datamodel.VectorDataNode;
 public class VectorDataNodeAssert extends AbstractAssert<VectorDataNodeAssert, ProductNodeGroup<VectorDataNode>> {
 
   public VectorDataNodeAssert(ProductNodeGroup<VectorDataNode> actual) {
-    super(actual, ProductAssert.class);
+    super(actual, VectorDataNodeAssert.class);
     isNotNull();
   }
 

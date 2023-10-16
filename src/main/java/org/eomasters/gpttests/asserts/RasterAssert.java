@@ -38,7 +38,7 @@ import org.esa.snap.core.datamodel.RasterDataNode;
 public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
 
   public RasterAssert(RasterDataNode actual) {
-    super(actual, ProductAssert.class);
+    super(actual, RasterAssert.class);
     isNotNull();
   }
 

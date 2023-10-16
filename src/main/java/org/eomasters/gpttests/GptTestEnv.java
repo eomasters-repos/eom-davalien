@@ -23,6 +23,8 @@
 
 package org.eomasters.gpttests;
 
+import com.bc.ceres.jai.operator.InterpretationType;
+import com.bc.ceres.jai.operator.ReinterpretDescriptor;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,13 +32,19 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
+import javax.media.jai.JAI;
+import javax.media.jai.OperationRegistry;
+import javax.media.jai.RegistryElementDescriptor;
 import org.eomasters.gpttests.res.Resources;
 import org.eomasters.gpttests.res.testdef.ProductContent;
 import org.eomasters.gpttests.res.testdef.TestDefinition;
 import org.esa.snap.core.dataio.ProductIO;
 import org.esa.snap.core.datamodel.Product;
 import org.esa.snap.core.gpf.main.CommandLineTool;
+import org.esa.snap.core.gpf.main.GPT;
+import org.esa.snap.core.util.SystemUtils;
 
 public class GptTestEnv {
 
@@ -44,8 +52,8 @@ public class GptTestEnv {
   protected static final String RESULTS_DIR = "results";
   protected static final String PRODUCTS_DIR = "products";
   private final Path envPath;
-  private final String[] testNames;
-  private final String[] tags;
+  private final List<String> testNames;
+  private final List<String> tags;
   private List<TestDefinition> allTestDefinitions;
   private Path resultsDir;
   private Path resultProductDir;
@@ -53,8 +61,8 @@ public class GptTestEnv {
 
   public GptTestEnv(String envPath, String[] testNames, String[] tags) {
     this.envPath = Paths.get(envPath);
-    this.testNames = testNames;
-    this.tags = tags;
+    this.testNames = List.of(testNames);
+    this.tags = List.of(tags);
   }
 
   public void init() throws IOException {
@@ -63,6 +71,7 @@ public class GptTestEnv {
     resultsDir = envPath.resolve(RESULTS_DIR);
     resultProductDir = resultsDir.resolve(PRODUCTS_DIR);
     Files.createDirectories(resultProductDir);
+
   }
 
   public void execute() {
@@ -81,7 +90,7 @@ public class GptTestEnv {
 
   private void reportResults(List<TestResult> testResults) {
     if(testResults.isEmpty()) {
-      System.out.println("No tests selected");
+      System.out.println("No tests executed.");
     } else {
       System.out.println("Test Results:");
       for (TestResult testResult : testResults) {
@@ -135,16 +144,18 @@ public class GptTestEnv {
     }).collect(Collectors.toList());
   }
 
-  private List<TestDefinition> filterTestDefinitions(List<TestDefinition> allTestDefinitions, String[] testNames,
-      String[] tags) {
-    List<String> testNameList = Arrays.asList(testNames);
-    return allTestDefinitions.stream().filter(testDefinition -> {
-      if (testNameList.contains(testDefinition.getTestName())) {
-        List<String> defTags = Arrays.asList(testDefinition.getTags());
-        return Arrays.stream(tags).anyMatch(defTags::contains);
-      }
-      return false;
-    }).collect(Collectors.toList());
+  private List<TestDefinition> filterTestDefinitions(List<TestDefinition> allTestDefinitions, List<String> testNames,
+      List<String> tags) {
+    List<TestDefinition> filteredTests = new ArrayList<>(allTestDefinitions);
+
+    if(!testNames.isEmpty()) {
+      filteredTests.removeIf(testDefinition -> !testNames.contains(testDefinition.getTestName()));
+    }
+
+    if(!tags.isEmpty()) {
+      filteredTests.removeIf(testDefinition -> tags.stream().noneMatch(testDefinition.getTags()::contains));
+    }
+    return filteredTests;
 
   }
 
