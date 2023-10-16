@@ -35,27 +35,24 @@ public class Resources {
 
   private static Path envPath;
   private Map<String, Resource> sourceProducts;
-  private Map<String, Resource> expectedProducts;
   private Map<String, Resource> graphFiles;
   private Map<String, Resource> auxdataFiles;
 
   public static Resources create(Path envPath) throws IOException {
     Resources.envPath = envPath;
     Resources resources = new Resources();
-    resources.sourceProducts = JsonHelper.getResources(getOptionalFile(envPath, "test-products.json"));
-    resources.expectedProducts = JsonHelper.getResources(getOptionalFile(envPath, "expected-products.json"));
+    resources.sourceProducts = JsonHelper.getResources(getOptionalFile(envPath, "source-products.json"));
     resources.graphFiles = JsonHelper.getResources(getOptionalFile(envPath, "test-graphs.json"));
     resources.auxdataFiles = JsonHelper.getResources(getOptionalFile(envPath, "auxiliary-data.json"));
 
     return resources;
   }
 
+  public List<TestDefinition> getTestDefinitions(Path testsDir) throws IOException {
+    return JsonHelper.getTestDefinitions(envPath.resolve(testsDir));
+  }
   public Map<String, Resource> getSourceProducts() {
     return sourceProducts;
-  }
-
-  public Map<String, Resource> getExpectedProducts() {
-    return expectedProducts;
   }
 
   public Map<String, Resource> getGraphFiles() {
@@ -73,9 +70,6 @@ public class Resources {
       case SRC:
         resource = getSourceProducts().get(id);
         break;
-      case TAR:
-        resource = getExpectedProducts().get(id);
-        break;
       case AUX:
         resource = getAuxdataFiles().get(id);
         break;
@@ -91,7 +85,4 @@ public class Resources {
     return resource;
   }
 
-  public List<TestDefinition> getTestDefinitions(Path testsDir) throws IOException {
-    return JsonHelper.getTestDefinitions(envPath.resolve(testsDir));
-  }
 }

@@ -28,7 +28,6 @@ public class Resource {
 
   public enum Type {
     SRC,
-    TAR,
     AUX,
     GPH
   }
