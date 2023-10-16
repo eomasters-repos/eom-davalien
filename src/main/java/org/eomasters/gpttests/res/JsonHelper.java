@@ -42,8 +42,10 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -75,24 +77,27 @@ public class JsonHelper {
           .filter(f -> f.getFileName().toString().matches("test-.*\\.json"))
           .collect(Collectors.toList());
     }
-    List<TestDefinition> testDefinitions = new ArrayList<>();
+    Set<TestDefinition> testDefinitions = new HashSet<>();
     for (Path testDefFile : testDefFiles) {
       try {
-        testDefinitions.add(gson.fromJson(Files.newBufferedReader(testDefFile),
+        TestDefinition testDef = gson.fromJson(Files.newBufferedReader(testDefFile),
             new TypeToken<TestDefinition>() {
-            }.getType()));
+            }.getType());
+        if(!testDefinitions.add(testDef)) {
+          throw new IOException("Duplicate test name: " + testDef.getTestName());
+        };
         for (TestDefinition testDefinition : testDefinitions) {
           try {
             Paths.get(testDefinition.getTestName());
           } catch (Exception e) {
-            throw new IOException("Invalid test name. Name must be a valid filename: " + testDefinition.getTestName(), e);
+            throw new IOException("Invalid test name. Name must follow file naming rules: " + testDefinition.getTestName(), e);
           }
         }
       } catch (Exception e) {
         throw new IOException("Cannot read test definition file: " + testDefFile, e);
       }
     }
-    return testDefinitions;
+    return new ArrayList<>(testDefinitions);
   }
 
   public static Map<String, Resource> getResources(Path fromFile) throws IOException {
