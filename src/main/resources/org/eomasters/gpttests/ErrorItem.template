@@ -1,0 +1,10 @@
+<li>
+  <details>
+    <summary>{{ErrorMessage}}</summary>
+    <p>
+      <code>
+        {{StackTrace}}
+      </code>
+    </p>
+  </details>
+</li>

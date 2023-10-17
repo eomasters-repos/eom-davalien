@@ -1,0 +1,3 @@
+<tr class="report">
+  <td colspan="3" class="report"><a href="file://{{TargetPath}}" target="_blank">{{TargetPath}}</a></td>
+</tr>

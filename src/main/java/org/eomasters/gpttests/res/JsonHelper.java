@@ -29,12 +29,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -65,6 +68,8 @@ public class JsonHelper {
     builder.registerTypeAdapter(PixelPos.class, new PixelPosTypeAdapter());
     builder.registerTypeAdapter(GeoPos.class, new GeoPosTypeAdapter());
     builder.registerTypeAdapter(ProductData.UTC.class, new UtcAdapter());
+    builder.registerTypeHierarchyAdapter(Throwable.class, new ThrowableAdapter());
+    builder.registerTypeAdapter(Path.class, new PathAdapter());
     builder.serializeSpecialFloatingPointValues();
     builder.setPrettyPrinting();
     gson = builder.create();
@@ -83,14 +88,16 @@ public class JsonHelper {
         TestDefinition testDef = gson.fromJson(Files.newBufferedReader(testDefFile),
             new TypeToken<TestDefinition>() {
             }.getType());
-        if(!testDefinitions.add(testDef)) {
+        if (!testDefinitions.add(testDef)) {
           throw new IOException("Duplicate test name: " + testDef.getTestName());
-        };
+        }
+
         for (TestDefinition testDefinition : testDefinitions) {
           try {
             Paths.get(testDefinition.getTestName());
           } catch (Exception e) {
-            throw new IOException("Invalid test name. Name must follow file naming rules: " + testDefinition.getTestName(), e);
+            throw new IOException(
+                "Invalid test name. Name must follow file naming rules: " + testDefinition.getTestName(), e);
           }
         }
       } catch (Exception e) {
@@ -184,6 +191,28 @@ public class JsonHelper {
       array.add(src.width);
       array.add(src.height);
       return array;
+    }
+  }
+
+  private static class ThrowableAdapter implements JsonSerializer<Throwable> {
+    @Override
+    public JsonElement serialize(Throwable exception, Type typeOfSrc, JsonSerializationContext context) {
+      StringWriter traceWriter = new StringWriter();
+      exception.printStackTrace(new PrintWriter(traceWriter));
+      JsonObject jsonObject = new JsonObject();
+      jsonObject.add("message", context.serialize(exception.getMessage()));
+      jsonObject.add("stacktrace", context.serialize(traceWriter.toString()));
+      if(exception.getCause() != null && exception.getCause() != exception.getCause().getCause()) {
+        jsonObject.add("cause", context.serialize(exception.getCause()));
+      }
+      return jsonObject;
+    }
+  }
+
+  private static class PathAdapter implements JsonSerializer<Path> {
+    @Override
+    public JsonElement serialize(Path path, Type typeOfSrc, JsonSerializationContext context) {
+      return context.serialize(path.toAbsolutePath().toString());
     }
   }
 }

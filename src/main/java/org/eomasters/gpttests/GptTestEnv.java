@@ -27,12 +27,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.eomasters.gpttests.TestResult.STATUS;
+import java.util.stream.Stream;
 import org.eomasters.gpttests.res.JsonHelper;
 import org.eomasters.gpttests.res.Resources;
 import org.eomasters.gpttests.res.testdef.ProductContent;
@@ -43,16 +45,21 @@ import org.esa.snap.core.gpf.main.CommandLineTool;
 
 public class GptTestEnv {
 
-  protected static final String TESTS_DIR = "tests";
-  protected static final String RESULTS_DIR = "results";
-  protected static final String PRODUCTS_DIR = "products";
+  private static final String TESTS_DIR = "tests";
+  private static final String RESULTS_DIR = "results";
+  private static final String PRODUCTS_DIR = "products";
+  private static final int ROLLING_RESULTS = 5;
+  private static final boolean DELETE_RESULT_AFTER_SUCCESS = true;
+
+  private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
   private final Path envPath;
   private final List<String> testNames;
   private final List<String> tags;
   private List<TestDefinition> allTestDefinitions;
-  private Path resultsDir;
+  private Path runResultsDir;
   private Path resultProductDir;
   private Resources resources;
+  private String dateString;
 
   public GptTestEnv(String envPath, String[] testNames, String[] tags) {
     this.envPath = Paths.get(envPath);
@@ -60,13 +67,53 @@ public class GptTestEnv {
     this.tags = List.of(tags);
   }
 
+  public Path getEnvPath() {
+    return envPath;
+  }
+
+  public List<String> getTestNames() {
+    return testNames;
+  }
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public String getDateString() {
+    return dateString;
+  }
+
+  public List<TestDefinition> getAllTestDefinitions() {
+    return allTestDefinitions;
+  }
+
   public void init() throws IOException {
     resources = Resources.create(envPath);
     allTestDefinitions = resources.getTestDefinitions(envPath.resolve(TESTS_DIR));
-    resultsDir = envPath.resolve(RESULTS_DIR).resolve(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")));
-    resultProductDir = resultsDir.resolve(PRODUCTS_DIR);
+    dateString = LocalDateTime.now().format(DATE_FORMAT);
+    Path resultsDir = envPath.resolve(RESULTS_DIR);
+    rollResults(resultsDir);
+    runResultsDir = resultsDir.resolve(dateString);
+    resultProductDir = runResultsDir.resolve(PRODUCTS_DIR);
     Files.createDirectories(resultProductDir);
 
+  }
+
+  private void rollResults(Path resultsDir) throws IOException {
+    try (Stream<Path> resultDirList = Files.list(resultsDir)) {
+      Stream<Path> resultDirs = resultDirList.filter(path -> Files.isDirectory(path) && path.getFileName()
+                                                                                            .toString()
+                                                                                            .matches("\\d{8}_\\d{6}"));
+      List<Path> sorted = resultDirs.sorted(
+                                        Comparator.comparing(p -> LocalDateTime.parse(p.getFileName().toString(), DATE_FORMAT)))
+                                    .collect(Collectors.toList());
+      if (sorted.size() >= ROLLING_RESULTS) {
+        for (int i = 0; i <= sorted.size() - ROLLING_RESULTS; i++) {
+          Path path = sorted.get(i);
+          Files.walkFileTree(path, new DeleteTreeVisitor());
+        }
+      }
+    }
   }
 
   public List<TestResult> execute() {
@@ -74,38 +121,38 @@ public class GptTestEnv {
     ArrayList<TestResult> testResults = new ArrayList<>();
     if (!selectedTestDefs.isEmpty()) {
       List<Test> activeTests = createTests(selectedTestDefs);
-      List<TestExpectation> expectations = createTestExpectations(selectedTestDefs);
       runGptTests(activeTests);
+      List<TestExpectation> expectations = createTestExpectations(selectedTestDefs);
       testResults = compareResults(activeTests, expectations);
     }
     return testResults;
   }
 
-  public void createReports(List<TestResult> testResults) throws IOException{
+  public void createReports(List<TestResult> testResults) throws IOException {
     if (testResults.isEmpty()) {
       System.out.println("No tests executed.");
     } else {
+      TestReport testReport = new TestReport(testResults, this);
       System.out.println("Test Results:");
-      long successNum = testResults.stream().filter(testResult -> testResult.getStatus().equals(STATUS.SUCCESS)).count();
-      long errorNum = testResults.stream().filter(testResult -> testResult.getStatus().equals(STATUS.ERROR)).count();
-      long failureNum = testResults.stream().filter(testResult -> testResult.getStatus().equals(STATUS.FAILURE)).count();
-      System.out.printf("Tests executed: %d (success=%d / error=%d / failure=%d)", testResults.size(), successNum, errorNum, failureNum);
-      System.out.println("For details see the results directory: " + resultsDir);
-      String reportFileName = "test-results";
-      toJsonFile(testResults, resultsDir.resolve(reportFileName + ".json"));
-      toHtmlFile(testResults, resultsDir.resolve(reportFileName + ".html"));
+      System.out.printf("Tests executed: %d (success=%d / error=%d / failure=%d)%n", testReport.getTestResults().size(),
+          testReport.getNumSuccessTests(), testReport.getNumErrorTests(), testReport.getNumFailureTests());
+      System.out.println("For details see the results directory: " + runResultsDir);
+      String reportFileName = "validation_report";
+      toJsonFile(testReport, runResultsDir.resolve(reportFileName + ".json"));
+      toHtmlFile(testReport, runResultsDir.resolve(reportFileName + ".html"));
       for (TestResult testResult : testResults) {
         System.out.println(testResult);
       }
     }
   }
 
-  private void toHtmlFile(List<TestResult> testResults, Path file) {
-    // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details
+  private void toHtmlFile(TestReport testReport, Path file) throws IOException {
+    String htmlString = HtmlReport.create(testReport);
+    Files.writeString(file, htmlString);
   }
 
-  private void toJsonFile(List<TestResult> testResults, Path file) throws IOException {
-    String jsonString = JsonHelper.toJson(testResults);
+  private void toJsonFile(TestReport testReport, Path file) throws IOException {
+    String jsonString = JsonHelper.toJson(testReport);
     Files.writeString(file, jsonString);
   }
 
@@ -113,8 +160,14 @@ public class GptTestEnv {
     ArrayList<TestResult> testResults = new ArrayList<>();
     for (Test test : tests) {
       String testName = test.getName();
-      TestResult result = new TestResult(testName);
+      TestResult result = new TestResult(testName, test.getExecutionTime(), test.getTargetPath());
       testResults.add(result);
+
+      Throwable exception = test.getException();
+      if (exception != null) {
+        result.setException(exception);
+        continue;
+      }
       TestExpectation expectation = findExpectation(expectations, testName);
       if (expectation == null) {
         result.setException(new RuntimeException("No expectation found for test: " + testName));
@@ -123,6 +176,13 @@ public class GptTestEnv {
           ProductContent expectedContent = expectation.getExpectedContent();
           Product testProduct = ProductIO.readProduct(test.getTargetPath().toFile());
           ProductTester.testProduct(testProduct, expectedContent, result);
+          if(result.getStatus().equals(TestResult.STATUS.SUCCESS) && DELETE_RESULT_AFTER_SUCCESS) {
+            Files.walkFileTree(test.getTempProductDir(), new DeleteTreeVisitor());
+            result.setTargetPath(null);
+          } else {
+            Files.walkFileTree(test.getTempProductDir(), new CopyDirContentTreeVisitor(test.getTempProductDir(), resultProductDir));
+            result.setTargetPath(resultProductDir.resolve(test.getTargetPath().getFileName()));
+          }
         } catch (Exception e) {
           result.setException(new Exception("Error executing test: " + testName, e));
         }
@@ -141,19 +201,29 @@ public class GptTestEnv {
   }
 
   private List<Test> createTests(List<TestDefinition> selectedTestDefs) {
-    return selectedTestDefs.stream().map(def -> Test.create(def, resources, resultProductDir))
+    return selectedTestDefs.stream().map(def -> {
+                             try {
+                               Path tempDirectory = Files.createTempDirectory(def.getTestName());
+                               return Test.create(def, resources, tempDirectory);
+                             } catch (IOException e) {
+                               throw new RuntimeException(e);
+                             }
+                           })
                            .collect(Collectors.toList());
   }
 
   private void runGptTests(List<Test> activeTests) {
     CommandLineTool commandLineTool = new CommandLineTool();
-    activeTests.forEach(testDef -> {
+    activeTests.forEach(test -> {
       try {
-        commandLineTool.run(testDef.getParamList().toArray(new String[0]));
-        System.gc();
-      } catch (Exception e) {
-        throw new RuntimeException(e);
+        Instant start = Instant.now();
+        commandLineTool.run(test.getParamList().toArray(new String[0]));
+        Instant end = Instant.now();
+        test.setExecutionTime((end.toEpochMilli() - start.toEpochMilli()) / 1000f);
+      } catch (Throwable t) {
+        test.setException(t);
       }
+      System.gc();
     });
   }
 
@@ -171,6 +241,5 @@ public class GptTestEnv {
     return filteredTests;
 
   }
-
 
 }

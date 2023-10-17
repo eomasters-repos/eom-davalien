@@ -34,13 +34,16 @@ public class TestResult {
   }
 
   private String testName;
+  private final float executionTime;
   private STATUS status = STATUS.SUCCESS;
   private Path targetPath;
-  private Exception exception;
+  private Throwable exception;
   private List<AssertionError> errors = new ArrayList<>();
 
-  public TestResult(String name) {
+  public TestResult(String name, float executionTime, Path targetPath) {
     this.testName = name;
+    this.executionTime = executionTime;
+    this.targetPath = targetPath;
   }
 
   public String getTestName() {
@@ -51,15 +54,27 @@ public class TestResult {
     return status;
   }
 
+  public float getExecutionTime() {
+    return executionTime;
+  }
+
   public Path getTargetPath() {
     return targetPath;
+  }
+
+  public Throwable getException() {
+    return exception;
+  }
+
+  public List<AssertionError> getErrors() {
+    return errors;
   }
 
   public void setTargetPath(Path targetPath) {
     this.targetPath = targetPath;
   }
 
-  public void setException(Exception e) {
+  public void setException(Throwable e) {
     this.exception = e;
     this.status = STATUS.FAILURE;
   }

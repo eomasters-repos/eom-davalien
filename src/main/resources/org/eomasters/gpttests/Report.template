@@ -2,71 +2,72 @@
 <head>
   <title>EOMasters Product Validation Report</title>
 </head>
+<style>
+  .header {
+  background-color: LightGrey;
+  }
+  table.report{
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid;
+  }
+  tr.report{
+  border-collapse: collapse;
+  border: 1px solid;
+  }
+  td.report{
+  border-collapse: collapse;
+  border: 1px solid;
+  }
+  td.report.firstCol{
+  font-size:130%;
+  text-align: center;
+  }
+  thead {
+  font-size:130%;
+  text-align: center;
+  }
+  .SUCCESS {
+  color: Green;
+  }
+  .ERROR {
+  color: Red;
+  }
+  .FAILURE {
+  color: DarkOrange;
+  }
+</style>
 <body>
 
-<h1>Validation Report</h1>
-<b>DATE:</b> DATUM<br>
-<b>Tags:</b>TAGS<br>
-<b>Selected Tests:</b>Test names<br>
-<b>##</b> of <b>##</b> tests executed (<span style="color: Green">success=##</span> / <span style="color: Red">error=##</span> /
-<span style="color: DarkOrange">failure=##</span>)<br>
+<h1>Product Validation Report</h1>
+
+<div class="header">
+<b>DATE:</b> {{Date}}<br>
+<b>Filterd by:</b>
+<div>
+<b>&nbsp;&nbsp;Test names:</b> {{TestNames}}<br>
+<b>&nbsp;&nbsp;Tags:</b> {{Tags}}<br>
+</div>
+<b>Test Environment Path:</b> <a href="file://{{TestEnvironmentPath}}" target="_blank">{{TestEnvironmentPath}}</a><br>
+<b>{{NumSelectedTests}}</b> of <b>{{NumAllTests}}</b> tests executed (<span
+    class="SUCCESS">success={{NumSuccess}}</span> / <span class="ERROR">error={{NumError}}</span> /
+<span class="FAILURE">failure={{NumFailure}}</span>)<br>
+</div>
 <br>
 
-<table>
-  <tr>
-    <td rowspan="4">
-      <b style="font-size:130%">1</b>
-    </td>
-    <td style="font-size:130%"><b>NAME</b></td>
-    <td style="font-size:130%"><b>STATUS</b></td>
+<table class="report">
+  <thead class="report header">
+  <tr class="report">
+    <td class="report"><b>Nr</b></td>
+    <td class="report"><b>Test Name</b></td>
+    <td class="report"><b>Status</b></td>
+    <td class="report"><b>Time</b></td>
   </tr>
-  <tr>
-    <td>Target File Path</td>
-  </tr>
-  <tr>
-    <td>
-      <details>
-        <summary>Exception Message</summary>
-        <p>
-          <code>
-            Stack Trace
-          </code>
-        </p>
-      </details>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <details>
-        <summary>Errors Occurred: #</summary>
-        <ul>
-          <li>Error 1<br>
-            <details>
-              <summary>Error 1 Message</summary>
-              <p>
-                <code>
-                  Stack Trace
-                </code>
-              </p>
-            </details>
-          </li>
-          <li>Error 2<br>
-            <details>
-              <summary>Error 2 Message</summary>
-              <p>
-                <code>
-                  Stack Trace
-                </code>
-              </p>
-            </details>
-          </li>
-        </ul>
-      </details>
-    </td>
-  </tr>
+  </thead>
+  {{ReportRows}}
 </table>
-{REPORT_TABLE}
 
+<br>
 <footer>
   <hr>
   <table>

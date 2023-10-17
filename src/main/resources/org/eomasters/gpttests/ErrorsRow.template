@@ -1,0 +1,10 @@
+<tr class="report">
+  <td colspan="3" class="report">
+    <details>
+      <summary>Errors Occurred: #</summary>
+      <ol>
+        {{ErrorItems}}
+      </ol>
+    </details>
+  </td>
+</tr>

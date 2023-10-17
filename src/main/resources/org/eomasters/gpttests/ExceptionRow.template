@@ -1,0 +1,12 @@
+<tr class="report">
+  <td colspan="3" class="report">
+    <details>
+      <summary>{{ExceptionMessage}}</summary>
+      <p>
+        <code>
+          {{StackTrace}}
+        </code>
+      </p>
+    </details>
+  </td>
+</tr>

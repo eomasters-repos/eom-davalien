@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -36,19 +36,23 @@ import org.esa.snap.core.dataio.ProductReaderPlugIn;
 public class Test {
 
   private final String name;
+  private float executionTime = -1.0f;
+  private Throwable exception;
+  private Path tempProductDir;
   private Path targetPath;
   private List<String> paramList;
 
-  public static Test create(TestDefinition testDef, Resources resources, Path resultProductDir1) {
+  public static Test create(TestDefinition testDef, Resources resources, Path resultProductDir) {
     String gptCall = testDef.getGptCall();
-    if(gptCall == null || gptCall.isEmpty() || TestDefinition.GPT_CALL_REMINDER.equals(gptCall)) {
+    if (gptCall == null || gptCall.isEmpty() || TestDefinition.GPT_CALL_REMINDER.equals(gptCall)) {
       throw new IllegalArgumentException("gptCall must be defined");
     }
     String expandedGptCall = expandVariables(gptCall, resources);
     Test test = new Test(testDef.getTestName());
     List<String> paramList = parseCommandline(expandedGptCall);
     String format = ensureFormat(paramList);
-    Path targetPath = createTargetPath(test, resultProductDir1, format);
+    test.tempProductDir = resultProductDir;
+    Path targetPath = createTargetPath(test, test.tempProductDir, format);
     test.targetPath = targetPath;
     addTargetProduct(paramList, targetPath);
     test.paramList = paramList;
@@ -64,12 +68,36 @@ public class Test {
     return name;
   }
 
+  public Path getTempProductDir() {
+    return tempProductDir;
+  }
+
   public Path getTargetPath() {
     return targetPath;
   }
 
+  public void setTargetPath(Path targetPath) {
+    this.targetPath = targetPath;
+  }
+
   public List<String> getParamList() {
     return paramList;
+  }
+
+  public float getExecutionTime() {
+    return executionTime;
+  }
+
+  public void setExecutionTime(float executionTime) {
+    this.executionTime = executionTime;
+  }
+
+  public Throwable getException() {
+    return exception;
+  }
+
+  public void setException(Throwable t) {
+    this.exception = t;
   }
 
   private static Path createTargetPath(Test test, Path resultProductDir, String format) {
@@ -100,12 +128,15 @@ public class Test {
     if (!it.hasNext()) {
       throw new IllegalArgumentException("No reader plug-in found for format: " + format);
     }
+    if(format.equalsIgnoreCase("znap")) {
+      return it.next().getDefaultFileExtensions()[1];
+    }
     return it.next().getDefaultFileExtensions()[0];
   }
 
   // Splits a command line into an array of strings. As separator serves a space character but if the space is inside
   // a pair of double quotes, it is not used as separator. The double quotes are removed from the result.
-  static List<String> parseCommandline(String cmd) {
+  private static List<String> parseCommandline(String cmd) {
     String[] split = cmd.trim().split(" (?=([^\"]*\"[^\"]*\")*[^\"]*$)");
     for (int i = 0; i < split.length; i++) {
       split[i] = split[i].replace("\"", "");
