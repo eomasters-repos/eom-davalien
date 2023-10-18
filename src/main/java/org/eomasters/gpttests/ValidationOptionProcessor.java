@@ -39,17 +39,17 @@ import org.openide.util.NbBundle;
 
 /**
  * Option processor for the --validate option.
- * <p>With this option, the GPT Test Environment can be started.
+ * <p>With this option, the Product Validation Environment can be started.
  * <p>Example: <code>snap --validate C:\test\envPath</code></p>
  * <p>To prevent the GUI and splash screen from showing, add also {@code --nogui} {@code --nosplash} <br>
  */
 @org.openide.util.lookup.ServiceProvider(service = OptionProcessor.class)
 @NbBundle.Messages({
-    "DSC_Validate=Start the GPT Test Environment: snap --validate <envPath> [-N=<TestNameList>] [-T=<TagList>]."
+    "DSC_Validate=Start the Product Validation Environment: snap --validate <envPath> [-N=<TestNameList>] [-T=<TagList>]."
         + "Add also --nogui --nosplash to prevent GUI and splash screen from showing.",
     "DSC_TestNames=Optional comma separated list of test names to execute. If not provided all tests will be executed.",
     "DSC_TagNames=Optional comma separated list of tags associated with Tests to be executed. If not provided all tests will be executed."})
-public class GptTestEnvOptionProcessor extends OptionProcessor {
+public class ValidationOptionProcessor extends OptionProcessor {
 
   private static final String PROP_PLUGIN_MANAGER_CHECK_INTERVAL = "plugin.manager.check.interval";
   private static final Option gptTestsOpt;
@@ -58,7 +58,7 @@ public class GptTestEnvOptionProcessor extends OptionProcessor {
   private static final Set<Option> optionSet;
 
   static {
-    String b = GptTestEnvOptionProcessor.class.getPackageName() + ".Bundle";
+    String b = ValidationOptionProcessor.class.getPackageName() + ".Bundle";
     gptTestsOpt = Option.shortDescription(Option.requiredArgument(Option.NO_SHORT_NAME, "validate"), b, "DSC_Validate");
     testNamesOpt = Option.shortDescription(Option.requiredArgument('N', null), b, "DSC_TestNames");
     tagNamesOpt = Option.shortDescription(Option.requiredArgument('T', null), b, "DSC_TagNames");
@@ -95,7 +95,7 @@ public class GptTestEnvOptionProcessor extends OptionProcessor {
         try {
           gptTestEnv.init();
         } catch (IOException e) {
-          CommandException exception = new CommandException(80010, "GPT Test Environment cannot be started.");
+          CommandException exception = new CommandException(80010, "Product Validation Environment cannot be started.");
           exception.initCause(e);
           e.printStackTrace(env.getOutputStream());
           throw exception;
@@ -105,7 +105,7 @@ public class GptTestEnvOptionProcessor extends OptionProcessor {
         try {
           gptTestEnv.createReports(testResults);
         } catch (IOException e) {
-          CommandException exception = new CommandException(80020, "Error while creating reports.");
+          CommandException exception = new CommandException(80020, "Error while creating validation reports.");
           exception.initCause(e);
           e.printStackTrace(env.getOutputStream());
           throw exception;
