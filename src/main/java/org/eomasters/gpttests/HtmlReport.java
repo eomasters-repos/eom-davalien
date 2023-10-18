@@ -29,6 +29,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,10 +87,11 @@ public class HtmlReport {
 
   public static String create(TestReport report) {
     HashMap<String, String> variables = new HashMap<>();
-    variables.put("Date", report.getDate());
-    variables.put("Tags", String.join(",", report.getTags()));
-    variables.put("TestNames", String.join(",", report.getTestNames()));
-    variables.put("TestEnvironmentPath", report.getEnvPath().toAbsolutePath().toString());
+    variables.put("Date", report.getDate().format(DateTimeFormatter.ISO_DATE) + " " + report.getDate().withNano(0).format(DateTimeFormatter.ISO_LOCAL_TIME));
+    variables.put("Tags", report.getTags().isEmpty() ? "-" : String.join(",", report.getTags()));
+    variables.put("TestNames", report.getTestNames().isEmpty() ? "-" : String.join(",", report.getTestNames()));
+    variables.put("EnvironmentPathUrl", report.getEnvPath().toAbsolutePath().toUri().toString());
+    variables.put("EnvironmentPath", report.getEnvPath().toAbsolutePath().toString());
     variables.put("NumSelectedTests", String.valueOf(report.getTestResults().size()));
     variables.put("NumAllTests", String.valueOf(report.getNumAllTests()));
     variables.put("NumSuccess", String.valueOf(report.getNumSuccessTests()));
@@ -128,6 +130,7 @@ public class HtmlReport {
       return NO_TARGET_PATH_TEMPLATE;
     }else {
       HashMap<String, String> variables = new HashMap<>();
+      variables.put("TargetPathUrl", targetPath.toAbsolutePath().toUri().toString());
       variables.put("TargetPath", targetPath.toAbsolutePath().toString());
       return expandVariables(TARGET_PATH_TEMPLATE, variables);
     }

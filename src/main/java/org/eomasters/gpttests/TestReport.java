@@ -24,6 +24,7 @@
 package org.eomasters.gpttests;
 
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.eomasters.gpttests.TestResult.STATUS;
 
@@ -31,7 +32,7 @@ public class TestReport {
 
   private final List<TestResult> testResults;
   private final Path envPath;
-  private final String date;
+  private final LocalDateTime date;
   private final List<String> testNames;
   private final List<String> tags;
   private final int numAllTests;
@@ -45,7 +46,7 @@ public class TestReport {
     this.envPath = gptTestEnv.getEnvPath();
     this.testNames = gptTestEnv.getTestNames();
     this.tags = gptTestEnv.getTags();
-    this.date = gptTestEnv.getDateString();
+    this.date = gptTestEnv.getDate();
     numSuccessTests = testResults.stream().filter(testResult -> testResult.getStatus().equals(STATUS.SUCCESS)).count();
     numErrorTests = testResults.stream().filter(testResult -> testResult.getStatus().equals(STATUS.ERROR)).count();
     numFailureTests = testResults.stream().filter(testResult -> testResult.getStatus().equals(STATUS.FAILURE)).count();
@@ -59,7 +60,7 @@ public class TestReport {
     return envPath;
   }
 
-  public String getDate() {
+  public LocalDateTime getDate() {
     return date;
   }
 

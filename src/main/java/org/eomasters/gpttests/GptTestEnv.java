@@ -48,18 +48,16 @@ public class GptTestEnv {
   private static final String TESTS_DIR = "tests";
   private static final String RESULTS_DIR = "results";
   private static final String PRODUCTS_DIR = "products";
-  private static final int ROLLING_RESULTS = 5;
-  private static final boolean DELETE_RESULT_AFTER_SUCCESS = true;
-
   private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
   private final Path envPath;
   private final List<String> testNames;
   private final List<String> tags;
+  private EnvConfig config;
   private List<TestDefinition> allTestDefinitions;
   private Path runResultsDir;
   private Path resultProductDir;
   private Resources resources;
-  private String dateString;
+  private LocalDateTime date;
 
   public GptTestEnv(String envPath, String[] testNames, String[] tags) {
     this.envPath = Paths.get(envPath);
@@ -79,8 +77,8 @@ public class GptTestEnv {
     return tags;
   }
 
-  public String getDateString() {
-    return dateString;
+  public LocalDateTime getDate() {
+    return date;
   }
 
   public List<TestDefinition> getAllTestDefinitions() {
@@ -88,12 +86,13 @@ public class GptTestEnv {
   }
 
   public void init() throws IOException {
+    config = JsonHelper.getConfig(this.envPath.resolve("config.json"));
     resources = Resources.create(envPath);
     allTestDefinitions = resources.getTestDefinitions(envPath.resolve(TESTS_DIR));
-    dateString = LocalDateTime.now().format(DATE_FORMAT);
+    date = LocalDateTime.now();
     Path resultsDir = envPath.resolve(RESULTS_DIR);
     rollResults(resultsDir);
-    runResultsDir = resultsDir.resolve(dateString);
+    runResultsDir = resultsDir.resolve(date.format(DATE_FORMAT));
     resultProductDir = runResultsDir.resolve(PRODUCTS_DIR);
     Files.createDirectories(resultProductDir);
 
@@ -107,8 +106,8 @@ public class GptTestEnv {
       List<Path> sorted = resultDirs.sorted(
                                         Comparator.comparing(p -> LocalDateTime.parse(p.getFileName().toString(), DATE_FORMAT)))
                                     .collect(Collectors.toList());
-      if (sorted.size() >= ROLLING_RESULTS) {
-        for (int i = 0; i <= sorted.size() - ROLLING_RESULTS; i++) {
+      if (sorted.size() >= config.getRollingResults()) {
+        for (int i = 0; i <= sorted.size() - config.getRollingResults(); i++) {
           Path path = sorted.get(i);
           Files.walkFileTree(path, new DeleteTreeVisitor());
         }
@@ -140,9 +139,6 @@ public class GptTestEnv {
       String reportFileName = "validation_report";
       toJsonFile(testReport, runResultsDir.resolve(reportFileName + ".json"));
       toHtmlFile(testReport, runResultsDir.resolve(reportFileName + ".html"));
-      for (TestResult testResult : testResults) {
-        System.out.println(testResult);
-      }
     }
   }
 
@@ -176,7 +172,7 @@ public class GptTestEnv {
           ProductContent expectedContent = expectation.getExpectedContent();
           Product testProduct = ProductIO.readProduct(test.getTargetPath().toFile());
           ProductTester.testProduct(testProduct, expectedContent, result);
-          if(result.getStatus().equals(TestResult.STATUS.SUCCESS) && DELETE_RESULT_AFTER_SUCCESS) {
+          if(result.getStatus().equals(TestResult.STATUS.SUCCESS) && config.isDeleteResultAfterSuccess()) {
             Files.walkFileTree(test.getTempProductDir(), new DeleteTreeVisitor());
             result.setTargetPath(null);
           } else {

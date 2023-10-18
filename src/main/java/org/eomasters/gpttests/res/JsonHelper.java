@@ -52,6 +52,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.eomasters.gpttests.EnvConfig;
 import org.eomasters.gpttests.res.testdef.TestDefinition;
 import org.esa.snap.core.datamodel.GeoPos;
 import org.esa.snap.core.datamodel.PixelPos;
@@ -117,9 +118,18 @@ public class JsonHelper {
     return Collections.emptyMap();
   }
 
+  public static EnvConfig getConfig(Path fromFile) throws IOException {
+    if (fromFile != null && Files.exists(fromFile)) {
+      return gson.fromJson(Files.newBufferedReader(fromFile), EnvConfig.class);
+    }
+    return new EnvConfig();
+  }
+
+
   public static String toJson(Object content) {
     return gson.toJson(content);
   }
+
 
   private static class UtcAdapter implements JsonDeserializer<ProductData.UTC>, JsonSerializer<ProductData.UTC> {
 
