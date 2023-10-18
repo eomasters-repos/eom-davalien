@@ -156,7 +156,7 @@ public class GptTestEnv {
     ArrayList<TestResult> testResults = new ArrayList<>();
     for (Test test : tests) {
       String testName = test.getName();
-      TestResult result = new TestResult(testName, test.getExecutionTime(), test.getTargetPath());
+      TestResult result = new TestResult(testName, test.getDescription(), test.getExecutionTime(), test.getTargetPath());
       testResults.add(result);
 
       Throwable exception = test.getException();

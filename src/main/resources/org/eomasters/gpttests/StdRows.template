@@ -2,7 +2,7 @@
   <td class="report firstCol" rowspan="3">
     <b>{{TestNumber}}</b>
   </td>
-  <td class="report"><b>{{TestName}}</b></td>
+  <td class="report"><b>{{TestName}}</b>{{TestDescription}}</td>
   <td class="report"><b class="{{TestStatus}}">{{TestStatus}}</b></td>
   <td class="report"><b>{{TestTime}}</b></td>
 </tr>

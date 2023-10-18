@@ -29,25 +29,31 @@ import java.util.List;
 
 public class TestResult {
 
-  public static enum STATUS {
+  public enum STATUS {
     SUCCESS, FAILURE, ERROR
   }
 
   private String testName;
+  private final String description;
   private final float executionTime;
   private STATUS status = STATUS.SUCCESS;
   private Path targetPath;
   private Throwable exception;
   private List<AssertionError> errors = new ArrayList<>();
 
-  public TestResult(String name, float executionTime, Path targetPath) {
+  public TestResult(String name, String description, float executionTime, Path targetPath) {
     this.testName = name;
+    this.description = description;
     this.executionTime = executionTime;
     this.targetPath = targetPath;
   }
 
   public String getTestName() {
     return testName;
+  }
+
+  public String getDescription() {
+    return description;
   }
 
   public STATUS getStatus() {

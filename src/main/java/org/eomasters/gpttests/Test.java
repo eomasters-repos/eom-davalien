@@ -36,6 +36,7 @@ import org.esa.snap.core.dataio.ProductReaderPlugIn;
 public class Test {
 
   private final String name;
+  private final String description;
   private float executionTime = -1.0f;
   private Throwable exception;
   private Path tempProductDir;
@@ -48,7 +49,7 @@ public class Test {
       throw new IllegalArgumentException("gptCall must be defined");
     }
     String expandedGptCall = expandVariables(gptCall, resources);
-    Test test = new Test(testDef.getTestName());
+    Test test = new Test(testDef.getTestName(), testDef.getDescription());
     List<String> paramList = parseCommandline(expandedGptCall);
     String format = ensureFormat(paramList);
     test.tempProductDir = resultProductDir;
@@ -60,12 +61,17 @@ public class Test {
   }
 
 
-  public Test(String name) {
+  public Test(String name, String description) {
     this.name = name;
+    this.description = description;
   }
 
   public String getName() {
     return name;
+  }
+
+  public String getDescription() {
+    return description;
   }
 
   public Path getTempProductDir() {
@@ -74,10 +80,6 @@ public class Test {
 
   public Path getTargetPath() {
     return targetPath;
-  }
-
-  public void setTargetPath(Path targetPath) {
-    this.targetPath = targetPath;
   }
 
   public List<String> getParamList() {

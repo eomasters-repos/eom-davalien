@@ -31,6 +31,7 @@ public class TestDefinition {
   public static final String GPT_CALL_REMINDER = "{Define the GPT Call here}";
 
   private String testName;
+  private String description;
   private String[] tags;
   private String gptCall = GPT_CALL_REMINDER;
   private ProductContent productContent;
@@ -44,6 +45,10 @@ public class TestDefinition {
 
   public String getTestName() {
     return testName;
+  }
+
+  public String getDescription() {
+    return description;
   }
 
   public List<String> getTags() {

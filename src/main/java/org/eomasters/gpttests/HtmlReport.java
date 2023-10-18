@@ -45,7 +45,7 @@ public class HtmlReport {
   private static final String ERRORS_ROW_TEMPLATE;
   private static final String ERROR_ITEM_TEMPLATE;
   private static final String NO_PROBLEM_ROW_TEMPLATE;
-
+  private static final String DESCRIPTION_ELEM_TEMPLATE;
 
   static {
     try {
@@ -80,6 +80,10 @@ public class HtmlReport {
         assert resource != null;
         NO_PROBLEM_ROW_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("DescriptionElem.template")) {
+        assert resource != null;
+        DESCRIPTION_ELEM_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -109,6 +113,7 @@ public class HtmlReport {
       HashMap<String, String> variables = new HashMap<>();
       variables.put("TestNumber", String.valueOf(i + 1));
       variables.put("TestName", testResult.getTestName());
+      variables.put("TestDescription", createDescriptionElement(testResult.getDescription()));
       variables.put("TestStatus", String.valueOf(testResult.getStatus()));
       variables.put("TestTime", String.valueOf(testResult.getExecutionTime()));
       variables.put("TargetPathRow", createTargetPathRow(testResult.getTargetPath()));
@@ -123,6 +128,16 @@ public class HtmlReport {
 
     }
     return sb.toString();
+  }
+
+  private static String createDescriptionElement(String description) {
+    if(description == null || description.isEmpty()) {
+      return "";
+    }else {
+      HashMap<String, String> variables = new HashMap<>();
+      variables.put("Description", description);
+      return expandVariables(DESCRIPTION_ELEM_TEMPLATE, variables);
+    }
   }
 
   private static String createTargetPathRow(Path targetPath) {

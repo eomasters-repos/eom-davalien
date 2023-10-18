@@ -65,10 +65,10 @@
 <table class="report">
   <thead class="report header">
   <tr class="report">
-    <td class="report"><b>Nr</b></td>
-    <td class="report"><b>Test Name</b></td>
-    <td class="report"><b>Status</b></td>
-    <td class="report"><b>Time</b></td>
+    <td class="report" width="50"><b>Nr</b></td>
+    <td class="report" width="*"><b>Test Name</b></td>
+    <td class="report" width="150"><b>Status</b></td>
+    <td class="report" width="150"><b>Time</b></td>
   </tr>
   </thead>
   {{ReportRows}}
