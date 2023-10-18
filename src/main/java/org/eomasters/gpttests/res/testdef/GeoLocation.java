@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -23,19 +23,27 @@
 
 package org.eomasters.gpttests.res.testdef;
 
+import java.util.Objects;
 import org.esa.snap.core.datamodel.GeoPos;
 import org.esa.snap.core.datamodel.PixelPos;
 
 public class GeoLocation {
 
+  private static final double DEFAULT_EPS = 1.0e-8;
   private PixelPos pixel;
   private GeoPos geo;
-  private double eps = 1.0e-8;
+  private double eps = DEFAULT_EPS;
 
   public GeoLocation(PixelPos pos, GeoPos geoPos) {
+    this(pos, geoPos, DEFAULT_EPS);
+  }
+
+  public GeoLocation(PixelPos pos, GeoPos geoPos, double eps) {
     pixel = pos;
     geo = geoPos;
+    this.eps = eps;
   }
+
   private GeoLocation() {
   }
 
@@ -49,5 +57,30 @@ public class GeoLocation {
 
   public double getEps() {
     return eps;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    GeoLocation location = (GeoLocation) o;
+    return Double.compare(getEps(), location.getEps()) == 0
+        && Double.compare(pixel.x, location.pixel.x) == 0 && Double.compare(pixel.y, location.pixel.y) == 0
+        && Double.compare(geo.lat, location.geo.lat) == 0 && Double.compare(geo.lon, location.geo.lon) == 0;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(pixel, geo, getEps());
+  }
+
+  @Override
+  public String toString() {
+    return String.format("GeoLocation{pixel=[%s, %s], geo=[%s, %s], eps=%s}", pixel.getX(), pixel.getY(),
+        geo.getLat(), geo.getLon(), eps);
   }
 }

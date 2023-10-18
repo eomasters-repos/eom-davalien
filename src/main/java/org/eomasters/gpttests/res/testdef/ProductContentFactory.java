@@ -47,6 +47,9 @@ import org.esa.snap.core.datamodel.VectorDataNode;
 
 public class ProductContentFactory {
 
+  private static final int NUM_PIXELS = 3;
+  private static final int NUM_GEOLOCATIONS = 3;
+
   public static ProductContent create(Product product, Random random) throws IOException {
     ProductContent pc = new ProductContent();
     pc.setName(product.getName());
@@ -161,9 +164,9 @@ public class ProductContentFactory {
   }
 
   private static Pixel[] createPixels(RasterDataNode rdn, Random random) throws IOException {
-    Pixel[] pixels = new Pixel[5];
+    Pixel[] pixels = new Pixel[NUM_PIXELS];
     for (int i = 0; i < pixels.length; i++) {
-      PixelPos pos = new PixelPos(random.nextInt(rdn.getRasterWidth()), random.nextInt(rdn.getRasterHeight()));
+      PixelPos pos = new PixelPos(random.nextInt(rdn.getRasterWidth()) + 0.5, random.nextInt(rdn.getRasterHeight()) + 0.5);
       double[] pix = new double[1];
       rdn.readPixels((int) pos.x, (int) pos.y, 1, 1, pix);
       pixels[i] = new Pixel(pos, pix[0]);
@@ -172,9 +175,9 @@ public class ProductContentFactory {
   }
 
   private static GeoLocation[] create(GeoCoding geoCoding, Dimension dimension, Random random) {
-    GeoLocation[] geoLocations = new GeoLocation[3];
+    GeoLocation[] geoLocations = new GeoLocation[NUM_GEOLOCATIONS];
     for (int i = 0; i < geoLocations.length; i++) {
-      PixelPos pos = new PixelPos(random.nextInt(dimension.width), random.nextInt(dimension.height));
+      PixelPos pos = new PixelPos(random.nextInt(dimension.width) + 0.5, random.nextInt(dimension.height) + 0.5);
       GeoPos geoPos = geoCoding.getGeoPos(pos, null);
       geoLocations[i] = new GeoLocation(pos, geoPos);
     }

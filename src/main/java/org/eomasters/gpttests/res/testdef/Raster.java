@@ -24,6 +24,8 @@
 package org.eomasters.gpttests.res.testdef;
 
 import java.awt.Dimension;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Raster {
 
@@ -38,6 +40,13 @@ public class Raster {
   private Pixel[] pixels;
   private GeoLocation[] geoLocations;
 
+  public Raster(String name, String description) {
+    this.name = name;
+    this.description = description;
+  }
+
+  public Raster() {
+  }
 
   public String getName() {
     return name;
@@ -117,5 +126,41 @@ public class Raster {
 
   public void setGeoLocations(GeoLocation[] geoLocations) {
     this.geoLocations = geoLocations;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Raster raster = (Raster) o;
+    return Objects.equals(getName(), raster.getName()) && Objects.equals(getDescription(),
+        raster.getDescription()) && Objects.equals(getSize(), raster.getSize())
+        && getDataType() == raster.getDataType() && getRasterType() == raster.getRasterType() && Objects.equals(
+        getNoDataValue(), raster.getNoDataValue()) && Objects.equals(noDataValueUsed, raster.noDataValueUsed)
+        && Objects.equals(getValidPixelExpression(), raster.getValidPixelExpression())
+        && Arrays.equals(getPixels(), raster.getPixels()) && Arrays.equals(getGeoLocations(),
+        raster.getGeoLocations());
+  }
+
+  @Override
+  public int hashCode() {
+    int result = Objects.hash(getName(), getDescription(), getSize(), getDataType(), getRasterType(), getNoDataValue(),
+        noDataValueUsed, getValidPixelExpression());
+    result = 31 * result + Arrays.hashCode(getPixels());
+    result = 31 * result + Arrays.hashCode(getGeoLocations());
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "Raster{name='%s', description='%s', size=%s, dataType=%s, rasterType=%s, noDataValue=%s, noDataValueUsed=%s, "
+            + "validPixelExpression='%s', pixels=%s, geoLocations=%s}",
+        name, description, size != null ? "[" + size.width + "," + size.height + "]" : "null", dataType, rasterType, noDataValue, noDataValueUsed, validPixelExpression,
+        Arrays.toString(pixels), Arrays.toString(geoLocations));
   }
 }

@@ -23,6 +23,7 @@
 
 package org.eomasters.gpttests.res.testdef;
 
+import java.util.Objects;
 import org.esa.snap.core.datamodel.PixelPos;
 
 public class Pixel {
@@ -49,5 +50,29 @@ public class Pixel {
 
   public double getValue() {
     return value;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Pixel pixel = (Pixel) o;
+    return Double.compare(getValue(), pixel.getValue()) == 0
+        && Double.compare(getEps(), pixel.getEps()) == 0 && Objects.equals(getPosition(),
+        pixel.getPosition());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getPosition(), getValue(), getEps());
+  }
+
+  @Override
+  public String toString() {
+    return String.format("Pixel{position=[%s,%s], value=%s, eps=%s}", position.x, position.y, value, eps);
   }
 }

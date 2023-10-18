@@ -24,7 +24,6 @@
 package org.eomasters.gpttests.res.testdef;
 
 import java.awt.Dimension;
-import java.util.List;
 import org.esa.snap.core.datamodel.ProductData;
 import org.esa.snap.core.datamodel.ProductData.UTC;
 
@@ -75,8 +74,8 @@ public class ProductContent {
     return metadata;
   }
 
-  public List<Raster> getRasters() {
-    return List.of(rasters);
+  public Raster[] getRasters() {
+    return rasters;
   }
 
   public Vector[] getVectors() {

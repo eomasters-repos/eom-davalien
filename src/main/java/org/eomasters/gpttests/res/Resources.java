@@ -23,7 +23,7 @@
 
 package org.eomasters.gpttests.res;
 
-import static org.eomasters.gpttests.FileUtils.getOptionalFile;
+import static org.eomasters.gpttests.utils.FileUtils.getOptionalFile;
 
 import java.io.IOException;
 import java.nio.file.Path;

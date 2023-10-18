@@ -38,14 +38,14 @@ import org.netbeans.spi.sendopts.OptionProcessor;
 import org.openide.util.NbBundle;
 
 /**
- * Option processor for the --gpttests option.
+ * Option processor for the --validate option.
  * <p>With this option, the GPT Test Environment can be started.
- * <p>Example: <code>snap --gpttests C:\test\envPath</code></p>
+ * <p>Example: <code>snap --validate C:\test\envPath</code></p>
  * <p>To prevent the GUI and splash screen from showing, add also {@code --nogui} {@code --nosplash} <br>
  */
 @org.openide.util.lookup.ServiceProvider(service = OptionProcessor.class)
 @NbBundle.Messages({
-    "DSC_GptTests=Start the GPT Test Environment: snap --loopgpt <envPath> [-tests=<TestNameList>] [-tags=<TagList>]."
+    "DSC_Validate=Start the GPT Test Environment: snap --validate <envPath> [-N=<TestNameList>] [-T=<TagList>]."
         + "Add also --nogui --nosplash to prevent GUI and splash screen from showing.",
     "DSC_TestNames=Optional comma separated list of test names to execute. If not provided all tests will be executed.",
     "DSC_TagNames=Optional comma separated list of tags associated with Tests to be executed. If not provided all tests will be executed."})
@@ -59,7 +59,7 @@ public class GptTestEnvOptionProcessor extends OptionProcessor {
 
   static {
     String b = GptTestEnvOptionProcessor.class.getPackageName() + ".Bundle";
-    gptTestsOpt = Option.shortDescription(Option.requiredArgument(Option.NO_SHORT_NAME, "gpttests"), b, "DSC_GptTests");
+    gptTestsOpt = Option.shortDescription(Option.requiredArgument(Option.NO_SHORT_NAME, "validate"), b, "DSC_Validate");
     testNamesOpt = Option.shortDescription(Option.requiredArgument('N', null), b, "DSC_TestNames");
     tagNamesOpt = Option.shortDescription(Option.requiredArgument('T', null), b, "DSC_TagNames");
     optionSet = Set.of(OptionGroups.allOf(gptTestsOpt), OptionGroups.anyOf(testNamesOpt, tagNamesOpt));

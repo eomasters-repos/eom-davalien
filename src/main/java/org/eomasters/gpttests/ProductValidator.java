@@ -29,24 +29,24 @@ import org.eomasters.gpttests.asserts.ProductAssert;
 import org.eomasters.gpttests.res.testdef.ProductContent;
 import org.esa.snap.core.datamodel.Product;
 
-public class ProductTester {
+public class ProductValidator {
 
   static void testProduct(Product testProduct, ProductContent expectedContent, TestResult testResult) {
     ProductAssert productAssert = assertThat(testProduct);
-    runTest(() -> productAssert.hasName(expectedContent.getName()), testResult);
-    runTest(() -> productAssert.hasProductType(expectedContent.getProductType()), testResult);
-    runTest(() -> productAssert.hasDescription(expectedContent.getDescription()), testResult);
-    runTest(() -> productAssert.hasSceneSize(expectedContent.getSceneSize()), testResult);
-    runTest(() -> productAssert.hasStartTime(expectedContent.getStartTime()), testResult);
-    runTest(() -> productAssert.hasEndTime(expectedContent.getEndTime()), testResult);
-    runTest(() -> productAssert.hasSampleCodings(expectedContent.getSampleCodings()), testResult);
-    runTest(() -> productAssert.hasGeoLocations(expectedContent.getGeoLocations()), testResult);
-    runTest(() -> productAssert.hasRasters(expectedContent.getRasters()), testResult);
-    runTest(() -> productAssert.hasVectors(expectedContent.getVectors()), testResult);
-    runTest(() -> productAssert.hasMetadata(expectedContent.getMetadata()), testResult);
+    runValidation(() -> productAssert.hasName(expectedContent.getName()), testResult);
+    runValidation(() -> productAssert.hasProductType(expectedContent.getProductType()), testResult);
+    runValidation(() -> productAssert.hasDescription(expectedContent.getDescription()), testResult);
+    runValidation(() -> productAssert.hasSceneSize(expectedContent.getSceneSize()), testResult);
+    runValidation(() -> productAssert.hasStartTime(expectedContent.getStartTime()), testResult);
+    runValidation(() -> productAssert.hasEndTime(expectedContent.getEndTime()), testResult);
+    runValidation(() -> productAssert.hasSampleCodings(expectedContent.getSampleCodings()), testResult);
+    runValidation(() -> productAssert.hasGeoLocations(expectedContent.getGeoLocations()), testResult);
+    runValidation(() -> productAssert.hasRasters(expectedContent.getRasters()), testResult);
+    runValidation(() -> productAssert.hasVectors(expectedContent.getVectors()), testResult);
+    runValidation(() -> productAssert.hasMetadata(expectedContent.getMetadata()), testResult);
   }
 
-  private static void runTest(InnerTest test, TestResult testResult) {
+  private static void runValidation(InnerTest test, TestResult testResult) {
     try {
       test.run();
     } catch (AssertionError e) {

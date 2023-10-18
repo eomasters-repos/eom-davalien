@@ -23,6 +23,8 @@
 
 package org.eomasters.gpttests.res.testdef;
 
+import java.util.Objects;
+
 public class Vector {
 
   private String name;
@@ -48,5 +50,28 @@ public class Vector {
 
   public int getNumFeatures() {
     return numFeatures;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Vector vector = (Vector) o;
+    return getNumFeatures() == vector.getNumFeatures() && Objects.equals(getName(), vector.getName())
+        && Objects.equals(getDescription(), vector.getDescription());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getName(), getDescription(), getNumFeatures());
+  }
+
+  @Override
+  public String toString() {
+    return String.format("Vector{name='%s', description='%s', numFeatures=%d}", name, description, numFeatures);
   }
 }

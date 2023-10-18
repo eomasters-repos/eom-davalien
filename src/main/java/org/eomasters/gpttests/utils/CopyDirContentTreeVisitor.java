@@ -21,26 +21,52 @@
  * =========================LICENSE_END==================================
  */
 
-package org.eomasters.gpttests;
+package org.eomasters.gpttests.utils;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 
-class DeleteTreeVisitor extends SimpleFileVisitor<Path> {
+public class CopyDirContentTreeVisitor extends SimpleFileVisitor<Path> {
+
+  private final Path source;
+  private final Path target;
+
+  public CopyDirContentTreeVisitor(Path source, Path target) {
+    this.source = source;
+    this.target = target;
+  }
 
   @Override
-  public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-    Files.delete(file);
+  public FileVisitResult preVisitDirectory(Path dir,
+      BasicFileAttributes attrs) throws IOException {
+    if (dir.equals(source)) {
+      return FileVisitResult.CONTINUE;
+    }
+    Path resolve = target.resolve(source.relativize(dir));
+    if (Files.notExists(resolve)) {
+      Files.createDirectories(resolve);
+    }
+    return FileVisitResult.CONTINUE;
+
+  }
+
+  @Override
+  public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+      throws IOException {
+    Path resolve = target.resolve(source.relativize(file));
+    Files.copy(file, resolve, StandardCopyOption.REPLACE_EXISTING);
     return FileVisitResult.CONTINUE;
   }
 
   @Override
-  public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-    Files.delete(dir);
+  public FileVisitResult visitFileFailed(Path file, IOException exc) {
+    System.err.format("Unable to copy: %s: %s%n", file, exc);
     return FileVisitResult.CONTINUE;
   }
+
 }

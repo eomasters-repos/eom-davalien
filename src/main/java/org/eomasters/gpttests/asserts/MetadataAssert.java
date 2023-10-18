@@ -24,8 +24,8 @@
 package org.eomasters.gpttests.asserts;
 
 import org.assertj.core.api.AbstractAssert;
-import org.eomasters.gpttests.MetadataUtils;
-import org.eomasters.gpttests.MetadataUtils.MetadataWrapper;
+import org.eomasters.gpttests.utils.MetadataUtils;
+import org.eomasters.gpttests.utils.MetadataUtils.MetadataWrapper;
 import org.eomasters.gpttests.res.testdef.Metadata;
 import org.esa.snap.core.datamodel.MetadataElement;
 

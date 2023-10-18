@@ -39,6 +39,8 @@ import org.eomasters.gpttests.res.JsonHelper;
 import org.eomasters.gpttests.res.Resources;
 import org.eomasters.gpttests.res.testdef.ProductContent;
 import org.eomasters.gpttests.res.testdef.TestDefinition;
+import org.eomasters.gpttests.utils.CopyDirContentTreeVisitor;
+import org.eomasters.gpttests.utils.DeleteTreeVisitor;
 import org.esa.snap.core.dataio.ProductIO;
 import org.esa.snap.core.datamodel.Product;
 import org.esa.snap.core.gpf.main.CommandLineTool;
@@ -171,7 +173,7 @@ public class GptTestEnv {
         try {
           ProductContent expectedContent = expectation.getExpectedContent();
           Product testProduct = ProductIO.readProduct(test.getTargetPath().toFile());
-          ProductTester.testProduct(testProduct, expectedContent, result);
+          ProductValidator.testProduct(testProduct, expectedContent, result);
           if(result.getStatus().equals(TestResult.STATUS.SUCCESS) && config.isDeleteResultAfterSuccess()) {
             Files.walkFileTree(test.getTempProductDir(), new DeleteTreeVisitor());
             result.setTargetPath(null);

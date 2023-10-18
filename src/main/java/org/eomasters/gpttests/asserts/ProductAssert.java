@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -29,6 +29,7 @@ import static org.eomasters.gpttests.asserts.ProductAssertions.assertThat;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -153,22 +154,22 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     return this;
   }
 
-  public ProductAssert hasRasters(List<Raster> expRasterList) {
-    if (expRasterList == null) {
+  public ProductAssert hasRasters(Raster[] expRasters) {
+    if (expRasters == null) {
       return this;
     }
-    if (actual.getRasterDataNodes().size() != expRasterList.size()) {
-      failWithMessage("Expected product to have {%s} rasters but were {%s}", expRasterList.size(),
+    if (actual.getRasterDataNodes().size() != expRasters.length) {
+      failWithMessage("Expected product to have {%s} rasters but were {%s}", expRasters.length,
           actual.getRasterDataNodes().size());
     }
 
     List<RasterDataNode> rasterDataNodes = actual.getRasterDataNodes();
     assertThat(rasterDataNodes).allSatisfy(raster -> {
-      Raster expectedRaster = expRasterList.stream()
-                                           .filter(current -> current.getName().equals(raster.getName()))
-                                           .findFirst()
-                                           .orElseThrow(() -> new AssertionError(
-                                               "Raster with name " + raster.getName() + " not found"));
+      Raster expectedRaster = Arrays.stream(expRasters)
+                                    .filter(current -> current.getName().equals(raster.getName()))
+                                    .findFirst()
+                                    .orElseThrow(() -> new AssertionError(
+                                        "Raster with name " + raster.getName() + " not found"));
       Pixel[] pixels = expectedRaster.getPixels();
       GeoLocation[] geoLocations = expectedRaster.getGeoLocations();
       assertThat(raster).hasName(expectedRaster.getName())

@@ -63,4 +63,12 @@ public class Metadata {
   public int hashCode() {
     return Objects.hash(getPath(), getValue());
   }
+
+  @Override
+  public String toString() {
+    return "Metadata{" +
+        "path='" + path + '\'' +
+        ", value='" + value + '\'' +
+        '}';
+  }
 }

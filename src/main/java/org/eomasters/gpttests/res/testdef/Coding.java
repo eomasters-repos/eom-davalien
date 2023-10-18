@@ -23,12 +23,15 @@
 
 package org.eomasters.gpttests.res.testdef;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class Coding {
 
   private String name;
   private Sample[] samples;
 
-  public Coding(String name, Sample[] samples) {
+  public Coding(String name, Sample... samples) {
     this.name = name;
     this.samples = samples;
   }
@@ -42,6 +45,34 @@ public class Coding {
 
   public Sample[] getSamples() {
     return samples;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Coding coding = (Coding) o;
+    return Objects.equals(getName(), coding.getName()) && Arrays.equals(getSamples(),
+        coding.getSamples());
+  }
+
+  @Override
+  public int hashCode() {
+    int result = Objects.hash(getName());
+    result = 31 * result + Arrays.hashCode(getSamples());
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return "Coding{" +
+        "name='" + name + '\'' +
+        ", samples=" + Arrays.toString(samples) +
+        '}';
   }
 
   public static class Sample {
@@ -68,6 +99,33 @@ public class Coding {
 
     public long getSampleValue() {
       return sampleValue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Sample sample = (Sample) o;
+      return getSampleValue() == sample.getSampleValue() && Objects.equals(getName(), sample.getName())
+          && Objects.equals(getDescription(), sample.getDescription());
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(getName(), getDescription(), getSampleValue());
+    }
+
+    @Override
+    public String toString() {
+      return "Sample{" +
+          "name='" + name + '\'' +
+          ", description='" + description + '\'' +
+          ", sampleValue=" + sampleValue +
+          '}';
     }
   }
 }

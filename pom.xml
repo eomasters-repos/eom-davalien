@@ -15,7 +15,7 @@
 
   <groupId>org.eomasters</groupId>
   <artifactId>eom-validation-env</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   <packaging>nbm</packaging>
 
   <properties>
