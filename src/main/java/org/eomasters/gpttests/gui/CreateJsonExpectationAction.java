@@ -72,7 +72,7 @@ public class CreateJsonExpectationAction implements ActionListener {
       return;
     }
     final ProgressMonitorSwingWorker<Void, Void> worker = new ProgressMonitorSwingWorker<>(window,
-        "Creating Test Expectation") {
+        "Creating Validation Expectation") {
       @Override
       protected Void doInBackground(ProgressMonitor pm) {
         pm.beginTask("Collecting data...", ProgressMonitor.UNKNOWN);
