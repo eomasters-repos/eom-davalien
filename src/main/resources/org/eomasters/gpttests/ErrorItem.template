@@ -2,9 +2,10 @@
   <details>
     <summary>{{ErrorMessage}}</summary>
     <p>
-      <code>
+      <code><b>Stack Trace:</b>
         {{StackTrace}}
       </code>
+      {{Cause}}
     </p>
   </details>
 </li>

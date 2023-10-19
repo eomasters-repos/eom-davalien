@@ -1,7 +1,7 @@
 <tr class="report">
   <td colspan="3" class="report">
     <details>
-      <summary>Errors Occurred: #</summary>
+      <summary>Errors Occurred: {{NumErrors}}</summary>
       <ol>
         {{ErrorItems}}
       </ol>

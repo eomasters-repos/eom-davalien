@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -64,7 +64,8 @@ public class HtmlReport {
       try (InputStream resource = HtmlReport.class.getResourceAsStream("NoTargetPath.template")) {
         assert resource != null;
         NO_TARGET_PATH_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
-      }      try (InputStream resource = HtmlReport.class.getResourceAsStream("ExceptionRow.template")) {
+      }
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("ExceptionRow.template")) {
         assert resource != null;
         EXCEPTION_ROW_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
@@ -99,7 +100,7 @@ public class HtmlReport {
     variables.put("EnvironmentPathUrl", report.getEnvPath().toAbsolutePath().toUri().toString());
     variables.put("EnvironmentPath", report.getEnvPath().toAbsolutePath().toString());
     variables.put("NumSelectedTests", String.valueOf(report.getTestResults().size()));
-    variables.put("NumAllTests", String.valueOf(report.getNumAllTests()));
+    variables.put("NumAllTests", String.valueOf(report.getTestsExecuted()));
     variables.put("NumSuccess", String.valueOf(report.getNumSuccessTests()));
     variables.put("NumError", String.valueOf(report.getNumErrorTests()));
     variables.put("NumFailure", String.valueOf(report.getNumFailureTests()));
@@ -117,7 +118,7 @@ public class HtmlReport {
       variables.put("TestName", testResult.getTestName());
       variables.put("TestDescription", createDescriptionElement(testResult.getDescription()));
       variables.put("TestStatus", String.valueOf(testResult.getStatus()));
-      variables.put("TestTime", String.valueOf(testResult.getExecutionTime()));
+      variables.put("TestTime", String.valueOf(testResult.getDuration()));
       variables.put("TargetPathRow", createTargetPathRow(testResult.getTargetPath()));
       if (testResult.getException() != null) {
         variables.put("ProblemRow", createExceptionRow(testResult.getException()));
@@ -133,9 +134,9 @@ public class HtmlReport {
   }
 
   private static String createDescriptionElement(String description) {
-    if(description == null || description.isEmpty()) {
+    if (description == null || description.isEmpty()) {
       return "";
-    }else {
+    } else {
       HashMap<String, String> variables = new HashMap<>();
       variables.put("Description", description);
       return expandVariables(DESCRIPTION_ELEM_TEMPLATE, variables);
@@ -143,9 +144,9 @@ public class HtmlReport {
   }
 
   private static String createTargetPathRow(Path targetPath) {
-    if(targetPath == null) {
+    if (targetPath == null) {
       return NO_TARGET_PATH_TEMPLATE;
-    }else {
+    } else {
       HashMap<String, String> variables = new HashMap<>();
       variables.put("TargetPathUrl", targetPath.toAbsolutePath().toUri().toString());
       variables.put("TargetPath", targetPath.toAbsolutePath().toString());
@@ -155,6 +156,7 @@ public class HtmlReport {
 
   private static String createErrorRow(List<AssertionError> errors) {
     HashMap<String, String> variables = new HashMap<>();
+    variables.put("NumErrors", String.valueOf(errors.size()));
     variables.put("ErrorItems", createErrorItems(errors));
     return expandVariables(ERRORS_ROW_TEMPLATE, variables);
   }
@@ -167,21 +169,26 @@ public class HtmlReport {
     return sb.toString();
   }
 
-  private static String createErrorItem(AssertionError assertionError) {
+  private static String createErrorItem(Throwable throwable) {
+    if (throwable == null) {
+      return "";
+    }
     HashMap<String, String> variables = new HashMap<>();
-    variables.put("ErrorMessage", assertionError.getMessage());
+    variables.put("ErrorMessage", throwable.getMessage());
     StringWriter traceWriter = new StringWriter();
-    assertionError.printStackTrace(new PrintWriter(traceWriter));
+    throwable.printStackTrace(new PrintWriter(traceWriter));
     variables.put("StackTrace", traceWriter.toString());
+    variables.put("Cause", createErrorItem(throwable.getCause()));
     return expandVariables(ERROR_ITEM_TEMPLATE, variables);
   }
 
-  private static String createExceptionRow(Throwable exception) {
+  private static String createExceptionRow(Throwable throwable) {
     HashMap<String, String> variables = new HashMap<>();
-    variables.put("ExceptionMessage", exception.getMessage());
+    variables.put("ExceptionMessage", throwable.getMessage());
     StringWriter traceWriter = new StringWriter();
-    exception.printStackTrace(new PrintWriter(traceWriter));
+    throwable.printStackTrace(new PrintWriter(traceWriter));
     variables.put("StackTrace", traceWriter.toString());
+    variables.put("Cause", createErrorItem(throwable.getCause()));
     return expandVariables(EXCEPTION_ROW_TEMPLATE, variables);
   }
 
@@ -195,7 +202,7 @@ public class HtmlReport {
       // remove enclosing {{}}
       String varName = token.substring(2, token.length() - 2);
       String value = variables.get(varName);
-      if(value == null) {
+      if (value == null) {
         throw new RuntimeException("No value found for variable: " + varName);
       }
       ref.expandedGptCall = ref.expandedGptCall.replace(token, value);

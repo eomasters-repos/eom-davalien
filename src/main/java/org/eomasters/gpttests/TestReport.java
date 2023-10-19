@@ -34,7 +34,7 @@ public class TestReport {
   private final LocalDateTime creationTime;
   private final List<String> testNames;
   private final List<String> tags;
-  private final int numAllTests;
+  private final int testsExecuted;
   private final long numSuccessTests;
   private final long numErrorTests;
   private final long numFailureTests;
@@ -42,7 +42,7 @@ public class TestReport {
 
   public TestReport(List<TestResult> testResults, GptTestEnv gptTestEnv) {
     this.creationTime = gptTestEnv.getDate();
-    this.numAllTests = gptTestEnv.getAllTestDefinitions().size();
+    this.testsExecuted = gptTestEnv.getAllTestDefinitions().size();
     this.envPath = gptTestEnv.getEnvPath();
     this.testNames = gptTestEnv.getTestNames();
     this.tags = gptTestEnv.getTags();
@@ -72,8 +72,8 @@ public class TestReport {
     return tags;
   }
 
-  public int getNumAllTests() {
-    return numAllTests;
+  public int getTestsExecuted() {
+    return testsExecuted;
   }
 
   public long getNumSuccessTests() {

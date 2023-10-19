@@ -35,16 +35,16 @@ public class TestResult {
 
   private String testName;
   private final String description;
-  private final float executionTime;
   private STATUS status = STATUS.SUCCESS;
+  private final float duration;
   private Path targetPath;
   private Throwable exception;
-  private List<AssertionError> errors = new ArrayList<>();
+  private List<AssertionError> errors;
 
-  public TestResult(String name, String description, float executionTime, Path targetPath) {
+  public TestResult(String name, String description, float duration, Path targetPath) {
     this.testName = name;
     this.description = description;
-    this.executionTime = executionTime;
+    this.duration = duration;
     this.targetPath = targetPath;
   }
 
@@ -60,8 +60,8 @@ public class TestResult {
     return status;
   }
 
-  public float getExecutionTime() {
-    return executionTime;
+  public float getDuration() {
+    return duration;
   }
 
   public Path getTargetPath() {
@@ -86,6 +86,9 @@ public class TestResult {
   }
 
   public void addError(AssertionError e) {
+    if (this.errors == null) {
+      this.errors = new ArrayList<>();
+    }
     this.errors.add(e);
     this.status = STATUS.ERROR;
   }

@@ -1,11 +1,12 @@
 <tr class="report">
   <td colspan="3" class="report">
     <details>
-      <summary>{{ExceptionMessage}}</summary>
+      <summary><b>Exception:</b> {{ExceptionMessage}}</summary>
       <p>
         <code>
           {{StackTrace}}
         </code>
+        {{Cause}}
       </p>
     </details>
   </td>
