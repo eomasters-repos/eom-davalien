@@ -158,7 +158,8 @@ public class GptTestEnv {
     ArrayList<TestResult> testResults = new ArrayList<>();
     for (Test test : tests) {
       String testName = test.getName();
-      TestResult result = new TestResult(testName, test.getDescription(), test.getExecutionTime(), test.getTargetPath());
+      TestResult result = new TestResult(testName, test.getDescription(), test.getExecutionTime(),
+          test.getTargetPath());
       testResults.add(result);
 
       Throwable exception = test.getException();
@@ -174,11 +175,12 @@ public class GptTestEnv {
           ProductContent expectedContent = expectation.getExpectedContent();
           Product testProduct = ProductIO.readProduct(test.getTargetPath().toFile());
           ProductValidator.testProduct(testProduct, expectedContent, result);
-          if(result.getStatus().equals(TestResult.STATUS.SUCCESS) && config.isDeleteResultAfterSuccess()) {
+          if (result.getStatus().equals(TestResult.STATUS.SUCCESS) && config.isDeleteResultAfterSuccess()) {
             Files.walkFileTree(test.getTempProductDir(), new DeleteTreeVisitor());
             result.setTargetPath(null);
           } else {
-            Files.walkFileTree(test.getTempProductDir(), new CopyDirContentTreeVisitor(test.getTempProductDir(), resultProductDir));
+            Files.walkFileTree(test.getTempProductDir(),
+                new CopyDirContentTreeVisitor(test.getTempProductDir(), resultProductDir));
             result.setTargetPath(resultProductDir.resolve(test.getTargetPath().getFileName()));
           }
         } catch (Exception e) {
@@ -225,19 +227,30 @@ public class GptTestEnv {
     });
   }
 
-  private List<TestDefinition> filterTestDefinitions(List<TestDefinition> allTestDefinitions, List<String> testNames,
+  static List<TestDefinition> filterTestDefinitions(List<TestDefinition> allTestDefinitions, List<String> testNames,
       List<String> tags) {
-    List<TestDefinition> filteredTests = new ArrayList<>(allTestDefinitions);
 
+    if (testNames.isEmpty() && tags.isEmpty()) {
+      return allTestDefinitions;
+    }
+
+    return allTestDefinitions.stream().filter(testDefinition -> isFiltered(testDefinition, testNames, tags)).collect(
+                          Collectors.toList());
+  }
+
+  private static boolean isFiltered(TestDefinition testDefinition, List<String> testNames, List<String> tags) {
+    boolean filtered = false;
     if (!testNames.isEmpty()) {
-      filteredTests.removeIf(testDefinition -> !testNames.contains(testDefinition.getTestName()));
+      if (testNames.contains(testDefinition.getTestName())) {
+        filtered = true;
+      }
     }
-
-    if (!tags.isEmpty()) {
-      filteredTests.removeIf(testDefinition -> tags.stream().noneMatch(testDefinition.getTags()::contains));
+    if (!filtered && !tags.isEmpty()) {
+      if (tags.stream().anyMatch(testDefinition.getTags()::contains)) {
+        filtered = true;
+      }
     }
-    return filteredTests;
-
+    return filtered;
   }
 
 }

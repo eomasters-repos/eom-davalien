@@ -43,6 +43,11 @@ public class TestDefinition {
     this.productContent = productContent;
   }
 
+  public TestDefinition(String name, String[] tags) {
+    this.testName = name;
+    this.tags = tags;
+  }
+
   public String getTestName() {
     return testName;
   }
@@ -52,7 +57,7 @@ public class TestDefinition {
   }
 
   public List<String> getTags() {
-    return List.of(tags);
+    return tags != null ? List.of(tags) : List.of();
   }
 
   public String getGptCall() {
