@@ -126,9 +126,9 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
                 failWithMessage("Expected sample {%s} to have description {%s} but was {%s}", sample.getName(),
                     sample.getDescription(), attribute.getDescription());
               }
-              if (attribute.getData().getElemInt() != sample.getSampleValue()) {
+              if (attribute.getData().getElemInt() != sample.getValue()) {
                 failWithMessage("Expected sample {%s} to have value {%s} but was {%s}", sample.getName(),
-                    sample.getSampleValue(), attribute.getData().getElemInt());
+                    sample.getValue(), attribute.getData().getElemInt());
               }
             }
           }

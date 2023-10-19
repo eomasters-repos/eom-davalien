@@ -123,8 +123,7 @@ public class GptTestEnv {
     if (!selectedTestDefs.isEmpty()) {
       List<Test> activeTests = createTests(selectedTestDefs);
       runGptTests(activeTests);
-      List<TestExpectation> expectations = createTestExpectations(selectedTestDefs);
-      testResults = compareResults(activeTests, expectations);
+      testResults = compareResults(activeTests, selectedTestDefs);
     }
     return testResults;
   }
@@ -154,7 +153,7 @@ public class GptTestEnv {
     Files.writeString(file, jsonString);
   }
 
-  private ArrayList<TestResult> compareResults(List<Test> tests, List<TestExpectation> expectations) {
+  private ArrayList<TestResult> compareResults(List<Test> tests, List<TestDefinition> testDefinitions) {
     ArrayList<TestResult> testResults = new ArrayList<>();
     for (Test test : tests) {
       String testName = test.getName();
@@ -167,12 +166,12 @@ public class GptTestEnv {
         result.setException(exception);
         continue;
       }
-      TestExpectation expectation = findExpectation(expectations, testName);
+      TestDefinition expectation = findExpectation(testDefinitions, testName);
       if (expectation == null) {
         result.setException(new RuntimeException("No expectation found for test: " + testName));
       } else {
         try {
-          ProductContent expectedContent = expectation.getExpectedContent();
+          ProductContent expectedContent = expectation.getExpectation();
           Product testProduct = ProductIO.readProduct(test.getTargetPath().toFile());
           ProductValidator.testProduct(testProduct, expectedContent, result);
           if (result.getStatus().equals(TestResult.STATUS.SUCCESS) && config.isDeleteResultAfterSuccess()) {
@@ -191,13 +190,9 @@ public class GptTestEnv {
     return testResults;
   }
 
-  private TestExpectation findExpectation(List<TestExpectation> expectations, String testName) {
-    return expectations.stream().filter(expectation -> expectation.getTestName().equals(testName))
+  private TestDefinition findExpectation(List<TestDefinition> testDefinitions, String testName) {
+    return testDefinitions.stream().filter(definition -> definition.getTestName().equals(testName))
                        .findFirst().orElse(null);
-  }
-
-  private List<TestExpectation> createTestExpectations(List<TestDefinition> selectedTestDefs) {
-    return selectedTestDefs.stream().map(TestExpectation::create).collect(Collectors.toList());
   }
 
   private List<Test> createTests(List<TestDefinition> selectedTestDefs) {

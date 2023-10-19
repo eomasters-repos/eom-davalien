@@ -78,12 +78,12 @@ public class Coding {
   public static class Sample {
     private String name;
     private String description;
-    private long sampleValue;
+    private long value;
 
-    public Sample(String name, String description, long sampleValue) {
+    public Sample(String name, String description, long value) {
       this.name = name;
       this.description = description;
-      this.sampleValue = sampleValue;
+      this.value = value;
     }
 
     private Sample() {
@@ -97,8 +97,8 @@ public class Coding {
       return description;
     }
 
-    public long getSampleValue() {
-      return sampleValue;
+    public long getValue() {
+      return value;
     }
 
     @Override
@@ -110,13 +110,13 @@ public class Coding {
         return false;
       }
       Sample sample = (Sample) o;
-      return getSampleValue() == sample.getSampleValue() && Objects.equals(getName(), sample.getName())
+      return getValue() == sample.getValue() && Objects.equals(getName(), sample.getName())
           && Objects.equals(getDescription(), sample.getDescription());
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(getName(), getDescription(), getSampleValue());
+      return Objects.hash(getName(), getDescription(), getValue());
     }
 
     @Override
@@ -124,7 +124,7 @@ public class Coding {
       return "Sample{" +
           "name='" + name + '\'' +
           ", description='" + description + '\'' +
-          ", sampleValue=" + sampleValue +
+          ", sampleValue=" + value +
           '}';
     }
   }
