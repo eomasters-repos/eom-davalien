@@ -138,18 +138,32 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     return this;
   }
 
-  public ProductAssert hasGeoLocations(GeoLocation[] geoLocations) {
-    if (geoLocations != null) {
-      assertThat(geoLocations).allSatisfy(geo -> {
-        GeoPos actualGP = actual.getSceneGeoCoding().getGeoPos(geo.getPixelPos(), null);
-        GeoPos expectedGP = geo.getGeoPos();
-        assertThat(actualGP.lat).isEqualTo(expectedGP.lat, offset(geo.getEps()));
-        assertThat(actualGP.lon).isEqualTo(expectedGP.lon, offset(geo.getEps()));
-        PixelPos actualPP = actual.getSceneGeoCoding().getPixelPos(geo.getGeoPos(), null);
-        PixelPos expectedPP = geo.getPixelPos();
-        assertThat(actualPP.getX()).isEqualTo(expectedPP.getX(), offset(geo.getEps()));
-        assertThat(actualPP.getY()).isEqualTo(expectedPP.getY(), offset(geo.getEps()));
-      });
+  public ProductAssert hasGeoLocations(GeoLocation[] expected) {
+    if (expected != null) {
+      for (int i = 0; i < expected.length; i++) {
+        GeoLocation geoLocation = expected[i];
+        GeoPos actualGP = actual.getSceneGeoCoding().getGeoPos(geoLocation.getPixelPos(), null);
+        GeoPos expectedGP = geoLocation.getGeoPos();
+        if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getEps()) ||
+            !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getEps())) {
+          failWithMessage("Geolocation[%d]: For pixel position [%f,%f] expected geo position [%f,%f] but was [%f,%f], with eps %f",
+              i, geoLocation.getPixelPos().x, geoLocation.getPixelPos().y,
+              expectedGP.getLat(), expectedGP.getLon(),
+              actualGP.getLat(), actualGP.getLon(),
+              geoLocation.getEps());
+        }
+
+        PixelPos actualPP = actual.getSceneGeoCoding().getPixelPos(geoLocation.getGeoPos(), null);
+        PixelPos expectedPP = geoLocation.getPixelPos();
+        if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps()) ||
+            !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps())) {
+          failWithMessage("Geolocation[%d]: For geo position [%f,%f] expected pixel position [%f,%f] but was [%f,%f], with eps %f",
+              i, geoLocation.getGeoPos().lat, geoLocation.getGeoPos().lon,
+              expectedPP.getX(), expectedPP.getY(),
+              actualPP.getX(), actualPP.getY(),
+              geoLocation.getEps());
+        }
+      }
     }
     return this;
   }
@@ -204,5 +218,8 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     return this;
   }
 
+  public boolean fuzzyEquals(double exp, double act, double eps) {
+    return Math.abs(exp - act) < eps;
+  }
 
 }
