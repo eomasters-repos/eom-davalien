@@ -3,7 +3,7 @@
   "tags": ["TAG1", "TAG2", "TAG3"],
   "description": "Description of what is being tested",
   "gptCall": "The GPT call that was is to generate the product (without the gpt command itself)",
-  "productContent": {
+  "expectation": {
     "productType": "productType",
     "sceneSize": [WIDTH, HEIGHT],
     "startTime": "dd-MMM-yyyy HH:mm:ss.SSSSSS",
@@ -11,7 +11,7 @@
     "geoLocations": [
       {
         "pixel": [X, Y],
-        "geo": [ LAT, LON ],
+        "geo": [LAT, LON],
         "eps": 1.0E-8
       }
     ],
@@ -30,6 +30,13 @@
             "value": VALUE,
             "eps": 1.0E-8
           }
+        ],
+        "geoLocations": [
+          {
+            "pixel": [X, Y],
+            "geo": [LAT, LON],
+            "eps": 1.0E-8
+          }
         ]
       }
     ],
@@ -42,8 +49,20 @@
     ],
     "metadata": [
       {
-        "path": "path/to/the/metadata/attribute",
+        "path": "path/to/the/metadata/attribute[2]",
         "value": "ATTRIBUTE_VALUE"
+      }
+    ],
+    "sampleCoding": [
+      {
+        "name": "CodingName",
+        "samples": [
+          {
+            "name": "SampleName",
+            "description": "The description of the sample",
+            "value": VALUE,
+          }
+        ]
       }
     ]
   }
