@@ -105,17 +105,18 @@ public class JsonHelper {
     if(testDef.getTestName() == null || testDef.getTestName().isEmpty()) {
       throw new IOException("Element 'testName' must not be provided and not empty: " + testDefFile);
     }
-    if(testDef.getGptCall() == null || testDef.getGptCall().isEmpty()) {
-      throw new IOException("Element 'gptCall' must not be provided and not empty: " + testDefFile);
-    }
-    if(testDef.getExpectation() == null) {
-      throw new IOException("Element 'expectation' must not be provided: " + testDefFile);
-    }
     try {
       Paths.get(testDef.getTestName());
     } catch (Exception e) {
       throw new IOException(
           "Invalid test name '%s'. Name must follow rules of the files system: "+ testDefFile, e);
+    }
+    String gptCall = testDef.getGptCall();
+    if (gptCall == null || gptCall.isEmpty() || TestDefinition.GPT_CALL_REMINDER.equals(gptCall)) {
+      throw new IOException("Element 'gptCall' must not be provided and not empty: " + testDefFile);
+    }
+    if(testDef.getExpectation() == null) {
+      throw new IOException("Element 'expectation' must not be provided: " + testDefFile);
     }
     return testDef;
   }

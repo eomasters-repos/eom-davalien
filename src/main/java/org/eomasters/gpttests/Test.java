@@ -35,8 +35,7 @@ import org.esa.snap.core.dataio.ProductReaderPlugIn;
 
 public class Test {
 
-  private final String name;
-  private final String description;
+  private final TestDefinition testDef;
   private float executionTime = -1.0f;
   private Throwable exception;
   private Path tempProductDir;
@@ -44,34 +43,28 @@ public class Test {
   private List<String> paramList;
 
   public static Test create(TestDefinition testDef, Resources resources, Path resultProductDir) {
-    String gptCall = testDef.getGptCall();
-    if (gptCall == null || gptCall.isEmpty() || TestDefinition.GPT_CALL_REMINDER.equals(gptCall)) {
-      throw new IllegalArgumentException("gptCall must be defined");
-    }
-    String expandedGptCall = expandVariables(gptCall, resources);
-    Test test = new Test(testDef.getTestName(), testDef.getDescription());
+    Test test = new Test(testDef);
+    test.tempProductDir = resultProductDir;
+    String expandedGptCall = expandVariables(testDef.getGptCall(), resources);
     List<String> paramList = parseCommandline(expandedGptCall);
     String format = ensureFormat(paramList);
-    test.tempProductDir = resultProductDir;
-    Path targetPath = createTargetPath(test, test.tempProductDir, format);
+    Path targetPath = createTargetPath(resultProductDir, format, testDef.getTestName());
     test.targetPath = targetPath;
     addTargetProduct(paramList, targetPath);
     test.paramList = paramList;
     return test;
   }
 
-
-  public Test(String name, String description) {
-    this.name = name;
-    this.description = description;
+  public Test(TestDefinition testDef) {
+    this.testDef = testDef;
   }
 
   public String getName() {
-    return name;
+    return testDef.getTestName();
   }
 
   public String getDescription() {
-    return description;
+    return testDef.getDescription();
   }
 
   public Path getTempProductDir() {
@@ -102,9 +95,9 @@ public class Test {
     this.exception = t;
   }
 
-  private static Path createTargetPath(Test test, Path resultProductDir, String format) {
+  private static Path createTargetPath(Path resultProductDir, String format, String name) {
     String fileExtension = getFileExtension(format);
-    return resultProductDir.resolve(test.getName() + fileExtension);
+    return resultProductDir.resolve(name + fileExtension);
   }
 
   private static void addTargetProduct(List<String> paramList, Path outputPath) {
