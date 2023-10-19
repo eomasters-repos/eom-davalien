@@ -30,23 +30,23 @@ import org.eomasters.gpttests.TestResult.STATUS;
 
 public class TestReport {
 
-  private final List<TestResult> testResults;
   private final Path envPath;
-  private final LocalDateTime date;
+  private final LocalDateTime creationTime;
   private final List<String> testNames;
   private final List<String> tags;
   private final int numAllTests;
   private final long numSuccessTests;
   private final long numErrorTests;
   private final long numFailureTests;
+  private final List<TestResult> testResults;
 
   public TestReport(List<TestResult> testResults, GptTestEnv gptTestEnv) {
-    this.testResults = testResults;
+    this.creationTime = gptTestEnv.getDate();
     this.numAllTests = gptTestEnv.getAllTestDefinitions().size();
     this.envPath = gptTestEnv.getEnvPath();
     this.testNames = gptTestEnv.getTestNames();
     this.tags = gptTestEnv.getTags();
-    this.date = gptTestEnv.getDate();
+    this.testResults = testResults;
     numSuccessTests = testResults.stream().filter(testResult -> testResult.getStatus().equals(STATUS.SUCCESS)).count();
     numErrorTests = testResults.stream().filter(testResult -> testResult.getStatus().equals(STATUS.ERROR)).count();
     numFailureTests = testResults.stream().filter(testResult -> testResult.getStatus().equals(STATUS.FAILURE)).count();
@@ -60,8 +60,8 @@ public class TestReport {
     return envPath;
   }
 
-  public LocalDateTime getDate() {
-    return date;
+  public LocalDateTime getCreationTime() {
+    return creationTime;
   }
 
   public List<String> getTestNames() {

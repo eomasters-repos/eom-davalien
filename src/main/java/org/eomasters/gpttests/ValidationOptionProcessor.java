@@ -78,8 +78,8 @@ public class ValidationOptionProcessor extends OptionProcessor {
       try {
         System.setProperty(PROP_PLUGIN_MANAGER_CHECK_INTERVAL, "NEVER");
         String envPath = getArgument(optionValues, gptTestsOpt);
-        String[] testNames = new String[0];
-        String[] tags = new String[0];
+        String[] testNames = null;
+        String[] tags = null;
         if (optionValues.containsKey(testNamesOpt)) {
           testNames = argumentToArray(getArgument(optionValues, testNamesOpt));
         }

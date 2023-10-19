@@ -91,9 +91,11 @@ public class HtmlReport {
 
   public static String create(TestReport report) {
     HashMap<String, String> variables = new HashMap<>();
-    variables.put("Date", report.getDate().format(DateTimeFormatter.ISO_DATE) + " " + report.getDate().withNano(0).format(DateTimeFormatter.ISO_LOCAL_TIME));
-    variables.put("Tags", report.getTags().isEmpty() ? "-" : String.join(",", report.getTags()));
-    variables.put("TestNames", report.getTestNames().isEmpty() ? "-" : String.join(",", report.getTestNames()));
+    variables.put("Date", report.getCreationTime().withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    List<String> tags = report.getTags();
+    variables.put("Tags", tags == null || tags.isEmpty() ? "-" : String.join(",", tags));
+    List<String> testNames = report.getTestNames();
+    variables.put("TestNames", testNames == null || testNames.isEmpty() ? "-" : String.join(",", testNames));
     variables.put("EnvironmentPathUrl", report.getEnvPath().toAbsolutePath().toUri().toString());
     variables.put("EnvironmentPath", report.getEnvPath().toAbsolutePath().toString());
     variables.put("NumSelectedTests", String.valueOf(report.getTestResults().size()));

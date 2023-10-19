@@ -43,6 +43,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -69,6 +71,7 @@ public class JsonHelper {
     builder.registerTypeAdapter(PixelPos.class, new PixelPosTypeAdapter());
     builder.registerTypeAdapter(GeoPos.class, new GeoPosTypeAdapter());
     builder.registerTypeAdapter(ProductData.UTC.class, new UtcAdapter());
+    builder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
     builder.registerTypeHierarchyAdapter(Throwable.class, new ThrowableAdapter());
     builder.registerTypeAdapter(Path.class, new PathAdapter());
     builder.serializeSpecialFloatingPointValues();
@@ -236,6 +239,13 @@ public class JsonHelper {
     @Override
     public JsonElement serialize(Path path, Type typeOfSrc, JsonSerializationContext context) {
       return context.serialize(path.toAbsolutePath().toString());
+    }
+  }
+
+  private static class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime> {
+    @Override
+    public JsonElement serialize(LocalDateTime localDateTime, Type typeOfSrc, JsonSerializationContext context) {
+      return context.serialize(localDateTime.withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
     }
   }
 }

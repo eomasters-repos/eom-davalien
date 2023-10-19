@@ -63,8 +63,8 @@ public class GptTestEnv {
 
   public GptTestEnv(String envPath, String[] testNames, String[] tags) {
     this.envPath = Paths.get(envPath);
-    this.testNames = List.of(testNames);
-    this.tags = List.of(tags);
+    this.testNames = testNames != null ? List.of(testNames) : null;
+    this.tags = tags != null ? List.of(tags) : null;
   }
 
   public Path getEnvPath() {
@@ -225,7 +225,7 @@ public class GptTestEnv {
   static List<TestDefinition> filterTestDefinitions(List<TestDefinition> allTestDefinitions, List<String> testNames,
       List<String> tags) {
 
-    if (testNames.isEmpty() && tags.isEmpty()) {
+    if ((testNames == null || testNames.isEmpty()) && (tags == null || tags.isEmpty())) {
       return allTestDefinitions;
     }
 
@@ -235,12 +235,12 @@ public class GptTestEnv {
 
   private static boolean isFiltered(TestDefinition testDefinition, List<String> testNames, List<String> tags) {
     boolean filtered = false;
-    if (!testNames.isEmpty()) {
+    if (testNames != null && !testNames.isEmpty()) {
       if (testNames.contains(testDefinition.getTestName())) {
         filtered = true;
       }
     }
-    if (!filtered && !tags.isEmpty()) {
+    if (!filtered && tags != null && !tags.isEmpty()) {
       if (tags.stream().anyMatch(testDefinition.getTags()::contains)) {
         filtered = true;
       }
