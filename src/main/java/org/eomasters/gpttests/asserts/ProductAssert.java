@@ -23,13 +23,10 @@
 
 package org.eomasters.gpttests.asserts;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.data.Offset.offset;
 import static org.eomasters.gpttests.asserts.ProductAssertions.assertThat;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -53,6 +50,7 @@ import org.esa.snap.core.datamodel.ProductData.UTC;
 import org.esa.snap.core.datamodel.RasterDataNode;
 import org.esa.snap.core.datamodel.SampleCoding;
 
+@SuppressWarnings("UnusedReturnValue")
 public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
 
   public ProductAssert(Product actual) {
@@ -62,42 +60,52 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
 
   public ProductAssert hasName(String name) {
     if (name != null && !actual.getName().equals(name)) {
-      failWithMessage("Expected product name to be {%s} but was {%s}", name, actual.getName());
+      failWithMessage("Product name expected to be [%s] but was [%s]", name, actual.getName());
     }
     return this;
   }
 
   public ProductAssert hasProductType(String productType) {
     if (productType != null && !actual.getProductType().equals(productType)) {
-      failWithMessage("Expected product type to be {%s} but was {%s}", productType, actual.getProductType());
+      failWithMessage("Product type expected to be [%s] but was [%s]", productType, actual.getProductType());
     }
     return this;
   }
 
   public ProductAssert hasDescription(String description) {
     if (description != null && !actual.getDescription().equals(description)) {
-      failWithMessage("Expected product description to be {%s} but was {%s}", description, actual.getDescription());
+      failWithMessage("Description expected to be [%s] but was [%s]", description, actual.getDescription());
     }
     return this;
   }
 
   public ProductAssert hasSceneSize(Dimension sceneSize) {
     if (sceneSize != null && !actual.getSceneRasterSize().equals(sceneSize)) {
-      failWithMessage("Expected product scene size to be {%s} but was {%s}", sceneSize, actual.getSceneRasterSize());
+      failWithMessage("Scene size expected to be [%f,%f] but was [%f,%f]",
+          sceneSize.getWidth(), sceneSize.getHeight(), actual.getSceneRasterSize().getWidth(),
+          actual.getSceneRasterSize().getHeight());
     }
     return this;
   }
 
   public ProductAssert hasStartTime(UTC startTime) {
-    if (startTime != null && !actual.getStartTime().format().equals(startTime.format())) {
-      failWithMessage("Expected product start time to be {%s} but was {%s}", startTime, actual.getStartTime());
+    if (startTime != null) {
+      String actStartString = actual.getStartTime().format();
+      String expStartString = startTime.format();
+      if (!actStartString.equals(expStartString)) {
+        failWithMessage("Start time expected to be [%s] but was [%s]", expStartString, actStartString);
+      }
     }
     return this;
   }
 
   public ProductAssert hasEndTime(UTC endTime) {
-    if (endTime != null && !actual.getEndTime().format().equals(endTime.format())) {
-      failWithMessage("Expected product end time to be {%s} but was {%s}", endTime, actual.getEndTime());
+    if (endTime != null) {
+      String actEndString = actual.getEndTime().format();
+      String expEndString = endTime.format();
+      if (!actEndString.equals(expEndString)) {
+        failWithMessage("End time expected to be [%s] but was [%s]", expEndString, actEndString);
+      }
     }
     return this;
   }
@@ -110,30 +118,33 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
       Map<String, SampleCoding> sampleCodingMap = sampleCodingList.stream()
                                                                   .collect(Collectors.toMap(SampleCoding::getName,
                                                                       Function.identity()));
-      assertThat(codings).allSatisfy(coding -> {
+
+      for (int i = 0; i < codings.length; i++) {
+        Coding coding = codings[i];
         SampleCoding sampleCoding = sampleCodingMap.get(coding.getName());
         if (sampleCoding == null) {
-          failWithMessage("Expected product to have sample coding {%s} but was not found", coding.getName());
+          failWithMessage("SampleCoding[%d]: Expected sample-coding [%s] was not found",
+              i, coding.getName());
         } else {
           Sample[] samples = coding.getSamples();
           for (Sample sample : samples) {
             MetadataAttribute attribute = sampleCoding.getAttribute(sample.getName());
             if (attribute == null) {
-              failWithMessage("Expected sample {%s} to be found in sample coding {%s} but was not found",
-                  sample.getName(), coding.getName());
+              failWithMessage("SampleCoding[%d]: Expected sample [%s] not found in sample-coding [%s]",
+                  i, sample.getName(), coding.getName());
             } else {
               if (!Objects.equals(attribute.getDescription(), sample.getDescription())) {
-                failWithMessage("Expected sample {%s} to have description {%s} but was {%s}", sample.getName(),
-                    sample.getDescription(), attribute.getDescription());
+                failWithMessage("SampleCoding[%d]: Description of sample [%s] should be [%s] but was [%s]",
+                    i, sample.getName(), sample.getDescription(), attribute.getDescription());
               }
               if (attribute.getData().getElemInt() != sample.getValue()) {
-                failWithMessage("Expected sample {%s} to have value {%s} but was {%s}", sample.getName(),
-                    sample.getValue(), attribute.getData().getElemInt());
+                failWithMessage("SampleCoding[%d]: Value of sample [%s]should be [%d] but was [%d]",
+                    i, sample.getName(), sample.getValue(), attribute.getData().getElemInt());
               }
             }
           }
         }
-      });
+      }
     }
     return this;
   }
@@ -146,7 +157,8 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
         GeoPos expectedGP = geoLocation.getGeoPos();
         if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getEps()) ||
             !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getEps())) {
-          failWithMessage("Geolocation[%d]: For pixel position [%f,%f] expected geo position [%f,%f] but was [%f,%f], with eps %f",
+          failWithMessage(
+              "Geolocation[%d]: For pixel position [%f,%f] expected geo position [%f,%f] but was [%f,%f], with eps %f",
               i, geoLocation.getPixelPos().x, geoLocation.getPixelPos().y,
               expectedGP.getLat(), expectedGP.getLon(),
               actualGP.getLat(), actualGP.getLon(),
@@ -157,7 +169,8 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
         PixelPos expectedPP = geoLocation.getPixelPos();
         if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps()) ||
             !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps())) {
-          failWithMessage("Geolocation[%d]: For geo position [%f,%f] expected pixel position [%f,%f] but was [%f,%f], with eps %f",
+          failWithMessage(
+              "Geolocation[%d]: For geo position [%f,%f] expected pixel position [%f,%f] but was [%f,%f], with eps %f",
               i, geoLocation.getGeoPos().lat, geoLocation.getGeoPos().lon,
               expectedPP.getX(), expectedPP.getY(),
               actualPP.getX(), actualPP.getY(),
@@ -173,37 +186,38 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
       return this;
     }
     if (actual.getRasterDataNodes().size() != expRasters.length) {
-      failWithMessage("Expected product to have {%s} rasters but were {%s}", expRasters.length,
-          actual.getRasterDataNodes().size());
+      failWithMessage("Expected product to have [%d] rasters but were [%s]",
+          expRasters.length, actual.getRasterDataNodes().size());
     }
 
-    List<RasterDataNode> rasterDataNodes = actual.getRasterDataNodes();
-    assertThat(rasterDataNodes).allSatisfy(raster -> {
-      Raster expectedRaster = Arrays.stream(expRasters)
-                                    .filter(current -> current.getName().equals(raster.getName()))
-                                    .findFirst()
-                                    .orElseThrow(() -> new AssertionError(
-                                        "Raster with name " + raster.getName() + " not found"));
-      Pixel[] pixels = expectedRaster.getPixels();
-      GeoLocation[] geoLocations = expectedRaster.getGeoLocations();
-      assertThat(raster).hasName(expectedRaster.getName())
-                        .hasDescription(expectedRaster.getDescription())
-                        .hasSize(expectedRaster.getSize())
-                        .hasDataType(expectedRaster.getDataType().getTypeValue())
-                        .hasNoDataValue(expectedRaster.getNoDataValue())
-                        .noDataValueIsUsed(expectedRaster.isNoDataValueUsed())
-                        .hasValidPixelExpression(expectedRaster.getValidPixelExpression())
-                        .rasterIsOfType(expectedRaster.getRasterType())
-                        .hasPixels(pixels)
-                        .hasGeoLocations(geoLocations);
-    });
+    for (int i = 0; i < expRasters.length; i++) {
+      Raster expRaster = expRasters[i];
+      RasterDataNode actRaster = actual.getRasterDataNode(expRaster.getName());
+      if (actRaster == null) {
+        failWithMessage("Raster[%d]: No raster found with name [%s] ", i, expRaster.getName());
+      }
+      Pixel[] pixels = expRaster.getPixels();
+      GeoLocation[] geoLocations = expRaster.getGeoLocations();
+      assertThat(actRaster, i).hasName(expRaster.getName())
+                              .hasDescription(expRaster.getDescription())
+                              .hasSize(expRaster.getSize())
+                              .hasDataType(expRaster.getDataType())
+                              .hasNoDataValue(expRaster.getNoDataValue())
+                              .noDataValueIsUsed(expRaster.isNoDataValueUsed())
+                              .hasValidPixelExpression(expRaster.getValidPixelExpression())
+                              .rasterIsOfType(expRaster.getRasterType())
+                              .hasPixels(pixels)
+                              .hasGeoLocations(geoLocations);
+
+    }
     return this;
   }
 
   public ProductAssert hasMetadata(Metadata[] metadata) {
     if (metadata != null) {
-      for (Metadata elem : metadata) {
-        assertThat(actual.getMetadataRoot()).has(elem);
+      for (int i = 0; i < metadata.length; i++) {
+        Metadata elem = metadata[i];
+        assertThat(actual.getMetadataRoot(), i).has(elem);
       }
     }
     return this;
@@ -211,14 +225,15 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
 
   public ProductAssert hasVectors(Vector[] vectorData) {
     if (vectorData != null) {
-      for (Vector vector : vectorData) {
-        assertThat(actual.getVectorDataGroup()).has(vector);
+      for (int i = 0; i < vectorData.length; i++) {
+        Vector vector = vectorData[i];
+        assertThat(actual.getVectorDataGroup(), i).has(vector);
       }
     }
     return this;
   }
 
-  public boolean fuzzyEquals(double exp, double act, double eps) {
+  public static boolean fuzzyEquals(double exp, double act, double eps) {
     return Math.abs(exp - act) < eps;
   }
 

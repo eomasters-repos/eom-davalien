@@ -53,10 +53,7 @@ public enum DataType {
         return value;
       }
     }
-    return null;
+    throw new IllegalArgumentException(" Unknown data type value: " + typeValue);
   }
 
-  public int getTypeValue() {
-    return typeValue;
-  }
 }

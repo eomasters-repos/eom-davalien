@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -24,17 +24,20 @@
 package org.eomasters.gpttests.asserts;
 
 import org.assertj.core.api.AbstractAssert;
+import org.eomasters.gpttests.res.testdef.Metadata;
 import org.eomasters.gpttests.utils.MetadataUtils;
 import org.eomasters.gpttests.utils.MetadataUtils.MetadataWrapper;
-import org.eomasters.gpttests.res.testdef.Metadata;
+import org.esa.snap.core.datamodel.MetadataAttribute;
 import org.esa.snap.core.datamodel.MetadataElement;
 
 public class MetadataAssert extends AbstractAssert<MetadataAssert, MetadataElement> {
 
   private final MetadataWrapper wrap;
+  private final int index;
 
-  public MetadataAssert(MetadataElement actual) {
+  public MetadataAssert(MetadataElement actual, int index) {
     super(actual, MetadataAssert.class);
+    this.index = index;
     isNotNull();
     wrap = MetadataUtils.wrap(actual);
   }
@@ -43,9 +46,17 @@ public class MetadataAssert extends AbstractAssert<MetadataAssert, MetadataEleme
     if (metadata != null) {
       String path = metadata.getPath();
       String value = metadata.getValue();
-      String s = wrap.get(path);
-      if (!value.equals(s)) {
-        failWithMessage("Expected metadata <%s> to be <%s> but was <%s>", path, value, s);
+
+      MetadataAttribute metadataAttribute = wrap.getElement(path);
+
+      if (metadataAttribute == null) {
+        failWithMessage("Metadata[%d]: No attribute for path [%s] found",
+            index, path);
+      } else {
+        if (!value.equals(metadataAttribute.getData().getElemString())) {
+          failWithMessage("Metadata[%d]: Value of metadata attribute <%s> should be <%s> but was <%s>", index, path,
+              value);
+        }
       }
     }
   }

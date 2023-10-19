@@ -24,6 +24,7 @@
 package org.eomasters.gpttests.utils;
 
 import java.util.Arrays;
+import org.esa.snap.core.datamodel.MetadataAttribute;
 import org.esa.snap.core.datamodel.MetadataElement;
 
 public class MetadataUtils {
@@ -40,22 +41,36 @@ public class MetadataUtils {
       this.root = root;
     }
 
-    public String get(String path) {
+    public MetadataAttribute getElement(String path) {
       String[] tokens = path.split("/");
       String[] elemtokens = Arrays.copyOf(tokens, tokens.length - 1);
-      String attrToken = tokens[tokens.length - 1];
       MetadataElement elem = root;
       for (String token : elemtokens) {
         String[] split = token.matches(".*\\[\\d+]") ? token.split("\\[") : new String[]{token};
         int index = split.length > 1 ? Integer.parseInt(split[1].substring(0, split[1].length() - 1)) : -1;
         if (index >= 0) {
-          elem = elem.getElementAt(index);
+          try {
+            elem = elem.getElementAt(index);
+          } catch (IndexOutOfBoundsException e) {
+            elem = null;
+          }
         } else {
           String name = split[0];
           elem = elem.getElement(name);
         }
+        if (elem == null) {
+          return null;
+        }
       }
-      return elem.getAttributeString(attrToken);
+      String attributeName = getAttributeName(path);
+      return elem.getAttribute(attributeName);
     }
+
+    public String getAttributeName(String path) {
+      String[] tokens = path.split("/");
+      return tokens[tokens.length - 1];
+    }
+
   }
+
 }

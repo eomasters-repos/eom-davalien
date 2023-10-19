@@ -35,9 +35,10 @@ public class ProductAssertions {
     return new ProductAssert(actual);
   }
 
-  public static RasterAssert assertThat(RasterDataNode actual) { return new RasterAssert(actual); }
+  public static RasterAssert assertThat(RasterDataNode actual, int index) { return new RasterAssert(actual, index); }
 
-  public static MetadataAssert assertThat(MetadataElement actual) { return new MetadataAssert(actual); }
-  public static VectorDataNodeAssert assertThat(ProductNodeGroup<VectorDataNode> actual) { return new VectorDataNodeAssert(actual); }
+  public static MetadataAssert assertThat(MetadataElement actual, int index) { return new MetadataAssert(actual, index); }
+
+  public static VectorDataNodeAssert assertThat(ProductNodeGroup<VectorDataNode> actual, int index) { return new VectorDataNodeAssert(actual, index); }
 
 }
