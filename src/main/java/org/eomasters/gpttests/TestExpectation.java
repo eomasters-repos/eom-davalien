@@ -34,7 +34,7 @@ public class TestExpectation {
   public static TestExpectation create(TestDefinition def) {
     TestExpectation expectation = new TestExpectation();
     expectation.testName = def.getTestName();
-    expectation.productContent = def.getProductContent();
+    expectation.productContent = def.getExpectation();
     return expectation;
   }
 

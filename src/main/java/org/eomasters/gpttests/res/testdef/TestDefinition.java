@@ -34,13 +34,13 @@ public class TestDefinition {
   private String description;
   private String gptCall = GPT_CALL_REMINDER;
   private String[] tags;
-  private ProductContent productContent;
+  private ProductContent expectation;
 
   private TestDefinition() {
   }
-  public TestDefinition(String name, ProductContent productContent) {
+  public TestDefinition(String name, ProductContent expectation) {
     this.testName = name;
-    this.productContent = productContent;
+    this.expectation = expectation;
   }
 
   public TestDefinition(String name, String[] tags) {
@@ -64,8 +64,8 @@ public class TestDefinition {
     return gptCall;
   }
 
-  public ProductContent getProductContent() {
-    return productContent;
+  public ProductContent getExpectation() {
+    return expectation;
   }
 
   @Override

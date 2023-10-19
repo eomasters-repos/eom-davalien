@@ -108,8 +108,8 @@ public class JsonHelper {
     if(testDef.getGptCall() == null || testDef.getGptCall().isEmpty()) {
       throw new IOException("Element 'gptCall' must not be provided and not empty: " + testDefFile);
     }
-    if(testDef.getProductContent() == null) {
-      throw new IOException("Element 'productContent' must not be provided: " + testDefFile);
+    if(testDef.getExpectation() == null) {
+      throw new IOException("Element 'expectation' must not be provided: " + testDefFile);
     }
     try {
       Paths.get(testDef.getTestName());
