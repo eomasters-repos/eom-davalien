@@ -86,26 +86,38 @@ public class JsonHelper {
     Set<TestDefinition> testDefinitions = new HashSet<>();
     for (Path testDefFile : testDefFiles) {
       try {
-        TestDefinition testDef = gson.fromJson(Files.newBufferedReader(testDefFile),
-            new TypeToken<TestDefinition>() {
-            }.getType());
+        TestDefinition testDef = readTestDefinition(testDefFile);
         if (!testDefinitions.add(testDef)) {
           throw new IOException("Duplicate test name: " + testDef.getTestName());
         }
 
-        for (TestDefinition testDefinition : testDefinitions) {
-          try {
-            Paths.get(testDefinition.getTestName());
-          } catch (Exception e) {
-            throw new IOException(
-                "Invalid test name. Name must follow file naming rules: " + testDefinition.getTestName(), e);
-          }
-        }
       } catch (Exception e) {
         throw new IOException("Cannot read test definition file: " + testDefFile, e);
       }
     }
     return new ArrayList<>(testDefinitions);
+  }
+
+  private static TestDefinition readTestDefinition(Path testDefFile) throws IOException {
+    TestDefinition testDef = gson.fromJson(Files.newBufferedReader(testDefFile),
+        new TypeToken<TestDefinition>() {
+        }.getType());
+    if(testDef.getTestName() == null || testDef.getTestName().isEmpty()) {
+      throw new IOException("Element 'testName' must not be provided and not empty: " + testDefFile);
+    }
+    if(testDef.getGptCall() == null || testDef.getGptCall().isEmpty()) {
+      throw new IOException("Element 'gptCall' must not be provided and not empty: " + testDefFile);
+    }
+    if(testDef.getProductContent() == null) {
+      throw new IOException("Element 'productContent' must not be provided: " + testDefFile);
+    }
+    try {
+      Paths.get(testDef.getTestName());
+    } catch (Exception e) {
+      throw new IOException(
+          "Invalid test name '%s'. Name must follow rules of the files system: "+ testDefFile, e);
+    }
+    return testDef;
   }
 
   public static Map<String, Resource> getResources(Path fromFile) throws IOException {
