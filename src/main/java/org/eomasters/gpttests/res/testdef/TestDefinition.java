@@ -32,8 +32,8 @@ public class TestDefinition {
 
   private String testName;
   private String description;
-  private String[] tags;
   private String gptCall = GPT_CALL_REMINDER;
+  private String[] tags;
   private ProductContent productContent;
 
   private TestDefinition() {
