@@ -35,8 +35,10 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import java.awt.Dimension;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -105,20 +107,20 @@ public class JsonHelper {
     TestDefinition testDef = gson.fromJson(Files.newBufferedReader(testDefFile),
         new TypeToken<TestDefinition>() {
         }.getType());
-    if(testDef.getTestName() == null || testDef.getTestName().isEmpty()) {
+    if (testDef.getTestName() == null || testDef.getTestName().isEmpty()) {
       throw new IOException("Element 'testName' must not be provided and not empty: " + testDefFile);
     }
     try {
       Paths.get(testDef.getTestName());
     } catch (Exception e) {
       throw new IOException(
-          "Invalid test name '%s'. Name must follow rules of the files system: "+ testDefFile, e);
+          "Invalid test name '%s'. Name must follow rules of the files system: " + testDefFile, e);
     }
     String gptCall = testDef.getGptCall();
     if (gptCall == null || gptCall.isEmpty() || TestDefinition.GPT_CALL_REMINDER.equals(gptCall)) {
       throw new IOException("Element 'gptCall' must not be provided and not empty: " + testDefFile);
     }
-    if(testDef.getExpectation() == null) {
+    if (testDef.getExpectation() == null) {
       throw new IOException("Element 'expectation' must not be provided: " + testDefFile);
     }
     return testDef;
@@ -126,12 +128,16 @@ public class JsonHelper {
 
   public static Map<String, Resource> getResources(Path fromFile) throws IOException {
     if (fromFile != null) {
-      List<Resource> resourceList = gson.fromJson(Files.newBufferedReader(fromFile),
-          new TypeToken<Resource>() {
-          }.getType());
-      return resourceList.stream().collect(TreeMap::new, (m, v) -> m.put(v.getId(), v), TreeMap::putAll);
+      return getResources(Files.newBufferedReader(fromFile));
     }
     return Collections.emptyMap();
+  }
+
+  static Map<String, Resource> getResources(Reader reader) {
+    List<Resource> resourceList = gson.fromJson(reader,
+        new TypeToken<List<Resource>>() {
+        }.getType());
+    return resourceList.stream().collect(TreeMap::new, (m, v) -> m.put(v.getId(), v), TreeMap::putAll);
   }
 
   public static EnvConfig getConfig(Path fromFile) throws IOException {
@@ -221,6 +227,7 @@ public class JsonHelper {
   }
 
   private static class ThrowableAdapter implements JsonSerializer<Throwable> {
+
     @Override
     public JsonElement serialize(Throwable exception, Type typeOfSrc, JsonSerializationContext context) {
       StringWriter traceWriter = new StringWriter();
@@ -228,7 +235,7 @@ public class JsonHelper {
       JsonObject jsonObject = new JsonObject();
       jsonObject.add("message", context.serialize(exception.getMessage()));
       jsonObject.add("stacktrace", context.serialize(traceWriter.toString()));
-      if(exception.getCause() != null && exception.getCause() != exception.getCause().getCause()) {
+      if (exception.getCause() != null && exception.getCause() != exception.getCause().getCause()) {
         jsonObject.add("cause", context.serialize(exception.getCause()));
       }
       return jsonObject;
@@ -236,6 +243,7 @@ public class JsonHelper {
   }
 
   private static class PathAdapter implements JsonSerializer<Path> {
+
     @Override
     public JsonElement serialize(Path path, Type typeOfSrc, JsonSerializationContext context) {
       return context.serialize(path.toAbsolutePath().toString());
@@ -243,6 +251,7 @@ public class JsonHelper {
   }
 
   private static class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime> {
+
     @Override
     public JsonElement serialize(LocalDateTime localDateTime, Type typeOfSrc, JsonSerializationContext context) {
       return context.serialize(localDateTime.withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
