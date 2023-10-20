@@ -101,17 +101,20 @@ public class GptTestEnv {
   }
 
   private void rollResults(Path resultsDir) throws IOException {
-    try (Stream<Path> resultDirList = Files.list(resultsDir)) {
-      Stream<Path> resultDirs = resultDirList.filter(path -> Files.isDirectory(path) && path.getFileName()
-                                                                                            .toString()
-                                                                                            .matches("\\d{8}_\\d{6}"));
-      List<Path> sorted = resultDirs.sorted(
-                                        Comparator.comparing(p -> LocalDateTime.parse(p.getFileName().toString(), DATE_FORMAT)))
-                                    .collect(Collectors.toList());
-      if (sorted.size() >= config.getRollingResults()) {
-        for (int i = 0; i <= sorted.size() - config.getRollingResults(); i++) {
-          Path path = sorted.get(i);
-          Files.walkFileTree(path, new DeleteTreeVisitor());
+    if (Files.isDirectory(resultsDir)) {
+      try (Stream<Path> resultDirList = Files.list(resultsDir)) {
+        Stream<Path> resultDirs = resultDirList.filter(path -> Files.isDirectory(path) && path.getFileName()
+                                                                                              .toString()
+                                                                                              .matches(
+                                                                                                  "\\d{8}_\\d{6}"));
+        List<Path> sorted = resultDirs.sorted(
+                                          Comparator.comparing(p -> LocalDateTime.parse(p.getFileName().toString(), DATE_FORMAT)))
+                                      .collect(Collectors.toList());
+        if (sorted.size() >= config.getRollingResults()) {
+          for (int i = 0; i <= sorted.size() - config.getRollingResults(); i++) {
+            Path path = sorted.get(i);
+            Files.walkFileTree(path, new DeleteTreeVisitor());
+          }
         }
       }
     }
@@ -121,7 +124,7 @@ public class GptTestEnv {
     List<TestDefinition> selectedTestDefs = filterTestDefinitions(allTestDefinitions, testNames, tags);
     ArrayList<TestResult> testResults = new ArrayList<>();
     if (!selectedTestDefs.isEmpty()) {
-      List<Test> activeTests = createTests(selectedTestDefs);
+      List<TestInst> activeTests = createTests(selectedTestDefs);
       runGptTests(activeTests);
       testResults = compareResults(activeTests, selectedTestDefs);
     }
@@ -153,9 +156,9 @@ public class GptTestEnv {
     Files.writeString(file, jsonString);
   }
 
-  private ArrayList<TestResult> compareResults(List<Test> tests, List<TestDefinition> testDefinitions) {
+  private ArrayList<TestResult> compareResults(List<TestInst> tests, List<TestDefinition> testDefinitions) {
     ArrayList<TestResult> testResults = new ArrayList<>();
-    for (Test test : tests) {
+    for (TestInst test : tests) {
       String testName = test.getName();
       TestResult result = new TestResult(testName, test.getDescription(), test.getExecutionTime(),
           test.getTargetPath());
@@ -195,11 +198,11 @@ public class GptTestEnv {
                        .findFirst().orElse(null);
   }
 
-  private List<Test> createTests(List<TestDefinition> selectedTestDefs) {
+  private List<TestInst> createTests(List<TestDefinition> selectedTestDefs) {
     return selectedTestDefs.stream().map(def -> {
                              try {
                                Path tempDirectory = Files.createTempDirectory(def.getTestName());
-                               return Test.create(def, resources, tempDirectory);
+                               return TestInst.create(def, resources, tempDirectory);
                              } catch (IOException e) {
                                throw new RuntimeException(e);
                              }
@@ -207,7 +210,7 @@ public class GptTestEnv {
                            .collect(Collectors.toList());
   }
 
-  private void runGptTests(List<Test> activeTests) {
+  private void runGptTests(List<TestInst> activeTests) {
     CommandLineTool commandLineTool = new CommandLineTool();
     activeTests.forEach(test -> {
       try {

@@ -80,7 +80,7 @@ public class Resources {
         throw new IllegalArgumentException("Unknown resource category: " + category);
     }
     if (resource == null) {
-      throw new IllegalArgumentException(String.format("Unknown resource id: %s:%s", category, id));
+      throw new IllegalArgumentException(String.format("Unknown resource id: [%s:%s]", category, id));
     }
     return resource;
   }

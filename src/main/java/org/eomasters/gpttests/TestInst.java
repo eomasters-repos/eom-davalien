@@ -27,13 +27,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.eomasters.gpttests.res.Resources;
 import org.eomasters.gpttests.res.testdef.TestDefinition;
 import org.esa.snap.core.dataio.ProductIOPlugInManager;
 import org.esa.snap.core.dataio.ProductReaderPlugIn;
 
-public class Test {
+public class TestInst {
 
   private final TestDefinition testDef;
   private float executionTime = -1.0f;
@@ -42,8 +44,8 @@ public class Test {
   private Path targetPath;
   private List<String> paramList;
 
-  public static Test create(TestDefinition testDef, Resources resources, Path resultProductDir) {
-    Test test = new Test(testDef);
+  public static TestInst create(TestDefinition testDef, Resources resources, Path resultProductDir) {
+    TestInst test = new TestInst(testDef);
     test.tempProductDir = resultProductDir;
     String expandedGptCall = expandVariables(testDef.getGptCall(), resources);
     List<String> paramList = parseCommandline(expandedGptCall);
@@ -55,7 +57,7 @@ public class Test {
     return test;
   }
 
-  public Test(TestDefinition testDef) {
+  public TestInst(TestDefinition testDef) {
     this.testDef = testDef;
   }
 
@@ -123,7 +125,7 @@ public class Test {
     if (!it.hasNext()) {
       throw new IllegalArgumentException("No reader plug-in found for format: " + format);
     }
-    if(format.equalsIgnoreCase("znap")) {
+    if (format.equalsIgnoreCase("znap")) {
       return it.next().getDefaultFileExtensions()[1];
     }
     return it.next().getDefaultFileExtensions()[0];
@@ -144,16 +146,25 @@ public class Test {
     var ref = new Object() {
       String expandedGptCall = gptCall;
     };
-    Pattern.compile("\\{.*:.*?}").matcher(gptCall).results().forEach(matchResult -> {
-      String token = matchResult.group();
-      // remove enclosing {}
-      String tokenName = token.substring(1, token.length() - 1);
-      // split category and id
-      String[] split = tokenName.split(":");
-      String value = resources.getResource(split[0], split[1]).getPath();
-      ref.expandedGptCall = ref.expandedGptCall.replace(token, value);
+    getMatchResults(gptCall).forEach(matchResult -> {
+      String[] resTokens = getTokens(matchResult);
+      String value = resources.getResource(resTokens[1], resTokens[2]).getPath();
+      ref.expandedGptCall = ref.expandedGptCall.replace(resTokens[0], value);
     });
     return ref.expandedGptCall;
+  }
+
+  static List<MatchResult> getMatchResults(String gptCall) {
+    return Pattern.compile("\\{.*?:.*?}").matcher(gptCall).results().collect(Collectors.toList());
+  }
+
+  static String[] getTokens(MatchResult matchResult) {
+    String token = matchResult.group();
+    // remove enclosing {}
+    String tokenName = token.substring(1, token.length() - 1);
+    // split category and id
+    String[] split = tokenName.split(":");
+    return new String[]{token, split[0], split[1]};
   }
 
 }
