@@ -107,11 +107,15 @@ public class ValidationOptionProcessor extends OptionProcessor {
         } catch (IOException e) {
           CommandException exception = new CommandException(80020, "Error while creating validation reports.");
           exception.initCause(e);
-          e.printStackTrace(env.getOutputStream());
+          e.printStackTrace(env.getErrorStream());
           throw exception;
         }
 
-      } finally {
+      } catch (RuntimeException re) {
+        env.getErrorStream().println("Error while executing validation tests.");
+        env.getErrorStream().println("Sorry, this should not have happened. Please help to fix this problem and report the issue to EOMasters (https://www.eomasters.org/forum).");
+        re.printStackTrace(env.getErrorStream());
+      } finally{
         if (actualUpdateInterval != null) {
           System.setProperty(PROP_PLUGIN_MANAGER_CHECK_INTERVAL, actualUpdateInterval);
         }
