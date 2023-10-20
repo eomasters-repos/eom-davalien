@@ -122,7 +122,7 @@ public class HtmlReport {
       variables.put("TargetPathRow", createTargetPathRow(testResult.getTargetPath()));
       if (testResult.getException() != null) {
         variables.put("ProblemRow", createExceptionRow(testResult.getException()));
-      } else if (!testResult.getErrors().isEmpty()) {
+      } else if (testResult.getErrors() != null && !testResult.getErrors().isEmpty()) {
         variables.put("ProblemRow", createErrorRow(testResult.getErrors()));
       } else {
         variables.put("ProblemRow", NO_PROBLEM_ROW_TEMPLATE);
