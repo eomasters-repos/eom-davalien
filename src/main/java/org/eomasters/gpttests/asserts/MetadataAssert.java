@@ -45,17 +45,17 @@ public class MetadataAssert extends AbstractAssert<MetadataAssert, MetadataEleme
   public void has(Metadata metadata) {
     if (metadata != null) {
       String path = metadata.getPath();
-      String value = metadata.getValue();
+      String expValue = metadata.getValue();
 
       MetadataAttribute metadataAttribute = wrap.getElement(path);
 
       if (metadataAttribute == null) {
-        failWithMessage("Metadata[%d]: No attribute for path [%s] found",
-            index, path);
+        failWithMessage("Metadata[%d]: No attribute for path [%s] found", index, path);
       } else {
-        if (!value.equals(metadataAttribute.getData().getElemString())) {
-          failWithMessage("Metadata[%d]: Value of metadata attribute <%s> should be <%s> but was <%s>", index, path,
-              value);
+        String actValue = metadataAttribute.getData().getElemString();
+        if (!expValue.equals(actValue)) {
+          failWithMessage("Metadata[%d]: Value of metadata attribute <%s> should be <%s> but was <%s>",
+              index, path, expValue, actValue);
         }
       }
     }
