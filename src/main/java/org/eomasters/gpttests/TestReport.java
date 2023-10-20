@@ -40,12 +40,12 @@ public class TestReport {
   private final long numFailureTests;
   private final List<TestResult> testResults;
 
-  public TestReport(List<TestResult> testResults, GptTestEnv gptTestEnv) {
-    this.creationTime = gptTestEnv.getDate();
-    this.testsExecuted = gptTestEnv.getAllTestDefinitions().size();
-    this.envPath = gptTestEnv.getEnvPath();
-    this.testNames = gptTestEnv.getTestNames();
-    this.tags = gptTestEnv.getTags();
+  public TestReport(List<TestResult> testResults, ValidationEnv validationEnv) {
+    this.creationTime = validationEnv.getDate();
+    this.testsExecuted = validationEnv.getAllTestDefinitions().size();
+    this.envPath = validationEnv.getEnvPath();
+    this.testNames = validationEnv.getTestNames();
+    this.tags = validationEnv.getTags();
     this.testResults = testResults;
     numSuccessTests = testResults.stream().filter(testResult -> testResult.getStatus().equals(STATUS.SUCCESS)).count();
     numErrorTests = testResults.stream().filter(testResult -> testResult.getStatus().equals(STATUS.ERROR)).count();

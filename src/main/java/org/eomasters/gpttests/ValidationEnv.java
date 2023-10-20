@@ -45,7 +45,7 @@ import org.esa.snap.core.dataio.ProductIO;
 import org.esa.snap.core.datamodel.Product;
 import org.esa.snap.core.gpf.main.CommandLineTool;
 
-public class GptTestEnv {
+public class ValidationEnv {
 
   private static final String TESTS_DIR = "tests";
   private static final String RESULTS_DIR = "results";
@@ -60,8 +60,9 @@ public class GptTestEnv {
   private Path resultProductDir;
   private Resources resources;
   private LocalDateTime date;
+  private List<TestInst> testInstants;
 
-  public GptTestEnv(String envPath, String[] testNames, String[] tags) {
+  public ValidationEnv(String envPath, String[] testNames, String[] tags) {
     this.envPath = Paths.get(envPath);
     this.testNames = testNames != null ? List.of(testNames) : null;
     this.tags = tags != null ? List.of(tags) : null;
@@ -87,8 +88,9 @@ public class GptTestEnv {
     return allTestDefinitions;
   }
 
-  public void init() throws IOException {
-    config = JsonHelper.getConfig(this.envPath.resolve("config.json"));
+  public void init() throws ValidationEnvException {
+    try {
+      config = JsonHelper.getConfig(this.envPath.resolve("config.json"));
     resources = Resources.create(envPath);
     allTestDefinitions = resources.getTestDefinitions(envPath.resolve(TESTS_DIR));
     date = LocalDateTime.now();
@@ -98,6 +100,39 @@ public class GptTestEnv {
     resultProductDir = runResultsDir.resolve(PRODUCTS_DIR);
     Files.createDirectories(resultProductDir);
 
+    List<TestDefinition> selectedTestDefs = filterTestDefinitions(allTestDefinitions, testNames, tags);
+    testInstants = new ArrayList<>();
+    if (!selectedTestDefs.isEmpty()) {
+      testInstants = createTests(selectedTestDefs);
+    }
+    } catch (Exception e) {
+      throw new ValidationEnvException("Not able to initialise validation tests", e);
+    }
+  }
+
+  public List<TestResult> execute() {
+    List<TestDefinition> selectedTestDefs = filterTestDefinitions(allTestDefinitions, testNames, tags);
+    ArrayList<TestResult> testResults = new ArrayList<>();
+    if (!testInstants.isEmpty()) {
+      runGptTests(testInstants);
+      testResults = compareResults(testInstants, selectedTestDefs);
+    }
+    return testResults;
+  }
+
+  public void createReports(List<TestResult> testResults) throws IOException {
+    if (testResults.isEmpty()) {
+      System.out.println("No tests executed.");
+    } else {
+      TestReport testReport = new TestReport(testResults, this);
+      System.out.println("Test Results:");
+      System.out.printf("Tests executed: %d (success=%d / error=%d / failure=%d)%n", testReport.getTestResults().size(),
+          testReport.getNumSuccessTests(), testReport.getNumErrorTests(), testReport.getNumFailureTests());
+      System.out.println("For details see the results directory: " + runResultsDir);
+      String reportFileName = "validation_report";
+      toJsonFile(testReport, runResultsDir.resolve(reportFileName + ".json"));
+      toHtmlFile(testReport, runResultsDir.resolve(reportFileName + ".html"));
+    }
   }
 
   private void rollResults(Path resultsDir) throws IOException {
@@ -117,32 +152,6 @@ public class GptTestEnv {
           }
         }
       }
-    }
-  }
-
-  public List<TestResult> execute() {
-    List<TestDefinition> selectedTestDefs = filterTestDefinitions(allTestDefinitions, testNames, tags);
-    ArrayList<TestResult> testResults = new ArrayList<>();
-    if (!selectedTestDefs.isEmpty()) {
-      List<TestInst> activeTests = createTests(selectedTestDefs);
-      runGptTests(activeTests);
-      testResults = compareResults(activeTests, selectedTestDefs);
-    }
-    return testResults;
-  }
-
-  public void createReports(List<TestResult> testResults) throws IOException {
-    if (testResults.isEmpty()) {
-      System.out.println("No tests executed.");
-    } else {
-      TestReport testReport = new TestReport(testResults, this);
-      System.out.println("Test Results:");
-      System.out.printf("Tests executed: %d (success=%d / error=%d / failure=%d)%n", testReport.getTestResults().size(),
-          testReport.getNumSuccessTests(), testReport.getNumErrorTests(), testReport.getNumFailureTests());
-      System.out.println("For details see the results directory: " + runResultsDir);
-      String reportFileName = "validation_report";
-      toJsonFile(testReport, runResultsDir.resolve(reportFileName + ".json"));
-      toHtmlFile(testReport, runResultsDir.resolve(reportFileName + ".html"));
     }
   }
 
@@ -198,16 +207,18 @@ public class GptTestEnv {
                        .findFirst().orElse(null);
   }
 
-  private List<TestInst> createTests(List<TestDefinition> selectedTestDefs) {
-    return selectedTestDefs.stream().map(def -> {
-                             try {
-                               Path tempDirectory = Files.createTempDirectory(def.getTestName());
-                               return TestInst.create(this, def, resources, tempDirectory);
-                             } catch (IOException e) {
-                               throw new RuntimeException(e);
-                             }
-                           })
-                           .collect(Collectors.toList());
+  private List<TestInst> createTests(List<TestDefinition> selectedTestDefs) throws Exception {
+    ArrayList<TestInst> testList = new ArrayList<>();
+
+    for (TestDefinition def : selectedTestDefs) {
+      try {
+        Path tempDirectory = Files.createTempDirectory(def.getTestName());
+        testList.add(TestInst.create(this, def, resources, tempDirectory));
+      } catch (IOException e) {
+        throw new Exception("Error creating temp directory for test: " + def.getTestName(), e);
+      }
+    }
+    return testList;
   }
 
   private void runGptTests(List<TestInst> activeTests) {

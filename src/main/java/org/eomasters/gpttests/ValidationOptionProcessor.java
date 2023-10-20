@@ -91,21 +91,28 @@ public class ValidationOptionProcessor extends OptionProcessor {
         // need to use a class from ceres-jai in order to get the defined JAI descriptors loaded
         SystemUtils.init3rdPartyLibs(ReinterpretDescriptor.class);
 
-        GptTestEnv gptTestEnv = new GptTestEnv(envPath, testNames, tags);
+        ValidationEnv validationEnv = new ValidationEnv(envPath, testNames, tags);
         try {
-          gptTestEnv.init();
-        } catch (IOException e) {
+          validationEnv.init();
+        } catch (Exception e) {
           CommandException exception = new CommandException(80010, "Product Validation Environment cannot be started.");
           exception.initCause(e);
           e.printStackTrace(env.getOutputStream());
           throw exception;
         }
-        List<TestResult> testResults = gptTestEnv.execute();
+        List<TestResult> testResults = null;
+        try {
+          testResults = validationEnv.execute();
+        } catch (Exception e) {
+          CommandException commandException = new CommandException(80020, "Error while executing validation tests.");
+          commandException.initCause(e);
+          throw commandException;
+        }
 
         try {
-          gptTestEnv.createReports(testResults);
+          validationEnv.createReports(testResults);
         } catch (IOException e) {
-          CommandException exception = new CommandException(80020, "Error while creating validation reports.");
+          CommandException exception = new CommandException(80030, "Error while creating validation reports.");
           exception.initCause(e);
           e.printStackTrace(env.getErrorStream());
           throw exception;

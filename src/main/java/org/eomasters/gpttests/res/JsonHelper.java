@@ -35,7 +35,6 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import java.awt.Dimension;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -90,14 +89,9 @@ public class JsonHelper {
     }
     Set<TestDefinition> testDefinitions = new HashSet<>();
     for (Path testDefFile : testDefFiles) {
-      try {
-        TestDefinition testDef = readTestDefinition(testDefFile);
-        if (!testDefinitions.add(testDef)) {
-          throw new IOException("Duplicate test name: " + testDef.getTestName());
-        }
-
-      } catch (Exception e) {
-        throw new IOException("Cannot read test definition file: " + testDefFile, e);
+      TestDefinition testDef = readTestDefinition(testDefFile);
+      if (!testDefinitions.add(testDef)) {
+        throw new IllegalStateException("Duplicate test name: " + testDef.getTestName());
       }
     }
     return new ArrayList<>(testDefinitions);

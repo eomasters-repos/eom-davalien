@@ -25,17 +25,12 @@ package org.eomasters.gpttests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import org.eomasters.gpttests.res.JsonHelper;
-import org.eomasters.gpttests.res.Resource;
 import org.eomasters.gpttests.res.testdef.TestDefinition;
 import org.junit.jupiter.api.Test;
 
-class GptTestEnvTest {
+class ValidationEnvTest {
 
   @Test
   void testTestDefinitionFiltering() {
@@ -47,19 +42,19 @@ class GptTestEnvTest {
     List<TestDefinition> filtered;
 
 
-    filtered = GptTestEnv.filterTestDefinitions(testDefinitions, List.of(), List.of("ABC"));
+    filtered = ValidationEnv.filterTestDefinitions(testDefinitions, List.of(), List.of("ABC"));
     assertEquals(2, filtered.size());
     assertEquals("test1", filtered.get(0).getTestName());
     assertEquals("test3", filtered.get(1).getTestName());
 
-    filtered = GptTestEnv.filterTestDefinitions(testDefinitions, List.of(), List.of());
+    filtered = ValidationEnv.filterTestDefinitions(testDefinitions, List.of(), List.of());
     assertEquals(4, filtered.size());
     assertEquals("test1", filtered.get(0).getTestName());
     assertEquals("test2", filtered.get(1).getTestName());
     assertEquals("test3", filtered.get(2).getTestName());
     assertEquals("test4", filtered.get(3).getTestName());
 
-    filtered = GptTestEnv.filterTestDefinitions(testDefinitions, List.of("test2"), List.of("ABC"));
+    filtered = ValidationEnv.filterTestDefinitions(testDefinitions, List.of("test2"), List.of("ABC"));
     assertEquals(3, filtered.size());
     assertEquals("test1", filtered.get(0).getTestName());
     assertEquals("test2", filtered.get(1).getTestName());

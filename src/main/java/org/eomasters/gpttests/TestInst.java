@@ -37,7 +37,7 @@ import org.esa.snap.core.dataio.ProductReaderPlugIn;
 
 public class TestInst {
 
-  private static GptTestEnv gptTestEnv;
+  private static ValidationEnv validationEnv;
   private final TestDefinition testDef;
   private float executionTime = -1.0f;
   private Throwable exception;
@@ -45,17 +45,23 @@ public class TestInst {
   private Path targetPath;
   private List<String> paramList;
 
-  public static TestInst create(GptTestEnv gptTestEnv, TestDefinition testDef, Resources resources, Path resultProductDir) {
-    TestInst.gptTestEnv = gptTestEnv;
-    TestInst test = new TestInst(testDef);
-    test.tempProductDir = resultProductDir;
-    String expandedGptCall = expandVariables(testDef.getGptCall(), resources);
-    List<String> paramList = parseCommandline(expandedGptCall);
-    String format = ensureFormat(paramList);
-    Path targetPath = createTargetPath(resultProductDir, format, testDef.getTestName());
-    test.targetPath = targetPath;
-    addTargetProduct(paramList, targetPath);
-    test.paramList = paramList;
+  public static TestInst create(ValidationEnv validationEnv, TestDefinition testDef, Resources resources, Path resultProductDir)
+      throws ValidationEnvException {
+    TestInst test = null;
+    try {
+      TestInst.validationEnv = validationEnv;
+      test = new TestInst(testDef);
+      test.tempProductDir = resultProductDir;
+      String expandedGptCall = expandVariables(testDef.getGptCall(), resources);
+      List<String> paramList = parseCommandline(expandedGptCall);
+      String format = ensureFormat(paramList);
+      Path targetPath = createTargetPath(resultProductDir, format, testDef.getTestName());
+      test.targetPath = targetPath;
+      addTargetProduct(paramList, targetPath);
+      test.paramList = paramList;
+    } catch (Exception e) {
+      throw new ValidationEnvException("Error creating test instance for test: " + testDef.getTestName(), e);
+    }
     return test;
   }
 
@@ -151,7 +157,7 @@ public class TestInst {
     getMatchResults(gptCall).forEach(matchResult -> {
       String[] resTokens = getTokens(matchResult);
       String value = resources.getResource(resTokens[1], resTokens[2]).getPath();
-      String resourcePath = gptTestEnv.getEnvPath().resolve(value).toAbsolutePath().toString();
+      String resourcePath = validationEnv.getEnvPath().resolve(value).toAbsolutePath().toString();
       ref.expandedGptCall = ref.expandedGptCall.replace(resTokens[0], resourcePath);
     });
     return ref.expandedGptCall;
@@ -167,6 +173,9 @@ public class TestInst {
     String tokenName = token.substring(1, token.length() - 1);
     // split category and id
     String[] split = tokenName.split(":");
+    if (split.length != 2) {
+      throw new IllegalStateException("Illegal resource variable definition: " + token);
+    }
     return new String[]{token, split[0], split[1]};
   }
 
