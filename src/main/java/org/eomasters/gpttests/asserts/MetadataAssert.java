@@ -54,7 +54,7 @@ public class MetadataAssert extends AbstractAssert<MetadataAssert, MetadataEleme
       } else {
         String actValue = metadataAttribute.getData().getElemString();
         if (!expValue.equals(actValue)) {
-          failWithMessage("Metadata[%d]: Value of metadata attribute <%s> should be <%s> but was <%s>",
+          failWithMessage("Metadata[%d]: Value of metadata attribute [%s] should be [%s] but was [%s]]",
               index, path, expValue, actValue);
         }
       }

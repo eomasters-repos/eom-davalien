@@ -146,26 +146,26 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
         assert geoCoding != null;
         GeoPos actualGP = geoCoding.getGeoPos(geoLocation.getPixelPos(), null);
         GeoPos expectedGP = geoLocation.getGeoPos();
-        if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getEps()) ||
-            !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getEps())) {
+        if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getFwdEps()) ||
+            !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getFwdEps())) {
           failWithMessage(
-              "Raster[%d] - Geolocation[%d]: Geo position for pixel position [%.8f,%.8f] should be [%.8f,%.8f] but was [%.8f,%.8f], with eps %e",
+              "Raster[%d] - Geolocation[%d]: Geo position for pixel position [%.8f,%.8f] should be [%.8f,%.8f] but was [%.8f,%.8f], with fwdEps %e",
               index, i, geoLocation.getPixelPos().x, geoLocation.getPixelPos().y,
               expectedGP.getLat(), expectedGP.getLon(),
               actualGP.getLat(), actualGP.getLon(),
-              geoLocation.getEps());
+              geoLocation.getFwdEps());
         }
 
         PixelPos actualPP = geoCoding.getPixelPos(geoLocation.getGeoPos(), null);
         PixelPos expectedPP = geoLocation.getPixelPos();
-        if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps()) ||
-            !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps())) {
+        if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps()) ||
+            !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps())) {
           failWithMessage(
-              "Raster[%d] - Geolocation[%d]: Pixel position for geo position [%.8f,%.8f] should be [%.8f,%.8f] but was [%.8f,%.8f], with eps %e",
+              "Raster[%d] - Geolocation[%d]: Pixel position for geo position [%.8f,%.8f] should be [%.8f,%.8f] but was [%.8f,%.8f], with invEps %e",
               index, i, geoLocation.getGeoPos().lat, geoLocation.getGeoPos().lon,
               expectedPP.getX(), expectedPP.getY(),
               actualPP.getX(), actualPP.getY(),
-              geoLocation.getEps());
+              geoLocation.getInvEps());
         }
       }
     }

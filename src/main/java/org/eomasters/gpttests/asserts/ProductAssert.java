@@ -173,26 +173,26 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
         assert sceneGeoCoding != null;
         GeoPos actualGP = sceneGeoCoding.getGeoPos(geoLocation.getPixelPos(), null);
         GeoPos expectedGP = geoLocation.getGeoPos();
-        if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getEps()) ||
-            !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getEps())) {
+        if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getFwdEps()) ||
+            !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getFwdEps())) {
           failWithMessage(
-              "Geolocation[%d]: For pixel position [%.8f,%.8f] expected geo position [%.8f,%.8f] but was [%.8f,%.8f], with eps %e",
+              "Geolocation[%d]: For pixel position [%.8f,%.8f] expected geo position [%.8f,%.8f] but was [%.8f,%.8f], with fwdEps %e",
               i, geoLocation.getPixelPos().x, geoLocation.getPixelPos().y,
               expectedGP.getLat(), expectedGP.getLon(),
               actualGP.getLat(), actualGP.getLon(),
-              geoLocation.getEps());
+              geoLocation.getFwdEps());
         }
 
         PixelPos actualPP = sceneGeoCoding.getPixelPos(geoLocation.getGeoPos(), null);
         PixelPos expectedPP = geoLocation.getPixelPos();
-        if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps()) ||
-            !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps())) {
+        if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps()) ||
+            !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps())) {
           failWithMessage(
-              "Geolocation[%d]: For geo position [%.8f,%.8f] expected pixel position [%.8f,%.8f] but was [%.8f,%.8f], with eps %e",
+              "Geolocation[%d]: For geo position [%.8f,%.8f] expected pixel position [%.8f,%.8f] but was [%.8f,%.8f], with invEps %e",
               i, geoLocation.getGeoPos().lat, geoLocation.getGeoPos().lon,
               expectedPP.getX(), expectedPP.getY(),
               actualPP.getX(), actualPP.getY(),
-              geoLocation.getEps());
+              geoLocation.getInvEps());
         }
       }
     }

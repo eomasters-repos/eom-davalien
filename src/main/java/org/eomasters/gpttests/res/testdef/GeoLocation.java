@@ -32,16 +32,13 @@ public class GeoLocation {
   private static final double DEFAULT_EPS = 1.0e-8;
   private PixelPos pixel;
   private GeoPos geo;
-  private double eps = DEFAULT_EPS;
+  private double fwdEps = DEFAULT_EPS;
+  private double invEps = DEFAULT_EPS;
+
 
   public GeoLocation(PixelPos pos, GeoPos geoPos) {
-    this(pos, geoPos, DEFAULT_EPS);
-  }
-
-  public GeoLocation(PixelPos pos, GeoPos geoPos, double eps) {
     pixel = pos;
     geo = geoPos;
-    this.eps = eps;
   }
 
   private GeoLocation() {
@@ -55,8 +52,12 @@ public class GeoLocation {
     return geo;
   }
 
-  public double getEps() {
-    return eps;
+  public double getFwdEps() {
+    return fwdEps;
+  }
+
+  public double getInvEps() {
+    return invEps;
   }
 
   @Override
@@ -68,19 +69,20 @@ public class GeoLocation {
       return false;
     }
     GeoLocation location = (GeoLocation) o;
-    return Double.compare(getEps(), location.getEps()) == 0
+    return Double.compare(getFwdEps(), location.getFwdEps()) == 0
+        && Double.compare(getInvEps(), location.getInvEps()) == 0
         && Double.compare(pixel.x, location.pixel.x) == 0 && Double.compare(pixel.y, location.pixel.y) == 0
         && Double.compare(geo.lat, location.geo.lat) == 0 && Double.compare(geo.lon, location.geo.lon) == 0;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(pixel, geo, getEps());
+    return Objects.hash(pixel, geo, getFwdEps(), getInvEps());
   }
 
   @Override
   public String toString() {
-    return String.format("GeoLocation{pixel=[%s, %s], geo=[%s, %s], eps=%s}", pixel.getX(), pixel.getY(),
-        geo.getLat(), geo.getLon(), eps);
+    return String.format("GeoLocation{pixel=[%s, %s], geo=[%s, %s], fwdEps=[%e], invEps=[%e]}",
+        pixel.getX(), pixel.getY(), geo.getLat(), geo.getLon(), fwdEps, invEps);
   }
 }

@@ -109,6 +109,7 @@ public class HtmlReport {
     variables.put("NumSuccess", String.valueOf(report.getNumSuccessTests()));
     variables.put("NumError", String.valueOf(report.getNumErrorTests()));
     variables.put("NumFailure", String.valueOf(report.getNumFailureTests()));
+    ensureVariableValuesAreHtmlConform(variables);
     variables.put("ReportRows", createReportRows(report));
     return expandVariables(REPORT_TEMPLATE, variables);
   }
@@ -121,9 +122,10 @@ public class HtmlReport {
       HashMap<String, String> variables = new HashMap<>();
       variables.put("TestNumber", String.valueOf(i + 1));
       variables.put("TestName", testResult.getTestName());
-      variables.put("TestDescription", createDescriptionElement(testResult.getDescription()));
       variables.put("TestStatus", String.valueOf(testResult.getStatus()));
       variables.put("TestTime", String.valueOf(testResult.getDuration()));
+      ensureVariableValuesAreHtmlConform(variables);
+      variables.put("TestDescription", createDescriptionElement(testResult.getDescription()));
       variables.put("TargetPathRow", createTargetPathRow(testResult.getTargetPath()));
       if (testResult.getException() != null) {
         variables.put("ProblemRow", createExceptionRow(testResult.getException()));
@@ -144,6 +146,7 @@ public class HtmlReport {
     } else {
       HashMap<String, String> variables = new HashMap<>();
       variables.put("Description", description);
+      ensureVariableValuesAreHtmlConform(variables);
       return expandVariables(DESCRIPTION_ELEM_TEMPLATE, variables);
     }
   }
@@ -155,6 +158,7 @@ public class HtmlReport {
       HashMap<String, String> variables = new HashMap<>();
       variables.put("TargetPathUrl", targetPath.toAbsolutePath().toUri().toString());
       variables.put("TargetPath", targetPath.toAbsolutePath().toString());
+      ensureVariableValuesAreHtmlConform(variables);
       return expandVariables(TARGET_PATH_TEMPLATE, variables);
     }
   }
@@ -162,6 +166,7 @@ public class HtmlReport {
   private static String createErrorRow(List<AssertionError> errors) {
     HashMap<String, String> variables = new HashMap<>();
     variables.put("NumErrors", String.valueOf(errors.size()));
+    ensureVariableValuesAreHtmlConform(variables);
     variables.put("ErrorItems", createErrorItems(errors));
     return expandVariables(ERRORS_ROW_TEMPLATE, variables);
   }
@@ -185,6 +190,7 @@ public class HtmlReport {
     StringWriter traceWriter = new StringWriter();
     throwable.printStackTrace(new PrintWriter(traceWriter));
     variables.put("StackTrace", traceWriter.toString());
+    ensureVariableValuesAreHtmlConform(variables);
     variables.put("Cause", createExceptionItem(throwable.getCause()));
     return expandVariables(ERROR_ITEM_TEMPLATE, variables);
   }
@@ -195,6 +201,7 @@ public class HtmlReport {
     StringWriter traceWriter = new StringWriter();
     throwable.printStackTrace(new PrintWriter(traceWriter));
     variables.put("StackTrace", traceWriter.toString());
+    ensureVariableValuesAreHtmlConform(variables);
     variables.put("Cause", createExceptionItem(throwable.getCause()));
     return expandVariables(EXCEPTION_ROW_TEMPLATE, variables);
   }
@@ -210,6 +217,7 @@ public class HtmlReport {
     StringWriter traceWriter = new StringWriter();
     throwable.printStackTrace(new PrintWriter(traceWriter));
     variables.put("StackTrace", traceWriter.toString());
+    ensureVariableValuesAreHtmlConform(variables);
     variables.put("Cause", createExceptionItem(throwable.getCause()));
     return expandVariables(EXCEPTION_ITEM_TEMPLATE, variables);
   }
@@ -230,5 +238,16 @@ public class HtmlReport {
       ref.expandedGptCall = ref.expandedGptCall.replace(token, value);
     });
     return ref.expandedGptCall;
+  }
+
+  private static void ensureVariableValuesAreHtmlConform(Map<String, String> variables) {
+    for (Map.Entry<String, String> entry : variables.entrySet()) {
+      String value = entry.getValue();
+      if (value == null) {
+        continue;
+      }
+      String newValue = value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+      entry.setValue(newValue);
+    }
   }
 }
