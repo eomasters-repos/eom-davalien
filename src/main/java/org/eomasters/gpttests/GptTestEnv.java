@@ -202,7 +202,7 @@ public class GptTestEnv {
     return selectedTestDefs.stream().map(def -> {
                              try {
                                Path tempDirectory = Files.createTempDirectory(def.getTestName());
-                               return TestInst.create(def, resources, tempDirectory);
+                               return TestInst.create(this, def, resources, tempDirectory);
                              } catch (IOException e) {
                                throw new RuntimeException(e);
                              }

@@ -43,7 +43,7 @@ public class HtmlReport {
   private static final String NO_TARGET_PATH_TEMPLATE;
   private static final String EXCEPTION_ROW_TEMPLATE;
   private static final String ERRORS_ROW_TEMPLATE;
-  private static final String ERROR_ITEM_TEMPLATE;
+  private static final String THROWABLE_ITEM_TEMPLATE;
   private static final String NO_PROBLEM_ROW_TEMPLATE;
   private static final String DESCRIPTION_ELEM_TEMPLATE;
 
@@ -73,9 +73,9 @@ public class HtmlReport {
         assert resource != null;
         ERRORS_ROW_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
-      try (InputStream resource = HtmlReport.class.getResourceAsStream("ErrorItem.template")) {
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("ThrowableItem.template")) {
         assert resource != null;
-        ERROR_ITEM_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
+        THROWABLE_ITEM_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
       try (InputStream resource = HtmlReport.class.getResourceAsStream("NoProblemRow.template")) {
         assert resource != null;
@@ -164,22 +164,24 @@ public class HtmlReport {
   private static String createErrorItems(List<AssertionError> errors) {
     StringBuilder sb = new StringBuilder();
     for (AssertionError assertionError : errors) {
-      sb.append(createErrorItem(assertionError));
+      sb.append(createThrowableItem(assertionError));
     }
     return sb.toString();
   }
 
-  private static String createErrorItem(Throwable throwable) {
+  private static String createThrowableItem(Throwable throwable) {
     if (throwable == null) {
       return "";
     }
     HashMap<String, String> variables = new HashMap<>();
-    variables.put("ErrorMessage", throwable.getMessage());
+    String expMsg = throwable.getMessage();
+    String msg = expMsg == null ? "An exception (" + throwable.getClass().getSimpleName() + ") occurred" : expMsg;
+    variables.put("ErrorMessage", msg);
     StringWriter traceWriter = new StringWriter();
     throwable.printStackTrace(new PrintWriter(traceWriter));
     variables.put("StackTrace", traceWriter.toString());
-    variables.put("Cause", createErrorItem(throwable.getCause()));
-    return expandVariables(ERROR_ITEM_TEMPLATE, variables);
+    variables.put("Cause", createThrowableItem(throwable.getCause()));
+    return expandVariables(THROWABLE_ITEM_TEMPLATE, variables);
   }
 
   private static String createExceptionRow(Throwable throwable) {
@@ -188,7 +190,7 @@ public class HtmlReport {
     StringWriter traceWriter = new StringWriter();
     throwable.printStackTrace(new PrintWriter(traceWriter));
     variables.put("StackTrace", traceWriter.toString());
-    variables.put("Cause", createErrorItem(throwable.getCause()));
+    variables.put("Cause", createThrowableItem(throwable.getCause()));
     return expandVariables(EXCEPTION_ROW_TEMPLATE, variables);
   }
 

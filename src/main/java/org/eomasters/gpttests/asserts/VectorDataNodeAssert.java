@@ -43,17 +43,16 @@ public class VectorDataNodeAssert extends AbstractAssert<VectorDataNodeAssert, P
     if (vector != null) {
       String name = vector.getName();
       if (!actual.contains(name)) {
-        failWithMessage("Vector[%d]: No vector with name [%s] found",
-            index, name);
+        failWithMessage("Vector[%d]: No vector with name [%s] found", index, name);
       }
       VectorDataNode vectorNode = actual.get(name);
-      if (!vectorNode.getDescription().equals(vector.getDescription())) {
+      if (vector.getDescription() != null && !vector.getDescription().equals(vectorNode.getDescription())) {
         failWithMessage("Vector[%d]: Description of vector [%s] should be [%s] but was [%s]",
             index, name, vector.getDescription(), vectorNode.getDescription());
       }
       try {
         int count = vectorNode.getFeatureCollection().getCount();
-        if (count != vector.getNumFeatures()) {
+        if (vector.getNumFeatures() != null && vector.getNumFeatures().compareTo(count) != 0) {
           failWithMessage("Vector[%d]: Number of features of vector [%s] should be [%d] but was [%d]",
               index, name, vector.getNumFeatures(), vectorNode.getFeatureCollection().size());
         }

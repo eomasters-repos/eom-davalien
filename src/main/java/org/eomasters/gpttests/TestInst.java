@@ -37,6 +37,7 @@ import org.esa.snap.core.dataio.ProductReaderPlugIn;
 
 public class TestInst {
 
+  private static GptTestEnv gptTestEnv;
   private final TestDefinition testDef;
   private float executionTime = -1.0f;
   private Throwable exception;
@@ -44,7 +45,8 @@ public class TestInst {
   private Path targetPath;
   private List<String> paramList;
 
-  public static TestInst create(TestDefinition testDef, Resources resources, Path resultProductDir) {
+  public static TestInst create(GptTestEnv gptTestEnv, TestDefinition testDef, Resources resources, Path resultProductDir) {
+    TestInst.gptTestEnv = gptTestEnv;
     TestInst test = new TestInst(testDef);
     test.tempProductDir = resultProductDir;
     String expandedGptCall = expandVariables(testDef.getGptCall(), resources);
@@ -149,7 +151,8 @@ public class TestInst {
     getMatchResults(gptCall).forEach(matchResult -> {
       String[] resTokens = getTokens(matchResult);
       String value = resources.getResource(resTokens[1], resTokens[2]).getPath();
-      ref.expandedGptCall = ref.expandedGptCall.replace(resTokens[0], value);
+      String resourcePath = gptTestEnv.getEnvPath().resolve(value).toAbsolutePath().toString();
+      ref.expandedGptCall = ref.expandedGptCall.replace(resTokens[0], resourcePath);
     });
     return ref.expandedGptCall;
   }

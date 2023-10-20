@@ -29,7 +29,7 @@ public class Vector {
 
   private String name;
   private String description;
-  private int numFeatures;
+  private Integer numFeatures;
 
   public Vector(String name, String description, int count) {
     this.name = name;
@@ -48,7 +48,7 @@ public class Vector {
     return description;
   }
 
-  public int getNumFeatures() {
+  public Integer getNumFeatures() {
     return numFeatures;
   }
 

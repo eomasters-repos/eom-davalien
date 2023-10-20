@@ -32,10 +32,12 @@ import org.eomasters.gpttests.res.testdef.DataType;
 import org.eomasters.gpttests.res.testdef.GeoLocation;
 import org.eomasters.gpttests.res.testdef.Pixel;
 import org.eomasters.gpttests.res.testdef.RasterType;
+import org.esa.snap.core.datamodel.GeoCoding;
 import org.esa.snap.core.datamodel.GeoPos;
 import org.esa.snap.core.datamodel.PixelPos;
 import org.esa.snap.core.datamodel.RasterDataNode;
 
+@SuppressWarnings("UnusedReturnValue")
 public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
 
   private final int index;
@@ -47,7 +49,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
   }
 
   public RasterAssert hasName(String name) {
-    if (name != null && !actual.getName().equals(name)) {
+    if (name != null && !name.equals(actual.getName())) {
       failWithMessage("Raster[%d]: Raster name should be [%s] but was [%s]",
           index, name, actual.getName());
     }
@@ -55,7 +57,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
   }
 
   public RasterAssert hasDescription(String description) {
-    if (description != null && !actual.getDescription().equals(description)) {
+    if (description != null && !description.equals(actual.getDescription())) {
       failWithMessage("Raster[%d]: Description of raster [%s] should be [%s] but was <%s>",
           index, actual.getName(), description, actual.getDescription());
     }
@@ -63,7 +65,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
   }
 
   public RasterAssert hasSize(Dimension size) {
-    if (size != null && !actual.getRasterSize().equals(size)) {
+    if (size != null && !size.equals(actual.getRasterSize())) {
       failWithMessage("Raster[%d]: Size of raster [%s] should be [%.8f,%.8f] but was [%.8f,%.8f]",
           index, actual.getName(), size.getWidth(), size.getHeight(), actual.getRasterSize().getWidth(),
           actual.getRasterSize().getHeight());
@@ -97,7 +99,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
   }
 
   public RasterAssert hasValidPixelExpression(String validPixelExpression) {
-    if (validPixelExpression != null && !actual.getValidPixelExpression().equals(validPixelExpression)) {
+    if (validPixelExpression != null && !validPixelExpression.equals(actual.getValidPixelExpression())) {
       failWithMessage("Raster[%d]: Valid-pixel expression of raster [%s] should be [%s] but was [%s]",
           index, actual.getName(), validPixelExpression,
           actual.getValidPixelExpression());
@@ -134,10 +136,15 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
   }
 
   public RasterAssert hasGeoLocations(GeoLocation[] geoLocations) {
+    GeoCoding geoCoding = actual.getGeoCoding();
+    if (geoCoding == null) {
+      failWithMessage("Raster[%d]: Raster [%s] has no geocoding", index, actual.getName());
+    }
     if (geoLocations != null) {
       for (int i = 0; i < geoLocations.length; i++) {
         GeoLocation geoLocation = geoLocations[i];
-        GeoPos actualGP = actual.getGeoCoding().getGeoPos(geoLocation.getPixelPos(), null);
+        assert geoCoding != null;
+        GeoPos actualGP = geoCoding.getGeoPos(geoLocation.getPixelPos(), null);
         GeoPos expectedGP = geoLocation.getGeoPos();
         if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getEps()) ||
             !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getEps())) {
@@ -149,7 +156,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
               geoLocation.getEps());
         }
 
-        PixelPos actualPP = actual.getGeoCoding().getPixelPos(geoLocation.getGeoPos(), null);
+        PixelPos actualPP = geoCoding.getPixelPos(geoLocation.getGeoPos(), null);
         PixelPos expectedPP = geoLocation.getPixelPos();
         if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps()) ||
             !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps())) {

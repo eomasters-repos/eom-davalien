@@ -41,6 +41,7 @@ import org.eomasters.gpttests.res.testdef.Pixel;
 import org.eomasters.gpttests.res.testdef.Raster;
 import org.eomasters.gpttests.res.testdef.Vector;
 import org.esa.snap.core.datamodel.FlagCoding;
+import org.esa.snap.core.datamodel.GeoCoding;
 import org.esa.snap.core.datamodel.GeoPos;
 import org.esa.snap.core.datamodel.IndexCoding;
 import org.esa.snap.core.datamodel.MetadataAttribute;
@@ -59,28 +60,28 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
   }
 
   public ProductAssert hasName(String name) {
-    if (name != null && !actual.getName().equals(name)) {
+    if (name != null && !name.equals(actual.getName())) {
       failWithMessage("Product name expected to be [%s] but was [%s]", name, actual.getName());
     }
     return this;
   }
 
   public ProductAssert hasProductType(String productType) {
-    if (productType != null && !actual.getProductType().equals(productType)) {
+    if (productType != null && !productType.equals(actual.getProductType())) {
       failWithMessage("Product type expected to be [%s] but was [%s]", productType, actual.getProductType());
     }
     return this;
   }
 
   public ProductAssert hasDescription(String description) {
-    if (description != null && !actual.getDescription().equals(description)) {
+    if (description != null && !description.equals(actual.getDescription())) {
       failWithMessage("Description expected to be [%s] but was [%s]", description, actual.getDescription());
     }
     return this;
   }
 
   public ProductAssert hasSceneSize(Dimension sceneSize) {
-    if (sceneSize != null && !actual.getSceneRasterSize().equals(sceneSize)) {
+    if (sceneSize != null && !sceneSize.equals(actual.getSceneRasterSize())) {
       failWithMessage("Scene size expected to be [%.8f,%.8f] but was [%.8f,%.8f]",
           sceneSize.getWidth(), sceneSize.getHeight(), actual.getSceneRasterSize().getWidth(),
           actual.getSceneRasterSize().getHeight());
@@ -90,9 +91,15 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
 
   public ProductAssert hasStartTime(UTC startTime) {
     if (startTime != null) {
-      String actStartString = actual.getStartTime().format();
+      UTC startTimeUtc = actual.getStartTime();
+      String actStartString = null;
+      if (startTimeUtc != null) {
+        actStartString = startTimeUtc.format();
+      }else {
+        failWithMessage("Start time expected to be [%s] but was [null]", startTime.format());
+      }
       String expStartString = startTime.format();
-      if (!actStartString.equals(expStartString)) {
+      if (!expStartString.equals(actStartString)) {
         failWithMessage("Start time expected to be [%s] but was [%s]", expStartString, actStartString);
       }
     }
@@ -101,9 +108,15 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
 
   public ProductAssert hasEndTime(UTC endTime) {
     if (endTime != null) {
-      String actEndString = actual.getEndTime().format();
+      UTC endTimeUtc = actual.getEndTime();
+      String actEndString = null;
+      if (endTimeUtc != null) {
+        actEndString = endTimeUtc.format();
+      }else {
+        failWithMessage("End time expected to be [%s] but was [null]", endTime.format());
+      }
       String expEndString = endTime.format();
-      if (!actEndString.equals(expEndString)) {
+      if (!expEndString.equals(actEndString)) {
         failWithMessage("End time expected to be [%s] but was [%s]", expEndString, actEndString);
       }
     }
@@ -150,10 +163,15 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
   }
 
   public ProductAssert hasGeoLocations(GeoLocation[] expected) {
+    GeoCoding sceneGeoCoding = actual.getSceneGeoCoding();
+    if (sceneGeoCoding == null) {
+      failWithMessage("Geolocations: No scene geocoding found");
+    }
     if (expected != null) {
       for (int i = 0; i < expected.length; i++) {
         GeoLocation geoLocation = expected[i];
-        GeoPos actualGP = actual.getSceneGeoCoding().getGeoPos(geoLocation.getPixelPos(), null);
+        assert sceneGeoCoding != null;
+        GeoPos actualGP = sceneGeoCoding.getGeoPos(geoLocation.getPixelPos(), null);
         GeoPos expectedGP = geoLocation.getGeoPos();
         if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getEps()) ||
             !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getEps())) {
@@ -165,7 +183,7 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
               geoLocation.getEps());
         }
 
-        PixelPos actualPP = actual.getSceneGeoCoding().getPixelPos(geoLocation.getGeoPos(), null);
+        PixelPos actualPP = sceneGeoCoding.getPixelPos(geoLocation.getGeoPos(), null);
         PixelPos expectedPP = geoLocation.getPixelPos();
         if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps()) ||
             !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps())) {
