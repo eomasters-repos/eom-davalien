@@ -64,7 +64,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
 
   public RasterAssert hasSize(Dimension size) {
     if (size != null && !actual.getRasterSize().equals(size)) {
-      failWithMessage("Raster[%d]: Size of raster [%s] should be [%f,%f] but was [%f,%f]",
+      failWithMessage("Raster[%d]: Size of raster [%s] should be [%.8f,%.8f] but was [%.8f,%.8f]",
           index, actual.getName(), size.getWidth(), size.getHeight(), actual.getRasterSize().getWidth(),
           actual.getRasterSize().getHeight());
     }
@@ -82,7 +82,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
 
   public RasterAssert hasNoDataValue(Double noDataValue) {
     if (noDataValue != null && Double.compare(actual.getNoDataValue(), noDataValue) != 0) {
-      failWithMessage("Raster[%d]: No data value of raster [%s] should be [%f] but was [%f]",
+      failWithMessage("Raster[%d]: No data value of raster [%s] should be [%.8f] but was [%.8f]",
           index, actual.getName(), noDataValue, actual.getNoDataValue());
     }
     return this;
@@ -122,7 +122,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
         double[] actPixelValue = actual.readPixels((int) location.getX(), (int) location.getY(), 1, 1, new double[1]);
         if (!fuzzyEquals(actPixelValue[0], pixel.getValue(), pixel.getEps())) {
           failWithMessage(
-              "Raster[%d] - Pixel[%d]: For pixel position [%f,%f] expected value [%f] but was [%f], with eps %f",
+              "Raster[%d] - Pixel[%d]: For pixel position [%.8f,%.8f] expected value [%.8f] but was [%.8f], with eps %e",
               index, i, location.getX(), location.getY(), pixel.getValue(), actPixelValue[0], pixel.getEps());
         }
       } catch (IOException e) {
@@ -142,7 +142,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
         if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getEps()) ||
             !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getEps())) {
           failWithMessage(
-              "Raster[%d] - Geolocation[%d]: Geo position for pixel position [%f,%f] should be [%f,%f] but was [%f,%f], with eps %f",
+              "Raster[%d] - Geolocation[%d]: Geo position for pixel position [%.8f,%.8f] should be [%.8f,%.8f] but was [%.8f,%.8f], with eps %e",
               index, i, geoLocation.getPixelPos().x, geoLocation.getPixelPos().y,
               expectedGP.getLat(), expectedGP.getLon(),
               actualGP.getLat(), actualGP.getLon(),
@@ -154,7 +154,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
         if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps()) ||
             !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps())) {
           failWithMessage(
-              "Raster[%d] - Geolocation[%d]: Pixel position for geo position [%f,%f] should be [%f,%f] but was [%f,%f], with eps %f",
+              "Raster[%d] - Geolocation[%d]: Pixel position for geo position [%.8f,%.8f] should be [%.8f,%.8f] but was [%.8f,%.8f], with eps %e",
               index, i, geoLocation.getGeoPos().lat, geoLocation.getGeoPos().lon,
               expectedPP.getX(), expectedPP.getY(),
               actualPP.getX(), actualPP.getY(),

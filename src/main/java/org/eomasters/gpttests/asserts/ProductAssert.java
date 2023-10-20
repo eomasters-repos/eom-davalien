@@ -81,7 +81,7 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
 
   public ProductAssert hasSceneSize(Dimension sceneSize) {
     if (sceneSize != null && !actual.getSceneRasterSize().equals(sceneSize)) {
-      failWithMessage("Scene size expected to be [%f,%f] but was [%f,%f]",
+      failWithMessage("Scene size expected to be [%.8f,%.8f] but was [%.8f,%.8f]",
           sceneSize.getWidth(), sceneSize.getHeight(), actual.getSceneRasterSize().getWidth(),
           actual.getSceneRasterSize().getHeight());
     }
@@ -158,7 +158,7 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
         if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getEps()) ||
             !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getEps())) {
           failWithMessage(
-              "Geolocation[%d]: For pixel position [%f,%f] expected geo position [%f,%f] but was [%f,%f], with eps %f",
+              "Geolocation[%d]: For pixel position [%.8f,%.8f] expected geo position [%.8f,%.8f] but was [%.8f,%.8f], with eps %e",
               i, geoLocation.getPixelPos().x, geoLocation.getPixelPos().y,
               expectedGP.getLat(), expectedGP.getLon(),
               actualGP.getLat(), actualGP.getLon(),
@@ -170,7 +170,7 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
         if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps()) ||
             !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getEps())) {
           failWithMessage(
-              "Geolocation[%d]: For geo position [%f,%f] expected pixel position [%f,%f] but was [%f,%f], with eps %f",
+              "Geolocation[%d]: For geo position [%.8f,%.8f] expected pixel position [%.8f,%.8f] but was [%.8f,%.8f], with eps %e",
               i, geoLocation.getGeoPos().lat, geoLocation.getGeoPos().lon,
               expectedPP.getX(), expectedPP.getY(),
               actualPP.getX(), actualPP.getY(),
