@@ -252,6 +252,9 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
   }
 
   public static boolean fuzzyEquals(double exp, double act, double eps) {
+    if(Double.isNaN(exp) && Double.isNaN(act)) {
+      return true;
+    }
     return Math.abs(exp - act) < eps;
   }
 
