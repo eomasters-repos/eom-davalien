@@ -3,7 +3,7 @@
     <details>
       <summary><b>Exception:</b> {{ExceptionMessage}}</summary>
       <p>
-        <code>
+        <code><b>Stack Trace:</b><br>
           {{StackTrace}}
         </code>
         {{Cause}}
