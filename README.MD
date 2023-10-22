@@ -1,6 +1,10 @@
-EOMasters Product Validation Environment
+<img alt="env-validation-logo_100.png" style="float: left;" src="resources/logo/env-validation-logo_100.png"/>
+
+
+EOMasters Product Validation Environment 
 ========================================
 ----------------------------------------
+
 
 This projects provides a validation environment for EO data products. You can define a test by specifying the GPT
 commandline call and the expected product content. The test environment will then execute the command and compare the
