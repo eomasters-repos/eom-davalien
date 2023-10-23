@@ -1,15 +1,16 @@
 <img alt="env-validation-logo_100.png" style="float: left;" src="resources/logo/env-validation-logo_100.png"/>
 
+EOMasters DAVALIEN
+==================
+------------------
 
-EOMasters Product Validation Environment 
-========================================
-----------------------------------------
+DAVALIEN - the **DA**ta **VALI**dation **EN**vironment projects provides an environment for validating EO data. It is
+intended for quality assurance of EO data and data processing software. It is based on
+ [SNAP](https://step.esa.int/main/toolboxes/snap/) software and uses the [GPF](https://step.esa.int/main/wp-content/help/?version=9.0.0&helpid=gpf.overview).
 
-
-This projects provides a validation environment for EO data products. You can define a test by specifying the GPT
-commandline call and the expected product content. The test environment will then execute the command and compare the
-result with the result that was expected. In the end you will get 2 report files, one JSON and one HTML file. They are
-explained on the [Report Files](docs/ReportFiles.md) page.
+You can define tests by specifying the SNAP GPT command line call and the expected product content. The test environment will
+then execute the command and compare the result with the result that was expected. In the end you will get 2 report
+files, one JSON and one HTML file. They are explained on the [Report Files](docs/ReportFiles.md) page.
 
 The environment can be executed from your IDE where you develop your GPF operator or from an installed SNAP. Even the
 processing results of 3d party software can be tested, and it can be ensured that the result does not change

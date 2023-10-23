@@ -4,8 +4,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <name>EOMasters Validation Environment</name>
-  <description>This projects provides a test environment for operators you have developed.</description>
+  <name>EOMasters DAVALIEN</name>
+  <description>The DAta VALIdation ENvironment for quality assurance of EO data.</description>
   <url>https://www.eomasters.org/</url>
   <inceptionYear>2023</inceptionYear>
   <organization>
@@ -14,7 +14,7 @@
   </organization>
 
   <groupId>org.eomasters</groupId>
-  <artifactId>eom-validation-env</artifactId>
+  <artifactId>eom-davalien</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>nbm</packaging>
 
