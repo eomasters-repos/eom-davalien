@@ -1,4 +1,4 @@
-<img alt="env-validation-logo_100.png" style="float: left;" src="resources/logo/env-validation-logo_100.png"/>
+<img alt="env-validation-logo_100.png" style="float: left;" src="resources/logo/davalien-logo_100.png"/>
 
 EOMasters DAVALIEN
 ==================
