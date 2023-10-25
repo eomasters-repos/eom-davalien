@@ -50,7 +50,6 @@ import org.openide.awt.ActionRegistration;
 @ActionID(category = "Testing", id = "org.eomasters.gpttests.gui.CreateJsonExpectationAction")
 @ActionRegistration(displayName = "Create EOM Validation Expectation")
 @ActionReferences({
-    @ActionReference(path = "Menu/Tools/Testing"),
     @ActionReference(path = "Context/Product/Product", position = 9001, separatorBefore = 9000)
 })
 public class CreateJsonExpectationAction implements ActionListener {
