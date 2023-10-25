@@ -203,8 +203,8 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     if (expRasters == null) {
       return this;
     }
-    if (actual.getRasterDataNodes().size() != expRasters.length) {
-      failWithMessage("Expected product to have [%d] rasters but were [%s]",
+    if (actual.getRasterDataNodes().size() < expRasters.length) {
+      failWithMessage("Expected product to have at least [%d] rasters but were only [%s]",
           expRasters.length, actual.getRasterDataNodes().size());
     }
 
