@@ -98,9 +98,14 @@ public class JsonHelper {
   }
 
   private static TestDefinition readTestDefinition(Path testDefFile) throws IOException {
-    TestDefinition testDef = gson.fromJson(Files.newBufferedReader(testDefFile),
-        new TypeToken<TestDefinition>() {
-        }.getType());
+    TestDefinition testDef = null;
+    try {
+      testDef = gson.fromJson(Files.newBufferedReader(testDefFile),
+          new TypeToken<TestDefinition>() {
+          }.getType());
+    } catch (Exception e) {
+      throw new IOException(String.format("Error reading test definition file [%s]", testDefFile.getFileName()), e);
+    }
     if (testDef.getTestName() == null || testDef.getTestName().isEmpty()) {
       throw new IOException("Element 'testName' must not be provided and not empty: " + testDefFile);
     }
