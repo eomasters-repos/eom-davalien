@@ -3,8 +3,8 @@
   "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc categoryclosedimage="folder" categoryopenimage="folder" topicimage="doc" version="2.0">
-  <tocitem target="projectIntro" text="Project" image="projectIcon">
-    <tocitem target="projectIntro" text="Intro"/>
-    <tocitem target="entry1" text="ENTRY"/>
+  <tocitem target="davalienOverview" text="DAVALIEN" image="davalienIcon">
+    <tocitem target="davalienOverview" text="Overview"/>
+    <tocitem target="davalienCreateExpected" text="Create"/>
   </tocitem>
 </toc>

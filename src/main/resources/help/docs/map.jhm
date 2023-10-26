@@ -4,8 +4,7 @@
   "http://java.sun.com/products/javahelp/map_2_0.dtd">
 
 <map version="2.0">
-  <mapID target="projectIntro" url="pages/Intro.html"/>
-  <mapID target="entryOne" url="pages/Entry.html"/>
+  <mapID target="davalienOverview" url="pages/Overview.html"/>
 
-  <mapID target="projectIcon" url="images/Icon_16.png"/>
+  <mapID target="projectIcon" url="images/davalien-logo_16.png"/>
 </map>
