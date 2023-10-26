@@ -23,7 +23,6 @@
 
 package org.eomasters.gpttests;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,7 +39,7 @@ public class TestInst {
 
   private static ValidationEnv validationEnv;
   private final TestDefinition testDef;
-  private float executionTime = Float.NaN;
+  private float duration = Float.NaN;
   private Throwable exception;
   private Path tempProductDir;
   private Path targetPath;
@@ -70,6 +69,10 @@ public class TestInst {
     this.testDef = testDef;
   }
 
+  public TestDefinition getTestDef() {
+    return testDef;
+  }
+
   public String getName() {
     return testDef.getTestName();
   }
@@ -90,12 +93,12 @@ public class TestInst {
     return paramList;
   }
 
-  public float getExecutionTime() {
-    return executionTime;
+  public float getDuration() {
+    return duration;
   }
 
-  public void setExecutionTime(float executionTime) {
-    this.executionTime = executionTime;
+  public void setDuration(float duration) {
+    this.duration = duration;
   }
 
   public Throwable getException() {

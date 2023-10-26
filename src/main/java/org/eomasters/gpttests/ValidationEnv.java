@@ -92,31 +92,30 @@ public class ValidationEnv {
   public void init() throws DavalienException {
     try {
       config = JsonHelper.getConfig(this.envPath.resolve("config.json"));
-    resources = Resources.create(envPath);
-    allTestDefinitions = resources.getTestDefinitions(envPath.resolve(TESTS_DIR));
-    date = LocalDateTime.now();
-    Path resultsDir = envPath.resolve(RESULTS_DIR);
-    rollResults(resultsDir);
-    runResultsDir = resultsDir.resolve(date.format(DATE_FORMAT));
-    resultProductDir = runResultsDir.resolve(PRODUCTS_DIR);
-    Files.createDirectories(resultProductDir);
+      resources = Resources.create(envPath);
+      allTestDefinitions = resources.getTestDefinitions(envPath.resolve(TESTS_DIR));
+      date = LocalDateTime.now();
+      Path resultsDir = envPath.resolve(RESULTS_DIR);
+      rollResults(resultsDir);
+      runResultsDir = resultsDir.resolve(date.format(DATE_FORMAT));
+      resultProductDir = runResultsDir.resolve(PRODUCTS_DIR);
+      Files.createDirectories(resultProductDir);
 
-    List<TestDefinition> selectedTestDefs = filterTestDefinitions(allTestDefinitions, testNames, tags);
-    testInstants = new ArrayList<>();
-    if (!selectedTestDefs.isEmpty()) {
-      testInstants = createTests(selectedTestDefs);
-    }
+      List<TestDefinition> selectedTestDefs = filterTestDefinitions(allTestDefinitions, testNames, tags);
+      testInstants = new ArrayList<>();
+      if (!selectedTestDefs.isEmpty()) {
+        testInstants = createTests(selectedTestDefs);
+      }
     } catch (Exception e) {
       throw new DavalienException("Not able to initialise validation tests", e);
     }
   }
 
   public List<TestResult> execute() {
-    List<TestDefinition> selectedTestDefs = filterTestDefinitions(allTestDefinitions, testNames, tags);
     ArrayList<TestResult> testResults = new ArrayList<>();
     if (!testInstants.isEmpty()) {
       runGptTests(testInstants);
-      testResults = compareResults(testInstants, selectedTestDefs);
+      testResults = compareResults(testInstants);
     }
     return testResults;
   }
@@ -134,7 +133,7 @@ public class ValidationEnv {
       toJsonFile(testReport, runResultsDir.resolve(reportFileName + ".json"));
       Path htmlReportFile = runResultsDir.resolve(reportFileName + ".html");
       toHtmlFile(testReport, htmlReportFile);
-      if(Desktop.isDesktopSupported() && config.isOpenReport()) {
+      if (Desktop.isDesktopSupported() && config.isOpenReport()) {
         Desktop.getDesktop().open(htmlReportFile.toFile());
       }
     }
@@ -170,12 +169,11 @@ public class ValidationEnv {
     Files.writeString(file, jsonString);
   }
 
-  private ArrayList<TestResult> compareResults(List<TestInst> tests, List<TestDefinition> testDefinitions) {
+  private ArrayList<TestResult> compareResults(List<TestInst> tests) {
     ArrayList<TestResult> testResults = new ArrayList<>();
     for (TestInst test : tests) {
       String testName = test.getName();
-      TestResult result = new TestResult(testName, test.getDescription(), test.getExecutionTime(),
-          test.getTargetPath());
+      TestResult result = new TestResult(testName, test.getDescription(), test.getDuration(), test.getTargetPath());
       testResults.add(result);
 
       Throwable exception = test.getException();
@@ -183,17 +181,15 @@ public class ValidationEnv {
         result.setException(exception);
         continue;
       }
-      TestDefinition expectation = findExpectation(testDefinitions, testName);
+      ProductContent expectation = test.getTestDef().getExpectation();
       if (expectation == null) {
         result.setException(new RuntimeException("No expectation found for test: " + testName));
       } else {
         try {
-          ProductContent expectedContent = expectation.getExpectation();
           Product testProduct = ProductIO.readProduct(test.getTargetPath().toFile());
-          ProductValidator.testProduct(testProduct, expectedContent, result);
+          ProductValidator.testProduct(testProduct, expectation, result);
           if (result.getStatus().equals(TestResult.STATUS.SUCCESS) && config.isDeleteResultAfterSuccess()) {
             Files.walkFileTree(test.getTempProductDir(), new DeleteTreeVisitor());
-            result.setTargetPath(null);
           } else {
             Files.walkFileTree(test.getTempProductDir(),
                 new CopyDirContentTreeVisitor(test.getTempProductDir(), resultProductDir));
@@ -205,11 +201,6 @@ public class ValidationEnv {
       }
     }
     return testResults;
-  }
-
-  private TestDefinition findExpectation(List<TestDefinition> testDefinitions, String testName) {
-    return testDefinitions.stream().filter(definition -> definition.getTestName().equals(testName))
-                       .findFirst().orElse(null);
   }
 
   private List<TestInst> createTests(List<TestDefinition> selectedTestDefs) throws Exception {
@@ -233,7 +224,7 @@ public class ValidationEnv {
         Instant start = Instant.now();
         commandLineTool.run(test.getParamList().toArray(new String[0]));
         Instant end = Instant.now();
-        test.setExecutionTime((end.toEpochMilli() - start.toEpochMilli()) / 1000f);
+        test.setDuration((end.toEpochMilli() - start.toEpochMilli()) / 1000f);
       } catch (Throwable t) {
         test.setException(t);
       }
@@ -249,7 +240,7 @@ public class ValidationEnv {
     }
 
     return allTestDefinitions.stream().filter(testDefinition -> isFiltered(testDefinition, testNames, tags)).collect(
-                          Collectors.toList());
+        Collectors.toList());
   }
 
   private static boolean isFiltered(TestDefinition testDefinition, List<String> testNames, List<String> tags) {
