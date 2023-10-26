@@ -68,7 +68,7 @@
     <td class="report" width="50"><b>Nr</b></td>
     <td class="report" width="*"><b>Test Name</b></td>
     <td class="report" width="150"><b>Status</b></td>
-    <td class="report" width="150"><b>Time</b></td>
+    <td class="report" width="150"><b>Time (s)</b></td>
   </tr>
   </thead>
   {{ReportRows}}
