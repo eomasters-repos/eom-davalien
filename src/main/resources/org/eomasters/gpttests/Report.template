@@ -50,12 +50,12 @@
 
 <div class="header">
 <b>Date:</b> {{Date}}<br>
+<b>Environment Path:</b> <a href="{{EnvironmentPathUrl}}" target="_blank">{{EnvironmentPath}}</a><br>
 <b>Filterd by:</b>
 <div>
 <b>&nbsp;&nbsp;Test names:</b> {{TestNames}}<br>
 <b>&nbsp;&nbsp;Tags:</b> {{Tags}}<br>
 </div>
-<b>Environment Path:</b> <a href="{{EnvironmentPathUrl}}" target="_blank">{{EnvironmentPath}}</a><br>
 <b>{{NumSelectedTests}}</b> of <b>{{NumAllTests}}</b> tests executed (<span
     class="SUCCESS">success={{NumSuccess}}</span> / <span class="ERROR">error={{NumError}}</span> /
 <span class="FAILURE">failure={{NumFailure}}</span>)<br>
