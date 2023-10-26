@@ -39,7 +39,7 @@ public class TestInst {
 
   private static ValidationEnv validationEnv;
   private final TestDefinition testDef;
-  private float executionTime = -1.0f;
+  private float executionTime = Float.NaN;
   private Throwable exception;
   private Path tempProductDir;
   private Path targetPath;

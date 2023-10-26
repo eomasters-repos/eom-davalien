@@ -123,7 +123,7 @@ public class HtmlReport {
       variables.put("TestNumber", String.valueOf(i + 1));
       variables.put("TestName", testResult.getTestName());
       variables.put("TestStatus", String.valueOf(testResult.getStatus()));
-      variables.put("TestTime", String.valueOf(testResult.getDuration()));
+      variables.put("TestTime", Float.isNaN(testResult.getDuration()) ? "N/A" : String.valueOf(testResult.getDuration()));
       ensureVariableValuesAreHtmlConform(variables);
       variables.put("TestDescription", createDescriptionElement(testResult.getDescription()));
       variables.put("TargetPathRow", createTargetPathRow(testResult.getTargetPath()));
