@@ -24,13 +24,15 @@ The following configuration options are available:
 * `rollingResults` - Number of validation results to keep. If not specified the last two results are kept.
 * `deleteResultAfterSuccess` - If true the product result files are deleted after a successful validation. In case of an
   error the result is kept. The default is `true`.
+* `openReport` - If set to `true` the HTML report will be opened in the browser. The default is `false`.
 
 Example:
 
 ```json
 {
   "rollingResults": 4,
-  "deleteResultAfterSuccess": false
+  "deleteResultAfterSuccess": false,
+  "openReport": true
 }
 ```
 
