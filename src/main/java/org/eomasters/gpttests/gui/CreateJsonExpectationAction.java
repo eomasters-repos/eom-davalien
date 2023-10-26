@@ -31,7 +31,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Random;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -76,7 +75,7 @@ public class CreateJsonExpectationAction implements ActionListener {
       protected Void doInBackground(ProgressMonitor pm) {
         pm.beginTask("Collecting data...", ProgressMonitor.UNKNOWN);
         try {
-          ProductContent content = ProductContentFactory.create(product, new Random(123546));
+          ProductContent content = ProductContentFactory.create(product);
           TestDefinition testDefinition = new TestDefinition(testName, content);
           String jsonString = JsonHelper.toJson(testDefinition);
           Path outputFile = targetDir.resolve("test-" + testName + ".json");

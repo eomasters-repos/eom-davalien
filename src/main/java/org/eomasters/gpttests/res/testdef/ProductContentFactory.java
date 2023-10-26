@@ -50,7 +50,7 @@ public class ProductContentFactory {
   private static final int NUM_PIXELS = 3;
   private static final int NUM_GEOLOCATIONS = 3;
 
-  public static ProductContent create(Product product, Random random) throws IOException {
+  public static ProductContent create(Product product) throws IOException {
     ProductContent pc = new ProductContent();
     pc.setName(product.getName());
     pc.setDescription(product.getDescription());
@@ -58,15 +58,15 @@ public class ProductContentFactory {
     pc.setSceneSize(product.getSceneRasterSize());
     pc.setStartTime(product.getStartTime());
     pc.setEndTime(product.getEndTime());
-    pc.setGeoLocations(create(product.getSceneGeoCoding(), product.getSceneRasterSize(), random));
-    pc.setRasters(create(product.getRasterDataNodes(), random));
-    pc.setVectorData(create(product.getVectorDataGroup()));
-    pc.setMetadata(create(product.getMetadataRoot(), random));
-    pc.setSampleCoding(create(product.getFlagCodingGroup(), product.getIndexCodingGroup()));
+    pc.setGeoLocations(createGeoLocations(product.getSceneGeoCoding(), product.getSceneRasterSize()));
+    pc.setRasters(createRasters(product.getRasterDataNodes()));
+    pc.setVectorData(createVectors(product.getVectorDataGroup()));
+    pc.setMetadata(createMetadata(product.getMetadataRoot()));
+    pc.setSampleCoding(createCodings(product.getFlagCodingGroup(), product.getIndexCodingGroup()));
     return pc;
   }
 
-  private static Coding[] create(ProductNodeGroup<FlagCoding> flagCodingGroup,
+  private static Coding[] createCodings(ProductNodeGroup<FlagCoding> flagCodingGroup,
       ProductNodeGroup<IndexCoding> indexCodingGroup) {
     List<SampleCoding> sampleCodingList = new ArrayList<>();
     sampleCodingList.addAll(List.of(flagCodingGroup.toArray(new FlagCoding[0])));
@@ -87,7 +87,8 @@ public class ProductContentFactory {
     return codings;
   }
 
-  private static Metadata[] create(MetadataElement metadataRoot, Random random) {
+  private static Metadata[] createMetadata(MetadataElement metadataRoot) {
+    Random random = new Random(5);
     if (metadataRoot.getNumElements() > 0 || metadataRoot.getNumAttributes() > 0) {
       Set<Metadata> metadataList = new HashSet<>();
       for (int i = 0; i < 3; i++) {
@@ -122,7 +123,7 @@ public class ProductContentFactory {
     return stringBuilder.toString();
   }
 
-  private static Vector[] create(ProductNodeGroup<VectorDataNode> vectorDataGroup) throws IOException {
+  private static Vector[] createVectors(ProductNodeGroup<VectorDataNode> vectorDataGroup) throws IOException {
     Vector[] vectors = null;
     if (vectorDataGroup.getNodeCount() > 0) {
       vectors = new Vector[vectorDataGroup.getNodeCount()];
@@ -135,16 +136,22 @@ public class ProductContentFactory {
     return vectors;
   }
 
-  private static Raster[] create(List<RasterDataNode> rasterDataNodes, Random random) throws IOException {
-    Raster[] rasters = new Raster[rasterDataNodes.size()];
-    for (int i = 0; i < rasterDataNodes.size(); i++) {
-      RasterDataNode rasterDataNode = rasterDataNodes.get(i);
-      rasters[i] = create(rasterDataNode, random);
+  private static Raster[] createRasters(List<RasterDataNode> rasterDataNodes) throws IOException {
+    Random random = new Random(4);
+    List<Raster> rasters = new ArrayList<>();
+    List<Integer> usedIndices = new ArrayList<>();
+    while (rasters.size() < Math.min(5, rasterDataNodes.size())) {
+      int index = random.nextInt(rasterDataNodes.size());
+      if (!usedIndices.contains(index)) {
+        usedIndices.add(index);
+        RasterDataNode rasterDataNode = rasterDataNodes.get(index);
+        rasters.add(createRaster(rasterDataNode));
+      }
     }
-    return rasters;
+    return rasters.toArray(new Raster[0]);
   }
 
-  private static Raster create(RasterDataNode rdn, Random random) throws IOException {
+  private static Raster createRaster(RasterDataNode rdn) throws IOException {
     Raster raster = new Raster();
     raster.setName(rdn.getName());
     raster.setDescription(rdn.getDescription());
@@ -154,16 +161,17 @@ public class ProductContentFactory {
     raster.setNoDataValue(rdn.getNoDataValue());
     raster.setNoDataValueUsed(rdn.isNoDataValueUsed());
     raster.setValidPixelExpression(rdn.getValidPixelExpression());
-    raster.setPixels(createPixels(rdn, random));
+    raster.setPixels(createPixels(rdn));
     GeoCoding geoCoding = rdn.getGeoCoding();
     // Only create geoLocations if the geocoding of the raster is not the same  as the one of the product
     if (geoCoding != rdn.getProduct().getSceneGeoCoding()) {
-      raster.setGeoLocations(create(geoCoding, rdn.getRasterSize(), random));
+      raster.setGeoLocations(createGeoLocations(geoCoding, rdn.getRasterSize()));
     }
     return raster;
   }
 
-  private static Pixel[] createPixels(RasterDataNode rdn, Random random) throws IOException {
+  private static Pixel[] createPixels(RasterDataNode rdn) throws IOException {
+    Random random = new Random(2);
     Pixel[] pixels = new Pixel[NUM_PIXELS];
     for (int i = 0; i < pixels.length; i++) {
       PixelPos pos = new PixelPos(random.nextInt(rdn.getRasterWidth()) + 0.5, random.nextInt(rdn.getRasterHeight()) + 0.5);
@@ -174,7 +182,8 @@ public class ProductContentFactory {
     return pixels;
   }
 
-  private static GeoLocation[] create(GeoCoding geoCoding, Dimension dimension, Random random) {
+  private static GeoLocation[] createGeoLocations(GeoCoding geoCoding, Dimension dimension) {
+    Random random = new Random(1);
     GeoLocation[] geoLocations = new GeoLocation[NUM_GEOLOCATIONS];
     for (int i = 0; i < geoLocations.length; i++) {
       PixelPos pos = new PixelPos(random.nextInt(dimension.width) + 0.5, random.nextInt(dimension.height) + 0.5);
