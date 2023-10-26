@@ -49,7 +49,7 @@
 
 
 <div class="header">
-<b>DATE:</b> {{Date}}<br>
+<b>Date:</b> {{Date}}<br>
 <b>Filterd by:</b>
 <div>
 <b>&nbsp;&nbsp;Test names:</b> {{TestNames}}<br>
