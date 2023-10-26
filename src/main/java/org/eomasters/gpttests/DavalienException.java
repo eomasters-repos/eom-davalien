@@ -1,6 +1,6 @@
 /*-
  * ========================LICENSE_START=================================
- * EOMasters GPT Test Environment - This projects provides a test environment for operators you have developed.
+ * EOMasters Validation Environment - This projects provides a test environment for operators you have developed.
  * -> https://www.eomasters.org/
  * ======================================================================
  * Copyright (C) 2023 Marco Peters
@@ -23,9 +23,13 @@
 
 package org.eomasters.gpttests;
 
-public class GptTestEnvException extends Throwable {
+public class DavalienException extends Exception {
 
-  public GptTestEnvException(String msg, Throwable throwable) {
-    super(msg, throwable);
+  public DavalienException(String message) {
+    super(message);
+  }
+
+  public DavalienException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

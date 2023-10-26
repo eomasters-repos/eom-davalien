@@ -23,6 +23,7 @@
 
 package org.eomasters.gpttests;
 
+import java.awt.Desktop;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -88,7 +89,7 @@ public class ValidationEnv {
     return allTestDefinitions;
   }
 
-  public void init() throws ValidationEnvException {
+  public void init() throws DavalienException {
     try {
       config = JsonHelper.getConfig(this.envPath.resolve("config.json"));
     resources = Resources.create(envPath);
@@ -106,7 +107,7 @@ public class ValidationEnv {
       testInstants = createTests(selectedTestDefs);
     }
     } catch (Exception e) {
-      throw new ValidationEnvException("Not able to initialise validation tests", e);
+      throw new DavalienException("Not able to initialise validation tests", e);
     }
   }
 
@@ -131,7 +132,11 @@ public class ValidationEnv {
       System.out.println("For details see the results directory: " + runResultsDir);
       String reportFileName = "validation_report";
       toJsonFile(testReport, runResultsDir.resolve(reportFileName + ".json"));
-      toHtmlFile(testReport, runResultsDir.resolve(reportFileName + ".html"));
+      Path htmlReportFile = runResultsDir.resolve(reportFileName + ".html");
+      toHtmlFile(testReport, htmlReportFile);
+      if(Desktop.isDesktopSupported() && config.isOpenReport()) {
+        Desktop.getDesktop().open(htmlReportFile.toFile());
+      }
     }
   }
 

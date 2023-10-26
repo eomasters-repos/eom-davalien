@@ -32,15 +32,15 @@ public class FileUtils {
   private FileUtils() {
   }
 
-  public static Path getOptionalFile(Path envPath, String configFileName) throws IOException {
-    Path configFile = envPath.resolve(configFileName);
-    if (!Files.exists(configFile)) {
+  public static Path getOptionalFile(Path envPath, String fileName) throws IOException {
+    Path file = envPath.resolve(fileName);
+    if (!Files.exists(file)) {
       return null;
     }
-    if (!Files.isReadable(configFile)) {
-      throw new IOException("Config file is not readable: " + configFile);
+    if (!Files.isReadable(file)) {
+      throw new IOException("File is not readable: " + file);
     }
-    return configFile;
+    return file;
   }
 
 }

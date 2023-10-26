@@ -23,6 +23,7 @@
 
 package org.eomasters.gpttests;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -46,8 +47,8 @@ public class TestInst {
   private List<String> paramList;
 
   public static TestInst create(ValidationEnv validationEnv, TestDefinition testDef, Resources resources, Path resultProductDir)
-      throws ValidationEnvException {
-    TestInst test = null;
+      throws DavalienException {
+    TestInst test;
     try {
       TestInst.validationEnv = validationEnv;
       test = new TestInst(testDef);
@@ -60,7 +61,7 @@ public class TestInst {
       addTargetProduct(paramList, targetPath);
       test.paramList = paramList;
     } catch (Exception e) {
-      throw new ValidationEnvException("Error creating test instance for test: " + testDef.getTestName(), e);
+      throw new DavalienException("Error creating test instance for test: " + testDef.getTestName(), e);
     }
     return test;
   }
@@ -154,12 +155,17 @@ public class TestInst {
     var ref = new Object() {
       String expandedGptCall = gptCall;
     };
-    getMatchResults(gptCall).forEach(matchResult -> {
+    List<MatchResult> matchResults = getMatchResults(gptCall);
+    for (MatchResult matchResult : matchResults) {
       String[] resTokens = getTokens(matchResult);
-      String value = resources.getResource(resTokens[1], resTokens[2]).getPath();
-      String resourcePath = validationEnv.getEnvPath().resolve(value).toAbsolutePath().toString();
+      Path path = Path.of(resources.getResource(resTokens[1], resTokens[2]).getPath());
+      if(!path.isAbsolute()) {
+        path = validationEnv.getEnvPath().resolve(path);
+      }
+      String resourcePath = path.toAbsolutePath().toString();
       ref.expandedGptCall = ref.expandedGptCall.replace(resTokens[0], resourcePath);
-    });
+
+    }
     return ref.expandedGptCall;
   }
 

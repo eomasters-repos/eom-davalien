@@ -43,7 +43,8 @@ the `test-graphs.json`.
 The defined resources can be referenced in the test definition files by their type and `id`. This allows to reuse the
 same
 resource in multiple tests and shortens the definition text.
-The type of resource is either `SRC`, `AUX` or `GPH`. Each element in the resource file must have a unique id and a absolute
+The type of resource is either `SRC`, `AUX` or `GPH`. Each element in the resource file must have a unique id and a
+absolute
 path to the resource file.
 In the GPT call of the test definition the resource is then referenced `{TYPE:ID}`. For example `{SRC:SourceProduct}`,
 `{AUX:ShapeFile.shp}` or `{GPH:graph.xml}`.
@@ -52,8 +53,10 @@ A resource element can have the following elements:
 
 * `id` - The unique id of the resource within its type. It should not contain colons. This is used to reference the
   resource in the test definition files. This is mandatory.
+* `path` - The path relative to the base environment directory or the absolute path to the resource file. This is a
+  mandatory attribute. It is recommended to use relative paths to allow to move the environment directory to a different
+  location.
 * `description` - A description of the resource. This is used in the report files.
-* `path` - The absolute path to the resource file. This is mandatory.
 
 Example:
 

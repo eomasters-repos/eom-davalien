@@ -27,6 +27,7 @@ public class EnvConfig {
 
   private int rollingResults = 2;
   private boolean deleteResultAfterSuccess = true;
+  private boolean openReport = false;
 
   public int getRollingResults() {
     return rollingResults;
@@ -34,5 +35,9 @@ public class EnvConfig {
 
   public boolean isDeleteResultAfterSuccess() {
     return deleteResultAfterSuccess;
+  }
+
+  public boolean isOpenReport() {
+    return openReport;
   }
 }
