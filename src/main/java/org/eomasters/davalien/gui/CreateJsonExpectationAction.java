@@ -47,7 +47,7 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 
 @ActionID(category = "Testing", id = "org.eomasters.davalien.gui.CreateJsonExpectationAction")
-@ActionRegistration(displayName = "Create DAVALIEN Expectation")
+@ActionRegistration(displayName = "Create DAVALIEN Test")
 @ActionReferences({
     @ActionReference(path = "Context/Product/Product", position = 9001, separatorBefore = 9000)
 })

@@ -50,43 +50,43 @@ public class HtmlReport {
 
   static {
     try {
-      try (InputStream resource = HtmlReport.class.getResourceAsStream("Report.template")) {
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("templates/Report.template")) {
         assert resource != null;
         REPORT_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
-      try (InputStream resource = HtmlReport.class.getResourceAsStream("StdRows.template")) {
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("templates/StdRows.template")) {
         assert resource != null;
         STD_ROWS_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
-      try (InputStream resource = HtmlReport.class.getResourceAsStream("TargetPath.template")) {
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("templates/TargetPath.template")) {
         assert resource != null;
         TARGET_PATH_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
-      try (InputStream resource = HtmlReport.class.getResourceAsStream("NoTargetPath.template")) {
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("templates/NoTargetPath.template")) {
         assert resource != null;
         NO_TARGET_PATH_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
-      try (InputStream resource = HtmlReport.class.getResourceAsStream("ExceptionRow.template")) {
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("templates/ExceptionRow.template")) {
         assert resource != null;
         EXCEPTION_ROW_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
-      try (InputStream resource = HtmlReport.class.getResourceAsStream("ExceptionItem.template")) {
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("templates/ExceptionItem.template")) {
         assert resource != null;
         EXCEPTION_ITEM_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
-      try (InputStream resource = HtmlReport.class.getResourceAsStream("ErrorsRow.template")) {
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("templates/ErrorsRow.template")) {
         assert resource != null;
         ERRORS_ROW_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
-      try (InputStream resource = HtmlReport.class.getResourceAsStream("ErrorItem.template")) {
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("templates/ErrorItem.template")) {
         assert resource != null;
         ERROR_ITEM_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
-      try (InputStream resource = HtmlReport.class.getResourceAsStream("NoProblemRow.template")) {
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("templates/NoProblemRow.template")) {
         assert resource != null;
         NO_PROBLEM_ROW_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }
-      try (InputStream resource = HtmlReport.class.getResourceAsStream("DescriptionElem.template")) {
+      try (InputStream resource = HtmlReport.class.getResourceAsStream("templates/DescriptionElem.template")) {
         assert resource != null;
         DESCRIPTION_ELEM_TEMPLATE = new String(resource.readAllBytes(), StandardCharsets.UTF_8);
       }

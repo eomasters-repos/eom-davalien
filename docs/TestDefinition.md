@@ -1,10 +1,10 @@
 # Test Definition File
 
-The test definition files contained in the `tests` directory of the validation environmane define the tests that should
+The test definition files contained in the `tests` directory of the validation environment define the tests that will
 be executed. The test definition files are JSON files and must be named like `test-<test-name>.json`. You can create
-such files by installing the Product Validation Environment in SNAP and using the `Create EOM Validation Expectation`
-action from the context menu of the Product you want to test. Alternatively you can create the files manually, by using
-the provided template [test-def-template.json](test-def-template.json).
+such files by installing the DAVALIEN module in SNAP and using the `Create DAVALIEN Test` action from the context menu
+of the Product you want to test. Alternatively you can create the files manually, by using the provided
+template [test-def-template.json](test-def-template.json).
 
 ## Test Definition Structure
 

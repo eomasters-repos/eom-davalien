@@ -5,6 +5,6 @@
 <toc categoryclosedimage="folder" categoryopenimage="folder" topicimage="doc" version="2.0">
   <tocitem target="davalienOverview" text="DAVALIEN" image="davalienIcon">
     <tocitem target="davalienOverview" text="Overview"/>
-    <tocitem target="davalienCreateExpected" text="Create"/>
+    <tocitem target="davalienCreateExpectation" text="Create DAVALIEN Test"/>
   </tocitem>
 </toc>

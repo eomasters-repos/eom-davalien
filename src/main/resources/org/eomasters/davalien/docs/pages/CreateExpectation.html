@@ -23,7 +23,7 @@
 
 <html>
 <head>
-  <title>DAVALIEN - Data Validation Environment - Overview</title>
+  <title>DAVALIEN - Data Validation Environment - Create DAVALIEN Expectation</title>
   <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
   <link href="../style/style.css" rel="stylesheet">
   <link href="../style/eomastersstyle.css" rel="stylesheet">
@@ -39,22 +39,22 @@
   </tr>
 </table>
 
-<h1>Overview</h1>
-<p>DAVALIEN - the <b>DA</b>ta <b>VALI</b>dation <b>EN</b>vironment projects provides an environment for validating EO
-  data. It is intended for quality assurance of EO data and data processing software.</p>
-<p>You can define tests by specifying the SNAP GPT command line call and the expected product content. The test
-  environment will then execute the command and compare the result with the result that was expected. In the end you
-  will get 2 report files, one JSON and one HTML file.</p>
-<div style="text-align: centre"><img src="../images/report_success.jpeg" width="880"/></div>
-<p>The environment can be executed from your IDE where you develop your GPF operator or from an installed SNAP. Even the
-  processing results of 3d party software can be tested, and it can be ensured that the result does not change
-  accidentally while improving the processor. Only requirement is that SNAP can read the data.</p>
-<p>For details, please check the <object classid="java:eu.esa.snap.netbeans.javahelp.BrowserDisplayer">
-  <param name="content" value="https://github.com/eomasters-repos/eom-davalien/blob/master/docs/GettingStarted.md">
-  <param name="text" value="<html><u>Getting Started Guide</u></html>">
-  <param name="textFontSize" value="bigger">
-</object></p>
+<h1>Create DAVALIEN Test</h1>
+<p>
+  On right-click on a product int the product explorer it is possible to create a test-definition file for the product.
+  A test definition files are JSON files and must be named like `test-&lt;test-name&gt;.json`. During the process you
+  are asked for the test name and a target directory, the name of the file is created automatically.
+</p>
 
+<img src="../images/CreateTestMenu.jpg" height="256" width="288"/>
+<p>Please find details on the test definition file on the
+  <object classid="java:eu.esa.snap.netbeans.javahelp.BrowserDisplayer">
+    <param name="content" value="https://github.com/eomasters-repos/eom-davalien/blob/master/docs/TestDefinition.md">
+    <param name="text" value="<html><u>Test Definition</u></html>">
+    <param name="textFontSize" value="bigger">
+  </object>
+  page on GitHub.
+</p>
 <footer>
   <hr>
   <table class="eom_ft">
