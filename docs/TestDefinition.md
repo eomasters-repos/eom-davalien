@@ -60,7 +60,9 @@ The definition of the expected content of the product can have the following ele
     * `numFeatures` - The number of features expected in the vector data.
 * `metadata` -
     * `path` - The path to a metadata attribute. If in the Metadata, elements exists with the same name on the same
-      level then the name must be appended with a number, like `path: "metadata/path/element[2]/attribute[16]"`.
+      level then the name must be appended with a number, like `path: "metadata/path/element[2]/attribute[16]"`. Some
+      metadata values are dynamic values. For example, in some cases an operator instance ID is used, which is different
+      for each run. Such values should not be used in the test definition.
     * `value` - The expected value of the attribute as text.
 * `sampleCoding` - The expected sample codings (FlagCoding and IndexCoding)
     * `name` - The name of the sample coding.
