@@ -3,7 +3,7 @@
  * EOMasters GPT Test Environment - This projects provides a test environment for operators you have developed.
  * -> https://www.eomasters.org/
  * ======================================================================
- * Copyright (C) 2023 Marco Peters
+ * Copyright (C) 2023 - 2024 Marco Peters
  * ======================================================================
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -39,6 +39,9 @@ public class Raster {
   private String validPixelExpression;
   private Pixel[] pixels;
   private GeoLocation[] geoLocations;
+  private int[] histogramBins;
+  private Double minimum;
+  private Double maximum;
 
   public Raster(String name, String description) {
     this.name = name;
@@ -88,6 +91,17 @@ public class Raster {
     return geoLocations;
   }
 
+  public int[] getHistogramBins() {
+    return histogramBins;
+  }
+
+  public Double getMaximum() {
+    return maximum;
+  }
+  public Double getMinimum() {
+    return minimum;
+  }
+
   public void setName(String name) {
     this.name = name;
   }
@@ -128,6 +142,18 @@ public class Raster {
     this.geoLocations = geoLocations;
   }
 
+  public void setHistogramBins(int[] histogramBins) {
+    this.histogramBins = histogramBins;
+  }
+
+  public void setMinimum(double minimum) {
+    this.minimum = minimum;
+  }
+
+  public void setMaximum(double maximum) {
+    this.maximum = maximum;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -143,13 +169,15 @@ public class Raster {
         getNoDataValue(), raster.getNoDataValue()) && Objects.equals(noDataValueUsed, raster.noDataValueUsed)
         && Objects.equals(getValidPixelExpression(), raster.getValidPixelExpression())
         && Arrays.equals(getPixels(), raster.getPixels()) && Arrays.equals(getGeoLocations(),
-        raster.getGeoLocations());
+        raster.getGeoLocations()) && Arrays.equals(getHistogramBins(), raster.getHistogramBins())
+        && Objects.equals(getMinimum(), raster.getMinimum()) && Objects.equals(getMaximum(),
+        raster.getMaximum());
   }
 
   @Override
   public int hashCode() {
     int result = Objects.hash(getName(), getDescription(), getSize(), getDataType(), getRasterType(), getNoDataValue(),
-        noDataValueUsed, getValidPixelExpression());
+        noDataValueUsed, getValidPixelExpression(), Arrays.hashCode(getHistogramBins()), getMinimum(), getMaximum());
     result = 31 * result + Arrays.hashCode(getPixels());
     result = 31 * result + Arrays.hashCode(getGeoLocations());
     return result;
@@ -157,10 +185,20 @@ public class Raster {
 
   @Override
   public String toString() {
-    return String.format(
-        "Raster{name='%s', description='%s', size=%s, dataType=%s, rasterType=%s, noDataValue=%s, noDataValueUsed=%s, "
-            + "validPixelExpression='%s', pixels=%s, geoLocations=%s}",
-        name, description, size != null ? "[" + size.width + "," + size.height + "]" : "null", dataType, rasterType, noDataValue, noDataValueUsed, validPixelExpression,
-        Arrays.toString(pixels), Arrays.toString(geoLocations));
+    return "Raster{" +
+        "name='" + name + '\'' +
+        ", description='" + description + '\'' +
+        ", size=" + size +
+        ", dataType=" + dataType +
+        ", rasterType=" + rasterType +
+        ", noDataValue=" + noDataValue +
+        ", noDataValueUsed=" + noDataValueUsed +
+        ", validPixelExpression='" + validPixelExpression + '\'' +
+        ", pixels=" + Arrays.toString(pixels) +
+        ", geoLocations=" + Arrays.toString(geoLocations) +
+        ", minimum=" + minimum +
+        ", maximum=" + maximum +
+        ", histogram=" + Arrays.toString(histogramBins) +
+        "}";
   }
 }

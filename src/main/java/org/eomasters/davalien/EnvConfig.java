@@ -3,7 +3,7 @@
  * EOMasters Validation Environment - This projects provides a test environment for operators you have developed.
  * -> https://www.eomasters.org/
  * ======================================================================
- * Copyright (C) 2023 Marco Peters
+ * Copyright (C) 2023 - 2024 Marco Peters
  * ======================================================================
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as

@@ -3,18 +3,18 @@
  * EOMasters GPT Test Environment - This projects provides a test environment for operators you have developed.
  * -> https://www.eomasters.org/
  * ======================================================================
- * Copyright (C) 2023 Marco Peters
+ * Copyright (C) 2023 - 2024 Marco Peters
  * ======================================================================
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,7 @@ import static org.eomasters.davalien.asserts.ProductAssert.fuzzyEquals;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.util.Arrays;
 import org.assertj.core.api.AbstractAssert;
 import org.eomasters.davalien.res.testdef.DataType;
 import org.eomasters.davalien.res.testdef.GeoLocation;
@@ -36,6 +37,7 @@ import org.esa.snap.core.datamodel.GeoCoding;
 import org.esa.snap.core.datamodel.GeoPos;
 import org.esa.snap.core.datamodel.PixelPos;
 import org.esa.snap.core.datamodel.RasterDataNode;
+import org.esa.snap.core.datamodel.Stx;
 
 @SuppressWarnings("UnusedReturnValue")
 public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
@@ -125,10 +127,12 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
         if (!fuzzyEquals(actPixelValue[0], pixel.getValue(), pixel.getEps())) {
           failWithMessage(
               "Raster[%s] - Pixel[%d]: For pixel position [%.8f,%.8f] expected value [%.8f] but was [%.8f], with eps %e",
-              actual.getName(), i, location.getX(), location.getY(), pixel.getValue(), actPixelValue[0], pixel.getEps());
+              actual.getName(), i, location.getX(), location.getY(), pixel.getValue(), actPixelValue[0],
+              pixel.getEps());
         }
       } catch (IOException e) {
-        throw new RuntimeException(String.format("Raster[%S] - Pixel[%d]: Failed to read pixel value", actual.getName(), i), e);
+        throw new RuntimeException(
+            String.format("Raster[%S] - Pixel[%d]: Failed to read pixel value", actual.getName(), i), e);
       }
 
     }
@@ -171,4 +175,39 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
     }
     return this;
   }
+
+  public RasterAssert rasterHasMinimmum(Double minimum) {
+    if (minimum != null) {
+      Stx stx = actual.getStx(true, null);
+      if (!fuzzyEquals(stx.getMinimum(), minimum, 1e-8)) {
+        failWithMessage("Raster[%s]: Minimum should be [%.8f] but was [%.8f]",
+            actual.getName(), minimum, stx.getMinimum());
+      }
+    }
+    return null;
+  }
+
+  public RasterAssert rasterHasMaximum(Double maximum) {
+    if (maximum != null) {
+      Stx stx = actual.getStx(true, null);
+      if (!fuzzyEquals(stx.getMaximum(), maximum, 1e-8)) {
+        failWithMessage("Raster[%s]: Maximum should be [%.8f] but was [%.8f]",
+            actual.getName(), maximum, stx.getMaximum());
+      }
+    }
+    return null;
+  }
+
+  public RasterAssert rasterHasHistogram(int[] expectedBins) {
+    if (expectedBins != null) {
+      Stx stx = actual.getStx(true, null);
+      int[] actualBins = stx.getHistogram().getBins(0);
+      if (!Arrays.equals(expectedBins, actualBins)) {
+        failWithMessage("Raster[%s]: Histogram bins are not equal. Expected: %s, actual: %s",
+            Arrays.toString(expectedBins), Arrays.toString(actualBins));
+      }
+    }
+    return null;
+  }
+
 }
