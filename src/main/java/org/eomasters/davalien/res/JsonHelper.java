@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -33,7 +33,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -75,6 +78,7 @@ public class JsonHelper {
     builder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
     builder.registerTypeHierarchyAdapter(Throwable.class, new ThrowableAdapter());
     builder.registerTypeAdapter(Path.class, new PathAdapter());
+    builder.registerTypeAdapter(int[].class, new IntArrayTypeAdapter());
     builder.serializeSpecialFloatingPointValues();
     builder.setPrettyPrinting();
     gson = builder.create();
@@ -98,7 +102,7 @@ public class JsonHelper {
   }
 
   private static TestDefinition readTestDefinition(Path testDefFile) throws IOException {
-    TestDefinition testDef = null;
+    TestDefinition testDef;
     try {
       testDef = gson.fromJson(Files.newBufferedReader(testDefFile),
           new TypeToken<TestDefinition>() {
@@ -254,6 +258,48 @@ public class JsonHelper {
     @Override
     public JsonElement serialize(LocalDateTime localDateTime, Type typeOfSrc, JsonSerializationContext context) {
       return context.serialize(localDateTime.withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    }
+  }
+
+  /**
+   * Ensures that multiple array elements are written on a single line. Pretty printing writes each element on a new
+   * line, which is not desired.
+   */
+  private static class IntArrayTypeAdapter extends TypeAdapter<int[]> {
+
+    @Override
+    public void write(JsonWriter out, int[] value) throws IOException {
+      out.beginArray();
+      // split value array int chunks of 15
+      for (int i = 0; i < value.length; i += 15) {
+        int len = Math.min(15, value.length - i);
+        int[] chunk = new int[len];
+        System.arraycopy(value, i, chunk, 0, len);
+        // concatenate the chunk values to a string using ',' as separator
+        String[] strings = new String[len];
+        for (int j = 0; j < len; j++) {
+          strings[j] = String.valueOf(chunk[j]);
+        }
+        String s = String.join(",", strings);
+        out.value(s);
+      }
+
+      out.endArray();
+    }
+
+    @Override
+    public int[] read(JsonReader in) throws IOException {
+      List<Integer> list = new ArrayList<>();
+      in.beginArray();
+      while (in.hasNext()) {
+        list.add(in.nextInt());
+      }
+      in.endArray();
+      int[] arr = new int[list.size()];
+      for (int i = 0; i < list.size(); i++) {
+        arr[i] = list.get(i);
+      }
+      return arr;
     }
   }
 }
