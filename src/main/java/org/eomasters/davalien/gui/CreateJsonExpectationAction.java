@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -63,8 +63,11 @@ public class CreateJsonExpectationAction implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent event) {
     final Window window = SnapApp.getDefault().getMainFrame();
-    String testName = JOptionPane.showInputDialog(window, "Name of Test: ", "Give the Test a Name",
-        JOptionPane.QUESTION_MESSAGE);
+    String testName = (String) JOptionPane.showInputDialog(window, "Name of Test: ", "Give the Test a Name",
+        JOptionPane.QUESTION_MESSAGE, null, null, product.getName());
+    if (testName == null || testName.isEmpty()) {
+      return;
+    }
     Path targetDir = getValidationEnvDir(window);
     if (targetDir == null) {
       return;
