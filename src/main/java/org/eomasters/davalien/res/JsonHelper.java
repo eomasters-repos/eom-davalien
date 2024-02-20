@@ -112,7 +112,7 @@ public class JsonHelper {
       throw new IOException(String.format("Error reading test definition file [%s]", testDefFile.getFileName()), e);
     }
     if (testDef.getTestName() == null || testDef.getTestName().isEmpty()) {
-      throw new IOException("Element 'testName' must not be provided and not empty: " + testDefFile);
+      throw new IOException("Element 'testName' must be provided and not empty: " + testDefFile);
     }
     try {
       Paths.get(testDef.getTestName());
@@ -122,10 +122,10 @@ public class JsonHelper {
     }
     String gptCall = testDef.getGptCall();
     if (gptCall == null || gptCall.isEmpty() || TestDefinition.GPT_CALL_REMINDER.equals(gptCall)) {
-      throw new IOException("Element 'gptCall' must not be provided and not empty: " + testDefFile);
+      throw new IOException("Element 'gptCall' must be provided and not empty: " + testDefFile);
     }
     if (testDef.getExpectation() == null) {
-      throw new IOException("Element 'expectation' must not be provided: " + testDefFile);
+      throw new IOException("Element 'expectation' must be provided: " + testDefFile);
     }
     return testDef;
   }
