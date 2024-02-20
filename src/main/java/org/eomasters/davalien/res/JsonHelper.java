@@ -50,6 +50,7 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -153,6 +154,10 @@ public class JsonHelper {
 
   public static String toJson(Object content) {
     return gson.toJson(content);
+  }
+
+  public static Object fromJson(String json, Class aClass) {
+    return gson.fromJson(json, aClass);
   }
 
 
@@ -292,7 +297,8 @@ public class JsonHelper {
       List<Integer> list = new ArrayList<>();
       in.beginArray();
       while (in.hasNext()) {
-        list.add(in.nextInt());
+        String[] split = in.nextString().split(",");
+        Arrays.stream(split).forEach(i -> list.add(Integer.parseInt(i)));
       }
       in.endArray();
       int[] arr = new int[list.size()];

@@ -23,11 +23,13 @@
 
 package org.eomasters.davalien.res;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 
 class JsonHelperTest {
@@ -43,6 +45,12 @@ class JsonHelperTest {
     assertEquals("def", resourceList.get("def").getId());
     assertEquals("some descriptive text", resourceList.get("def").getDescription());
     assertEquals("path2", resourceList.get("def").getPath());
+  }
+  @Test
+  void jsonIntArrayConversion() {
+    String json = JsonHelper.toJson(IntStream.range(0, 50).toArray());
+    int[] data = (int[])JsonHelper.fromJson(json, int[].class);
+    assertArrayEquals(IntStream.range(0, 50).toArray(), data);
   }
 
 }
