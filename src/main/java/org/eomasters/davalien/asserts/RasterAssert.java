@@ -25,6 +25,7 @@ package org.eomasters.davalien.asserts;
 
 import static org.eomasters.davalien.asserts.ProductAssert.fuzzyEquals;
 
+import com.bc.ceres.core.ProgressMonitor;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.util.Arrays;
@@ -178,7 +179,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
 
   public RasterAssert rasterHasMinimmum(Double minimum) {
     if (minimum != null) {
-      Stx stx = actual.getStx(true, null);
+      Stx stx = actual.getStx(true, ProgressMonitor.NULL);
       if (!fuzzyEquals(stx.getMinimum(), minimum, 1e-8)) {
         failWithMessage("Raster[%s]: Minimum should be [%.8f] but was [%.8f]",
             actual.getName(), minimum, stx.getMinimum());
@@ -189,7 +190,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
 
   public RasterAssert rasterHasMaximum(Double maximum) {
     if (maximum != null) {
-      Stx stx = actual.getStx(true, null);
+      Stx stx = actual.getStx(true, ProgressMonitor.NULL);
       if (!fuzzyEquals(stx.getMaximum(), maximum, 1e-8)) {
         failWithMessage("Raster[%s]: Maximum should be [%.8f] but was [%.8f]",
             actual.getName(), maximum, stx.getMaximum());
@@ -200,7 +201,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
 
   public RasterAssert rasterHasHistogram(int[] expectedBins) {
     if (expectedBins != null) {
-      Stx stx = actual.getStx(true, null);
+      Stx stx = actual.getStx(true, ProgressMonitor.NULL);
       int[] actualBins = stx.getHistogram().getBins(0);
       if (!Arrays.equals(expectedBins, actualBins)) {
         failWithMessage("Raster[%s]: Histogram bins are not equal. Expected: %s, actual: %s",
