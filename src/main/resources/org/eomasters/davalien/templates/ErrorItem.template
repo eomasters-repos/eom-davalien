@@ -3,7 +3,7 @@
     <summary>{{ErrorMessage}}</summary>
     <p>
       <pre><b>Stack Trace:</b><br>
-        <code>{{StackTrace}}<code>
+        <code>{{StackTrace}}</code>
       </pre>
       {{Cause}}
     </p>
