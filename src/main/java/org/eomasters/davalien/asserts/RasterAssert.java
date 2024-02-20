@@ -184,7 +184,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
             actual.getName(), minimum, stx.getMinimum());
       }
     }
-    return null;
+    return this;
   }
 
   public RasterAssert rasterHasMaximum(Double maximum) {
@@ -195,7 +195,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
             actual.getName(), maximum, stx.getMaximum());
       }
     }
-    return null;
+    return this;
   }
 
   public RasterAssert rasterHasHistogram(int[] expectedBins) {
@@ -207,7 +207,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
             Arrays.toString(expectedBins), Arrays.toString(actualBins));
       }
     }
-    return null;
+    return this;
   }
 
 }
