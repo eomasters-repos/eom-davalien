@@ -45,7 +45,7 @@ public enum DataType {
   /**
    * The 64-bit signed integer.
    */
-  INT64(ProductData.TYPE_UINT8),
+  INT64(ProductData.TYPE_INT64),
   /**
    * The 8-bit unsigned integer.
    */
@@ -53,7 +53,7 @@ public enum DataType {
   /**
    * The 16-bit unsigned integer.
    */
-  UINT16(ProductData.TYPE_INT16),
+  UINT16(ProductData.TYPE_UINT16),
   /**
    * The 32-bit unsigned integer.
    */
