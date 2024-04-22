@@ -6,7 +6,7 @@
 
   <name>EOMasters DAVALIEN</name>
   <description>The DAta VALIdation ENvironment for quality assurance of EO data.</description>
-  <url>https://www.eomasters.org/</url>
+  <url>https://www.eomasters.org/davalien</url>
   <inceptionYear>2023</inceptionYear>
   <organization>
     <name>EOMasters</name>
@@ -15,7 +15,7 @@
 
   <groupId>org.eomasters</groupId>
   <artifactId>eom-davalien</artifactId>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.5</version>
   <packaging>nbm</packaging>
 
   <properties>
