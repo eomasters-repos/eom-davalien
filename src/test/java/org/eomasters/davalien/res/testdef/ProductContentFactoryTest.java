@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.Dimension;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.Random;
 import org.eomasters.davalien.DavalienException;
@@ -215,7 +214,7 @@ class ProductContentFactoryTest {
             5562, 5532, 5614, 5748, 5772, 6092, 6030, 6200, 6350, 6468, 6654, 6910, 6906, 7338, 7474, 7862, 7952, 8480,
             8678, 9244, 9814, 10170, 11212, 11956, 13200, 15118, 17968, 23158, 56082});
     Raster maskA = new Raster("Mask_A", "I am Mask A");
-    maskA.setDataType(DataType.INT64);
+    maskA.setDataType(DataType.UINT8);
     maskA.setRasterType(RasterType.MASK);
     maskA.setNoDataValue(0.0);
     maskA.setNoDataValueUsed(false);
