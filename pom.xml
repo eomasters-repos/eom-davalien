@@ -15,7 +15,7 @@
 
   <groupId>org.eomasters</groupId>
   <artifactId>eom-davalien</artifactId>
-  <version>0.5</version>
+  <version>1.0</version>
   <packaging>nbm</packaging>
 
   <properties>
