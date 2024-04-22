@@ -13,7 +13,7 @@ You can define tests by specifying the SNAP GPT command line call and the expect
 will
 then execute the command and compare the result with the result that was expected. In the end you will get 2 report
 files, one JSON and one HTML file. They are explained on
-the [Report Files](https://github.com/eomasters-repos/eom-davalien/wiki/Report-Files) page.
+the [Report File](https://github.com/eomasters-repos/eom-davalien/wiki/Report-File) page.
 
 The environment can be executed from your IDE where you develop your GPF operator or from an installed SNAP. Even the
 processing results of 3d party software can be tested, and it can be ensured that the result does not change
