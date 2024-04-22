@@ -8,7 +8,7 @@ DAVALIEN - the **DA**ta **VALI**dation **EN**vironment projects provides an envi
 intended for quality assurance of EO data and data processing software. It is based on
 [SNAP](https://step.esa.int/main/toolboxes/snap/) software and uses
 the [GPF](https://step.esa.int/main/wp-content/help/?version=9.0.0&helpid=gpf.overview).
-![report_success.jpeg](docs%2Freport_success.jpeg)
+![report_success.jpeg](https://github.com/eomasters-repos/eom-davalien/wiki/images/report_success.jpeg)
 You can define tests by specifying the SNAP GPT command line call and the expected product content. The test environment
 will
 then execute the command and compare the result with the result that was expected. In the end you will get 2 report
