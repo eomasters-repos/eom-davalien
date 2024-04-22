@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -33,6 +33,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.api.Assert;
 import org.eomasters.davalien.res.testdef.Coding;
 import org.eomasters.davalien.res.testdef.Coding.Sample;
 import org.eomasters.davalien.res.testdef.GeoLocation;
@@ -51,14 +52,29 @@ import org.esa.snap.core.datamodel.ProductData.UTC;
 import org.esa.snap.core.datamodel.RasterDataNode;
 import org.esa.snap.core.datamodel.SampleCoding;
 
+
+/**
+ * {@link Assert} implementation for a {@link Product}.
+ */
 @SuppressWarnings("UnusedReturnValue")
 public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
 
+  /**
+   * Creates an assert for the given {@link Product}
+   *
+   * @param actual the {@link Product} to be verified
+   */
   public ProductAssert(Product actual) {
     super(actual, ProductAssert.class);
     isNotNull();
   }
 
+  /**
+   * Checks if the actual {@link Product} has the given name.
+   *
+   * @param name the name to be checked
+   * @return the current {@link ProductAssert}
+   */
   public ProductAssert hasName(String name) {
     if (name != null && !name.equals(actual.getName())) {
       failWithMessage("Product name expected to be [%s] but was [%s]", name, actual.getName());
@@ -66,6 +82,12 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     return this;
   }
 
+  /**
+   * Checks if the actual {@link Product} has the given product type.
+   *
+   * @param productType the product type
+   * @return the current {@link ProductAssert}
+   */
   public ProductAssert hasProductType(String productType) {
     if (productType != null && !productType.equals(actual.getProductType())) {
       failWithMessage("Product type expected to be [%s] but was [%s]", productType, actual.getProductType());
@@ -73,6 +95,12 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     return this;
   }
 
+  /**
+   * Checks if the actual {@link Product} has the given description.
+   *
+   * @param description the description
+   * @return the current {@link ProductAssert}
+   */
   public ProductAssert hasDescription(String description) {
     if (description != null && !description.equals(actual.getDescription())) {
       failWithMessage("Description expected to be [%s] but was [%s]", description, actual.getDescription());
@@ -80,6 +108,12 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     return this;
   }
 
+  /**
+   * Checks if the actual {@link Product} has the given scene size.
+   *
+   * @param sceneSize the scene size
+   * @return the current {@link ProductAssert}
+   */
   public ProductAssert hasSceneSize(Dimension sceneSize) {
     if (sceneSize != null && !sceneSize.equals(actual.getSceneRasterSize())) {
       failWithMessage("Scene size expected to be [%.8f,%.8f] but was [%.8f,%.8f]",
@@ -89,13 +123,19 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     return this;
   }
 
+  /**
+   * Checks if the actual {@link Product} has the given start time.
+   *
+   * @param startTime the start time
+   * @return the current {@link ProductAssert}
+   */
   public ProductAssert hasStartTime(UTC startTime) {
     if (startTime != null) {
       UTC startTimeUtc = actual.getStartTime();
       String actStartString = null;
       if (startTimeUtc != null) {
         actStartString = startTimeUtc.format();
-      }else {
+      } else {
         failWithMessage("Start time expected to be [%s] but was [null]", startTime.format());
       }
       String expStartString = startTime.format();
@@ -106,13 +146,19 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     return this;
   }
 
+  /**
+   * Checks if the actual {@link Product} has the given end time.
+   *
+   * @param endTime the end time
+   * @return the current {@link ProductAssert}
+   */
   public ProductAssert hasEndTime(UTC endTime) {
     if (endTime != null) {
       UTC endTimeUtc = actual.getEndTime();
       String actEndString = null;
       if (endTimeUtc != null) {
         actEndString = endTimeUtc.format();
-      }else {
+      } else {
         failWithMessage("End time expected to be [%s] but was [null]", endTime.format());
       }
       String expEndString = endTime.format();
@@ -123,6 +169,12 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     return this;
   }
 
+  /**
+   * Checks if the actual {@link Product} has the given sample codings.
+   *
+   * @param codings the sample codings
+   * @return the current {@link ProductAssert}
+   */
   public ProductAssert hasSampleCodings(Coding[] codings) {
     if (codings != null) {
       List<SampleCoding> sampleCodingList = new ArrayList<>();
@@ -162,6 +214,12 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     return this;
   }
 
+  /**
+   * Checks if the actual {@link Product} has the given geolocations.
+   *
+   * @param expected the geolocations
+   * @return the current {@link ProductAssert}
+   */
   public ProductAssert hasGeoLocations(GeoLocation[] expected) {
     GeoCoding sceneGeoCoding = actual.getSceneGeoCoding();
     if (sceneGeoCoding == null) {
@@ -173,8 +231,8 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
         assert sceneGeoCoding != null;
         GeoPos actualGP = sceneGeoCoding.getGeoPos(geoLocation.getPixelPos(), null);
         GeoPos expectedGP = geoLocation.getGeoPos();
-        if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getFwdEps()) ||
-            !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getFwdEps())) {
+        if (!AssertionUtils.fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getFwdEps()) ||
+            !AssertionUtils.fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getFwdEps())) {
           failWithMessage(
               "Geolocation[%d]: For pixel position [%.8f,%.8f] expected geo position [%.8f,%.8f] but was [%.8f,%.8f], with fwdEps %e",
               i, geoLocation.getPixelPos().x, geoLocation.getPixelPos().y,
@@ -185,8 +243,8 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
 
         PixelPos actualPP = sceneGeoCoding.getPixelPos(geoLocation.getGeoPos(), null);
         PixelPos expectedPP = geoLocation.getPixelPos();
-        if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps()) ||
-            !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps())) {
+        if (!AssertionUtils.fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps()) ||
+            !AssertionUtils.fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps())) {
           failWithMessage(
               "Geolocation[%d]: For geo position [%.8f,%.8f] expected pixel position [%.8f,%.8f] but was [%.8f,%.8f], with invEps %e",
               i, geoLocation.getGeoPos().lat, geoLocation.getGeoPos().lon,
@@ -199,6 +257,12 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
     return this;
   }
 
+  /**
+   * Checks if the actual {@link Product} has the given rasters.
+   *
+   * @param expRasters the expected rasters
+   * @return the current {@link ProductAssert}
+   */
   public ProductAssert hasRasters(Raster[] expRasters) {
     if (expRasters == null) {
       return this;
@@ -216,49 +280,53 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
       }
       Pixel[] pixels = expRaster.getPixels();
       GeoLocation[] geoLocations = expRaster.getGeoLocations();
-      assertThat(actRaster, i).hasName(expRaster.getName())
-                              .hasDescription(expRaster.getDescription())
-                              .hasSize(expRaster.getSize())
-                              .hasDataType(expRaster.getDataType())
-                              .hasNoDataValue(expRaster.getNoDataValue())
-                              .noDataValueIsUsed(expRaster.isNoDataValueUsed())
-                              .hasValidPixelExpression(expRaster.getValidPixelExpression())
-                              .rasterIsOfType(expRaster.getRasterType())
-                              .rasterHasMinimmum(expRaster.getMinimum())
-                              .rasterHasMaximum(expRaster.getMaximum())
-                              .rasterHasHistogram(expRaster.getHistogramBins())
-                              .hasPixels(pixels)
-                              .hasGeoLocations(geoLocations);
-
+      assertThat(actRaster).hasName(expRaster.getName(), i)
+                           .hasDescription(expRaster.getDescription())
+                           .hasSize(expRaster.getSize())
+                           .hasDataType(expRaster.getDataType())
+                           .hasNoDataValue(expRaster.getNoDataValue())
+                           .noDataValueIsUsed(expRaster.isNoDataValueUsed())
+                           .hasValidPixelExpression(expRaster.getValidPixelExpression())
+                           .rasterIsOfType(expRaster.getRasterType(), i)
+                           .rasterHasMinimmum(expRaster.getMinimum())
+                           .rasterHasMaximum(expRaster.getMaximum())
+                           .rasterHasHistogram(expRaster.getHistogramBins())
+                           .hasPixels(pixels)
+                           .hasGeoLocations(geoLocations, i);
     }
     return this;
   }
 
+  /**
+   * Checks if the actual {@link Product} has the given metadata.
+   *
+   * @param metadata the metadata
+   * @return the current {@link ProductAssert}
+   */
   public ProductAssert hasMetadata(Metadata[] metadata) {
     if (metadata != null) {
       for (int i = 0; i < metadata.length; i++) {
         Metadata elem = metadata[i];
-        assertThat(actual.getMetadataRoot(), i).has(elem);
+        assertThat(actual.getMetadataRoot()).has(elem, i);
       }
     }
     return this;
   }
 
+  /**
+   * Checks if the actual {@link Product} has the given vectors.
+   *
+   * @param vectorData the vectors
+   * @return the current {@link ProductAssert}
+   */
   public ProductAssert hasVectors(Vector[] vectorData) {
     if (vectorData != null) {
       for (int i = 0; i < vectorData.length; i++) {
         Vector vector = vectorData[i];
-        assertThat(actual.getVectorDataGroup(), i).has(vector);
+        assertThat(actual.getVectorDataGroup()).has(vector, i);
       }
     }
     return this;
-  }
-
-  public static boolean fuzzyEquals(double exp, double act, double eps) {
-    if(Double.isNaN(exp) && Double.isNaN(act)) {
-      return true;
-    }
-    return Math.abs(exp - act) < eps;
   }
 
 }

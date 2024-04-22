@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -23,13 +23,14 @@
 
 package org.eomasters.davalien.asserts;
 
-import static org.eomasters.davalien.asserts.ProductAssert.fuzzyEquals;
+import static org.eomasters.davalien.asserts.AssertionUtils.fuzzyEquals;
 
 import com.bc.ceres.core.ProgressMonitor;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.util.Arrays;
 import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.api.Assert;
 import org.eomasters.davalien.res.testdef.DataType;
 import org.eomasters.davalien.res.testdef.GeoLocation;
 import org.eomasters.davalien.res.testdef.Pixel;
@@ -40,25 +41,43 @@ import org.esa.snap.core.datamodel.PixelPos;
 import org.esa.snap.core.datamodel.RasterDataNode;
 import org.esa.snap.core.datamodel.Stx;
 
+/**
+ * {@link Assert} implementation for a {@link RasterDataNode}.
+ */
 @SuppressWarnings("UnusedReturnValue")
 public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
 
-  private final int index;
-
-  public RasterAssert(RasterDataNode actual, int index) {
+  /**
+   * Creates an assert for the given {@link RasterDataNode }.
+   *
+   * @param actual the actual value to verify
+   */
+  public RasterAssert(RasterDataNode actual) {
     super(actual, RasterAssert.class);
-    this.index = index;
     isNotNull();
   }
 
-  public RasterAssert hasName(String name) {
+  /**
+   * Checks if the actual RasterDataNode has the given name.
+   *
+   * @param name            the expected name of the RasterDataNode
+   * @param indexOfExpected the index of the expected RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
+  public RasterAssert hasName(String name, int indexOfExpected) {
     if (name != null && !name.equals(actual.getName())) {
       failWithMessage("Raster[%d]: Name should be [%s] but was [%s]",
-          index, actual.getName(), name);
+          indexOfExpected, actual.getName(), name);
     }
     return this;
   }
 
+  /**
+   * Checks if the actual RasterDataNode has the given description.
+   *
+   * @param description the expected description of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
   public RasterAssert hasDescription(String description) {
     if (description != null && !description.equals(actual.getDescription())) {
       failWithMessage("Raster[%s]: Description should be [%s] but was <%s>",
@@ -67,6 +86,12 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
     return this;
   }
 
+  /**
+   * Checks if the actual RasterDataNode has the given size.
+   *
+   * @param size the expected size of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
   public RasterAssert hasSize(Dimension size) {
     if (size != null && !size.equals(actual.getRasterSize())) {
       failWithMessage("Raster[%s]: Size should be [%.8f,%.8f] but was [%.8f,%.8f]",
@@ -76,6 +101,12 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
     return this;
   }
 
+  /**
+   * Checks if the actual RasterDataNode has the given data type.
+   *
+   * @param typeValue the expected data type of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
   public RasterAssert hasDataType(DataType typeValue) {
     DataType actualdataType = DataType.fromTypeValue(actual.getDataType());
     if (!actualdataType.equals(typeValue)) {
@@ -85,6 +116,12 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
     return this;
   }
 
+  /**
+   * Checks if the actual RasterDataNode has the given no data value.
+   *
+   * @param noDataValue the expected no data value of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
   public RasterAssert hasNoDataValue(Double noDataValue) {
     if (noDataValue != null && Double.compare(actual.getNoDataValue(), noDataValue) != 0) {
       failWithMessage("Raster[%s]: No data value should be [%.8f] but was [%.8f]",
@@ -93,6 +130,12 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
     return this;
   }
 
+  /**
+   * Checks if the actual RasterDataNode has the given no data value used.
+   *
+   * @param noDataValueUsed the expected no data value used of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
   public RasterAssert noDataValueIsUsed(Boolean noDataValueUsed) {
     if (noDataValueUsed != null && actual.isNoDataValueUsed() != noDataValueUsed) {
       failWithMessage("Raster[%s]: No-data-value-used should be [%s] but was [%s]",
@@ -101,6 +144,12 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
     return this;
   }
 
+  /**
+   * Checks if the actual RasterDataNode has the given valid pixel expression.
+   *
+   * @param validPixelExpression the expected valid pixel expression of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
   public RasterAssert hasValidPixelExpression(String validPixelExpression) {
     if (validPixelExpression != null && !validPixelExpression.equals(actual.getValidPixelExpression())) {
       failWithMessage("Raster[%s]: Valid-pixel expression should be [%s] but was [%s]",
@@ -110,15 +159,27 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
     return this;
   }
 
-  public RasterAssert rasterIsOfType(RasterType rasterType) {
+  /**
+   * Checks if the actual RasterDataNode has the given raster type.
+   *
+   * @param rasterType the expected raster type of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
+  public RasterAssert rasterIsOfType(RasterType rasterType, int indexOfExpected) {
     RasterType actualRasterType = RasterType.get(actual);
     if (rasterType != null && actualRasterType != rasterType) {
       failWithMessage("Raster[%d]: Raster type of raster [%s] should be [%s] but was [%s]",
-          index, actual.getName(), rasterType, actualRasterType);
+          indexOfExpected, actual.getName(), rasterType, actualRasterType);
     }
     return this;
   }
 
+  /**
+   * Checks if the actual RasterDataNode has the given pixels.
+   *
+   * @param pixels the expected pixels of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
   public RasterAssert hasPixels(Pixel[] pixels) {
     for (int i = 0; i < pixels.length; i++) {
       Pixel pixel = pixels[i];
@@ -140,10 +201,16 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
     return this;
   }
 
-  public RasterAssert hasGeoLocations(GeoLocation[] geoLocations) {
+  /**
+   * Checks if the actual RasterDataNode has the given geolocation.
+   *
+   * @param geoLocations the expected geolocation of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
+  public RasterAssert hasGeoLocations(GeoLocation[] geoLocations, int indexOfExpected) {
     GeoCoding geoCoding = actual.getGeoCoding();
     if (geoCoding == null) {
-      failWithMessage("Raster [%s] has no geocoding", index, actual.getName());
+      failWithMessage("Raster [%s] has no geocoding", indexOfExpected, actual.getName());
     }
     if (geoLocations != null) {
       for (int i = 0; i < geoLocations.length; i++) {
@@ -177,6 +244,12 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
     return this;
   }
 
+  /**
+   * Checks if the actual RasterDataNode has the given minimum value.
+   *
+   * @param minimum the expected minimum of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
   public RasterAssert rasterHasMinimmum(Double minimum) {
     if (minimum != null) {
       Stx stx = actual.getStx(true, ProgressMonitor.NULL);
@@ -188,6 +261,12 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
     return this;
   }
 
+  /**
+   * Checks if the actual RasterDataNode has the given maximum value.
+   *
+   * @param maximum the expected maximum of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
   public RasterAssert rasterHasMaximum(Double maximum) {
     if (maximum != null) {
       Stx stx = actual.getStx(true, ProgressMonitor.NULL);
@@ -199,6 +278,12 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
     return this;
   }
 
+  /**
+   * Checks if the actual RasterDataNode has the given histogram bins.
+   *
+   * @param expectedBins the expected histogram bins of the RasterDataNode
+   * @return the current {@link RasterAssert}
+   */
   public RasterAssert rasterHasHistogram(int[] expectedBins) {
     if (expectedBins != null) {
       Stx stx = actual.getStx(true, ProgressMonitor.NULL);
