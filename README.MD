@@ -3,6 +3,7 @@
 EOMasters - DAVALIEN
 ====================
 --------------------
+[![Maven Build](https://github.com/eomasters-repos/eom-davalien/actions/workflows/maven.yml/badge.svg?branch=master&event=push)](https://github.com/eomasters-repos/eom-davalien/actions/workflows/maven.yml)
 
 DAVALIEN - the **DA**ta **VALI**dation **EN**vironment projects provides an environment for validating EO data. It is
 intended for quality assurance of EO data and data processing software. It is based on
