@@ -120,7 +120,7 @@ public class ValidationEnv {
     return testResults;
   }
 
-  public void createReports(List<TestResult> testResults) throws IOException {
+  public void createReport(List<TestResult> testResults) throws IOException {
     if (testResults.isEmpty()) {
       System.out.println("No tests executed.");
     } else {

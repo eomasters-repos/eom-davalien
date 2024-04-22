@@ -110,7 +110,7 @@ public class ValidationOptionProcessor extends OptionProcessor {
         }
 
         try {
-          validationEnv.createReports(testResults);
+          validationEnv.createReport(testResults);
         } catch (IOException e) {
           CommandException exception = new CommandException(80030, "Error while creating validation reports.");
           exception.initCause(e);
