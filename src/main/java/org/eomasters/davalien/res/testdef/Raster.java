@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,10 @@ import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Represents a {@link org.esa.snap.core.datamodel.RasterDataNode raster} of a
+ * {@link org.esa.snap.core.datamodel.Product product}.
+ */
 public class Raster {
 
   private String name;
@@ -43,73 +47,162 @@ public class Raster {
   private Double minimum;
   private Double maximum;
 
+  /**
+   * Creates a new raster with the given name and description.
+   *
+   * @param name        the name
+   * @param description the description
+   */
   public Raster(String name, String description) {
     this.name = name;
     this.description = description;
   }
 
-  public Raster() {
+  // for deserialization/serialization
+  @SuppressWarnings("unused")
+  private Raster() {
   }
 
+  /**
+   * Get the name of the raster.
+   *
+   * @return the name
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Get the description of the raster.
+   *
+   * @return the description
+   */
   public String getDescription() {
     return description;
   }
 
+  /**
+   * Get the size of the raster.
+   *
+   * @return the size
+   */
   public Dimension getSize() {
     return size;
   }
 
+  /**
+   * Get the data type of the raster.
+   *
+   * @return the data type
+   */
   public DataType getDataType() {
     return dataType;
   }
 
+  /**
+   * Get the raster type of the raster.
+   *
+   * @return the raster type
+   */
   public RasterType getRasterType() {
     return rasterType;
   }
 
+  /**
+   * Get the no-data value of the raster.
+   *
+   * @return the no-data value
+   */
   public Double getNoDataValue() {
     return noDataValue;
   }
 
+  /**
+   * Whether the no-data value is used or not.
+   *
+   * @return true if the no-data value is used
+   */
   public Boolean isNoDataValueUsed() {
     return noDataValueUsed;
   }
 
+  /**
+   * Get the valid pixel expression of the raster.
+   *
+   * @return the valid pixel expression
+   */
   public String getValidPixelExpression() {
     return validPixelExpression;
   }
 
+  /**
+   * Get the defined pixels of the raster.
+   *
+   * @return the defined pixels
+   */
   public Pixel[] getPixels() {
     return pixels;
   }
 
+  /**
+   * Get the geolocations of the raster.
+   *
+   * @return the defined geolocations
+   */
   public GeoLocation[] getGeoLocations() {
     return geoLocations;
   }
 
+  /**
+   * Get the histogram bins of the raster.
+   *
+   * @return the histogram bins
+   */
   public int[] getHistogramBins() {
     return histogramBins;
   }
 
+  /**
+   * Get the maximum of the raster.
+   *
+   * @return the maximum
+   */
   public Double getMaximum() {
     return maximum;
   }
+
+  /**
+   * Get the minimum of the raster.
+   *
+   * @return the minimum
+   */
   public Double getMinimum() {
     return minimum;
   }
 
+  /**
+   * Set the name of the raster.
+   *
+   * @param name the name to set
+   */
   public void setName(String name) {
     this.name = name;
   }
 
+  /**
+   * Set the description of the raster.
+   *
+   * @param description the description to set
+   */
   public void setDescription(String description) {
     this.description = description;
   }
 
+  /**
+   * Set the size of the raster.
+   *
+   * @param size the size to set
+   */
   public void setSize(Dimension size) {
     this.size = size;
   }
@@ -118,38 +211,83 @@ public class Raster {
     this.dataType = dataType;
   }
 
+  /**
+   * Set the raster type of the raster.
+   *
+   * @param rasterType the rasterType to set
+   */
   public void setRasterType(RasterType rasterType) {
     this.rasterType = rasterType;
   }
 
+  /**
+   * Set the no-data value of the raster.
+   *
+   * @param noDataValue the no-data value to set
+   */
   public void setNoDataValue(Double noDataValue) {
     this.noDataValue = noDataValue;
   }
 
+  /**
+   * Set whether the no-data value is used or not.
+   *
+   * @param noDataValueUsed whether the no-data value is used
+   */
   public void setNoDataValueUsed(Boolean noDataValueUsed) {
     this.noDataValueUsed = noDataValueUsed;
   }
 
+  /**
+   * Set the valid pixel expression of the raster.
+   *
+   * @param validPixelExpression the valid pixel expression to set
+   */
   public void setValidPixelExpression(String validPixelExpression) {
     this.validPixelExpression = validPixelExpression;
   }
 
+  /**
+   * Set the defined pixels of the raster.
+   *
+   * @param pixels the pixels to set
+   */
   public void setPixels(Pixel[] pixels) {
     this.pixels = pixels;
   }
 
+  /**
+   * Set the geolocations of the raster.
+   *
+   * @param geoLocations the geolocations to set
+   */
   public void setGeoLocations(GeoLocation[] geoLocations) {
     this.geoLocations = geoLocations;
   }
 
+  /**
+   * Set the histogram bins of the raster.
+   *
+   * @param histogramBins the histogram bins
+   */
   public void setHistogramBins(int[] histogramBins) {
     this.histogramBins = histogramBins;
   }
 
+  /**
+   * Set the minimum of the raster.
+   *
+   * @param minimum the minimum value of the raster
+   */
   public void setMinimum(double minimum) {
     this.minimum = minimum;
   }
 
+  /**
+   * Set the maximum of the raster.
+   *
+   * @param maximum the maximum value of the raster
+   */
   public void setMaximum(double maximum) {
     this.maximum = maximum;
   }
@@ -185,20 +323,20 @@ public class Raster {
 
   @Override
   public String toString() {
-    return "Raster{" +
-        "name='" + name + '\'' +
-        ", description='" + description + '\'' +
-        ", size=" + size +
-        ", dataType=" + dataType +
-        ", rasterType=" + rasterType +
-        ", noDataValue=" + noDataValue +
-        ", noDataValueUsed=" + noDataValueUsed +
-        ", validPixelExpression='" + validPixelExpression + '\'' +
-        ", pixels=" + Arrays.toString(pixels) +
-        ", geoLocations=" + Arrays.toString(geoLocations) +
-        ", minimum=" + minimum +
-        ", maximum=" + maximum +
-        ", histogram=" + Arrays.toString(histogramBins) +
-        "}";
+    return "Raster{"
+        + "name='" + name + '\''
+        + ", description='" + description + '\''
+        + ", size=" + size
+        + ", dataType=" + dataType
+        + ", rasterType=" + rasterType
+        + ", noDataValue=" + noDataValue
+        + ", noDataValueUsed=" + noDataValueUsed
+        + ", validPixelExpression='" + validPixelExpression + '\''
+        + ", pixels=" + Arrays.toString(pixels)
+        + ", geoLocations=" + Arrays.toString(geoLocations)
+        + ", minimum=" + minimum
+        + ", maximum=" + maximum
+        + ", histogram=" + Arrays.toString(histogramBins)
+        + "}";
   }
 }

@@ -38,7 +38,7 @@ import org.esa.snap.core.datamodel.VectorDataNode;
 public class VectorDataNodeAssert extends AbstractAssert<VectorDataNodeAssert, ProductNodeGroup<VectorDataNode>> {
 
   /**
-   * Creates an assert for the given  {@link ProductNodeGroup ProductNodeGroup<VectorDataNode>}.
+   * Creates an assert for the given  {@link ProductNodeGroup ProductNodeGroup&lt;VectorDataNode&gt;}.
    *
    * @param actual the actual value to verify
    */

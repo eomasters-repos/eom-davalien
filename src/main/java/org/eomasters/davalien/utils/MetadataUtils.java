@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -27,20 +27,39 @@ import java.util.Arrays;
 import org.esa.snap.core.datamodel.MetadataAttribute;
 import org.esa.snap.core.datamodel.MetadataElement;
 
+/**
+ * A class that provides utility methods for working with {@link MetadataElement} and {@link MetadataAttribute}.
+ */
 public class MetadataUtils {
 
-  public static MetadataWrapper wrap(MetadataElement root) {
-    return new MetadataWrapper(root);
+  /**
+   * Wraps a {@link MetadataElement} in a {@link MetadataWrapper}.
+   *
+   * @param element the element
+   * @return the wrapper
+   */
+  public static MetadataWrapper wrap(MetadataElement element) {
+    return new MetadataWrapper(element);
   }
 
+  /**
+   * This class wraps a {@link MetadataElement} in a {@link MetadataWrapper}. It provides a method for getting an
+   * attribute by its path.
+   */
   public static class MetadataWrapper {
 
     private final MetadataElement root;
 
-    public MetadataWrapper(MetadataElement root) {
+    private MetadataWrapper(MetadataElement root) {
       this.root = root;
     }
 
+    /**
+     * Get an attribute by its path.
+     *
+     * @param path the path to the attribute
+     * @return the attribute
+     */
     public MetadataAttribute getElement(String path) {
       String[] tokens = path.split("/");
       String[] elemtokens = Arrays.copyOf(tokens, tokens.length - 1);

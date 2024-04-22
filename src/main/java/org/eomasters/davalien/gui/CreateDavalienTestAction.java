@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -40,6 +41,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import org.eomasters.davalien.Davalien;
 import org.eomasters.davalien.res.JsonHelper;
 import org.eomasters.davalien.res.testdef.ProductContent;
 import org.eomasters.davalien.res.testdef.ProductContentFactory;
@@ -59,6 +61,11 @@ import org.openide.util.Utilities;
 import org.openide.util.WeakListeners;
 import org.openide.util.actions.Presenter;
 
+/**
+ * Creates a DAVALIEN Test Definition File.
+ *
+ * @author Marco Peters
+ */
 @ActionID(category = "Tools", id = "org.eomasters.davalien.gui.CreateDavalienTestAction")
 @ActionRegistration(displayName = "#TXT_CreateDavalienTestAction",
     popupText = "#TXT_CreateDavalienTestAction",
@@ -78,6 +85,9 @@ public class CreateDavalienTestAction extends AbstractAction implements Presente
   @SuppressWarnings("FieldCanBeLocal")
   private final LookupListener lookupListener;
 
+  /**
+   * Creates a new instance.
+   */
   public CreateDavalienTestAction() {
     putValue(Action.NAME, Bundle.TXT_CreateDavalienTestAction());
     putValue(Action.SHORT_DESCRIPTION, Bundle.DESCR_CreateDavalienTestAction());
@@ -173,7 +183,7 @@ public class CreateDavalienTestAction extends AbstractAction implements Presente
           Files.writeString(outputFile, jsonString);
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        Davalien.LOGGER.log(Level.SEVERE, "Failed to create test definition", e);
         Dialogs.showError(e.getClass().getSimpleName() + ": " + e.getMessage());
       } finally {
         pm.done();

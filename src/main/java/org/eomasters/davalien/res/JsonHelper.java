@@ -66,6 +66,11 @@ import org.esa.snap.core.datamodel.PixelPos;
 import org.esa.snap.core.datamodel.ProductData;
 import org.esa.snap.core.datamodel.ProductData.UTC;
 
+/**
+ * Helper class to serialize/deserialize JSON.
+ *
+ * @author marco
+ */
 public class JsonHelper {
 
   private static final Gson gson;
@@ -85,6 +90,13 @@ public class JsonHelper {
     gson = builder.create();
   }
 
+  /**
+   * Loads all test definitions from the given directory.
+   *
+   * @param fromDir the directory
+   * @return a list of test definitions
+   * @throws IOException if an I/O error occurs
+   */
   public static List<TestDefinition> getTestDefinitions(Path fromDir) throws IOException {
     List<Path> testDefFiles;
     try (Stream<Path> list = Files.list(fromDir)) {
@@ -101,6 +113,63 @@ public class JsonHelper {
     }
     return new ArrayList<>(testDefinitions);
   }
+
+  /**
+   * Loads all resources from the given file.
+   *
+   * @param fromFile the file
+   * @return the resources
+   * @throws IOException if an I/O error occurs
+   */
+  public static Map<String, Resource> getResources(Path fromFile) throws IOException {
+    if (fromFile != null) {
+      return getResources(Files.newBufferedReader(fromFile));
+    }
+    return Collections.emptyMap();
+  }
+
+  static Map<String, Resource> getResources(Reader reader) {
+    List<Resource> resourceList = gson.fromJson(reader,
+        new TypeToken<List<Resource>>() {
+        }.getType());
+    return resourceList.stream().collect(TreeMap::new, (m, v) -> m.put(v.getId(), v), TreeMap::putAll);
+  }
+
+  /**
+   * Loads the environment configuration from the given file.
+   *
+   * @param fromFile the file
+   * @return the environment configuration
+   * @throws IOException if an I/O error occurs
+   */
+  public static EnvConfig getConfig(Path fromFile) throws IOException {
+    if (fromFile != null && Files.exists(fromFile)) {
+      return gson.fromJson(Files.newBufferedReader(fromFile), EnvConfig.class);
+    }
+    return new EnvConfig();
+  }
+
+  /**
+   * Converts an object to JSON.
+   *
+   * @param content The object to convert
+   * @return The JSON string
+   */
+  public static String toJson(Object content) {
+    return gson.toJson(content);
+  }
+
+  /**
+   * Converts a JSON string to an object.
+   *
+   * @param json   The JSON string
+   * @param someClass The object class
+   * @return The object
+   */
+  public static Object fromJson(String json, Class<?> someClass) {
+    return gson.fromJson(json, someClass);
+  }
+
 
   private static TestDefinition readTestDefinition(Path testDefFile) throws IOException {
     TestDefinition testDef;
@@ -128,36 +197,6 @@ public class JsonHelper {
       throw new IOException("Element 'expectation' must be provided: " + testDefFile);
     }
     return testDef;
-  }
-
-  public static Map<String, Resource> getResources(Path fromFile) throws IOException {
-    if (fromFile != null) {
-      return getResources(Files.newBufferedReader(fromFile));
-    }
-    return Collections.emptyMap();
-  }
-
-  static Map<String, Resource> getResources(Reader reader) {
-    List<Resource> resourceList = gson.fromJson(reader,
-        new TypeToken<List<Resource>>() {
-        }.getType());
-    return resourceList.stream().collect(TreeMap::new, (m, v) -> m.put(v.getId(), v), TreeMap::putAll);
-  }
-
-  public static EnvConfig getConfig(Path fromFile) throws IOException {
-    if (fromFile != null && Files.exists(fromFile)) {
-      return gson.fromJson(Files.newBufferedReader(fromFile), EnvConfig.class);
-    }
-    return new EnvConfig();
-  }
-
-
-  public static String toJson(Object content) {
-    return gson.toJson(content);
-  }
-
-  public static Object fromJson(String json, Class aClass) {
-    return gson.fromJson(json, aClass);
   }
 
 

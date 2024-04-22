@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 import org.eomasters.davalien.res.testdef.TestDefinition;
 
+/**
+ * Class for accessing the resources.
+ */
 public class Resources {
 
   private static Path envPath;
@@ -38,6 +41,13 @@ public class Resources {
   private Map<String, Resource> graphFiles;
   private Map<String, Resource> auxdataFiles;
 
+  /**
+   * Creates a new instance of the {@link Resources} class.
+   *
+   * @param envPath the environment path to load the resources from
+   * @return the resources
+   * @throws IOException if an I/O error occurs
+   */
   public static Resources create(Path envPath) throws IOException {
     Resources.envPath = envPath;
     Resources resources = new Resources();
@@ -48,25 +58,55 @@ public class Resources {
     return resources;
   }
 
+  /**
+   * Returns the test definitions.
+   *
+   * @param testsDir the tests directory
+   * @return the test definitions
+   * @throws IOException if an I/O error occurs
+   */
   public List<TestDefinition> getTestDefinitions(Path testsDir) throws IOException {
     return JsonHelper.getTestDefinitions(envPath.resolve(testsDir));
   }
+
+  /**
+   * Returns the source products.
+   *
+   * @return the source products
+   */
   public Map<String, Resource> getSourceProducts() {
     return sourceProducts;
   }
 
+  /**
+   * The graph files.
+   *
+   * @return the graph files
+   */
   public Map<String, Resource> getGraphFiles() {
     return graphFiles;
   }
 
+  /**
+   * The auxiliary data files.
+   *
+   * @return the auxiliary data files
+   */
   public Map<String, Resource> getAuxdataFiles() {
     return auxdataFiles;
   }
 
-  public Resource getResource(String category, String id) {
-    Resource.Type type = Resource.Type.valueOf(category.toUpperCase());
+  /**
+   * Returns the resource specified by the given type and id.
+   *
+   * @param type the resource type
+   * @param id   the resource id
+   * @return the resource
+   */
+  public Resource getResource(String type, String id) {
+    Resource.Type resType = Resource.Type.valueOf(type.toUpperCase());
     Resource resource;
-    switch (type) {
+    switch (resType) {
       case SRC:
         resource = getSourceProducts().get(id);
         break;
@@ -77,10 +117,10 @@ public class Resources {
         resource = getGraphFiles().get(id);
         break;
       default:
-        throw new IllegalArgumentException("Unknown resource category: " + category);
+        throw new IllegalArgumentException("Unknown resource category: " + resType);
     }
     if (resource == null) {
-      throw new IllegalArgumentException(String.format("Unknown resource id: [%s:%s]", category, id));
+      throw new IllegalArgumentException(String.format("Unknown resource id: [%s:%s]", resType, id));
     }
     return resource;
   }

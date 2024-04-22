@@ -188,7 +188,8 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
         double[] actPixelValue = actual.readPixels((int) location.getX(), (int) location.getY(), 1, 1, new double[1]);
         if (!fuzzyEquals(actPixelValue[0], pixel.getValue(), pixel.getEps())) {
           failWithMessage(
-              "Raster[%s] - Pixel[%d]: For pixel position [%.8f,%.8f] expected value [%.8f] but was [%.8f], with eps %e",
+              "Raster[%s] - Pixel[%d]: For pixel position [%.8f,%.8f] expected value [%.8f] but was [%.8f], "
+                  + "with eps %e",
               actual.getName(), i, location.getX(), location.getY(), pixel.getValue(), actPixelValue[0],
               pixel.getEps());
         }
@@ -216,27 +217,29 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
       for (int i = 0; i < geoLocations.length; i++) {
         GeoLocation geoLocation = geoLocations[i];
         assert geoCoding != null;
-        GeoPos actualGP = geoCoding.getGeoPos(geoLocation.getPixelPos(), null);
-        GeoPos expectedGP = geoLocation.getGeoPos();
-        if (!fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getFwdEps()) ||
-            !fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getFwdEps())) {
+        GeoPos actualGp = geoCoding.getGeoPos(geoLocation.getPixelPos(), null);
+        GeoPos expectedGp = geoLocation.getGeoPos();
+        if (!fuzzyEquals(expectedGp.getLat(), actualGp.getLat(), geoLocation.getFwdEps())
+            || !fuzzyEquals(expectedGp.getLon(), actualGp.getLon(), geoLocation.getFwdEps())) {
           failWithMessage(
-              "Raster[%s] - Geolocation[%d]: Geo position for pixel position [%.8f,%.8f] should be [%.8f,%.8f] but was [%.8f,%.8f], with fwdEps %e",
+              "Raster[%s] - Geolocation[%d]: Geo position for pixel position [%.8f,%.8f] "
+                  + "should be [%.8f,%.8f] but was [%.8f,%.8f], with fwdEps %e",
               actual.getName(), i, geoLocation.getPixelPos().x, geoLocation.getPixelPos().y,
-              expectedGP.getLat(), expectedGP.getLon(),
-              actualGP.getLat(), actualGP.getLon(),
+              expectedGp.getLat(), expectedGp.getLon(),
+              actualGp.getLat(), actualGp.getLon(),
               geoLocation.getFwdEps());
         }
 
-        PixelPos actualPP = geoCoding.getPixelPos(geoLocation.getGeoPos(), null);
-        PixelPos expectedPP = geoLocation.getPixelPos();
-        if (!fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps()) ||
-            !fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps())) {
+        PixelPos actualPp = geoCoding.getPixelPos(geoLocation.getGeoPos(), null);
+        PixelPos expectedPp = geoLocation.getPixelPos();
+        if (!fuzzyEquals(expectedPp.getX(), actualPp.getX(), geoLocation.getInvEps())
+            || !fuzzyEquals(expectedPp.getX(), actualPp.getX(), geoLocation.getInvEps())) {
           failWithMessage(
-              "Raster[%s] - Geolocation[%d]: Pixel position for geo position [%.8f,%.8f] should be [%.8f,%.8f] but was [%.8f,%.8f], with invEps %e",
+              "Raster[%s] - Geolocation[%d]: Pixel position for geo position [%.8f,%.8f] "
+                  + "should be [%.8f,%.8f] but was [%.8f,%.8f], with invEps %e",
               actual.getName(), i, geoLocation.getGeoPos().lat, geoLocation.getGeoPos().lon,
-              expectedPP.getX(), expectedPP.getY(),
-              actualPP.getX(), actualPP.getY(),
+              expectedPp.getX(), expectedPp.getY(),
+              actualPp.getX(), actualPp.getY(),
               geoLocation.getInvEps());
         }
       }

@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -34,8 +34,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.eomasters.davalien.TestResult.Status;
 import org.eomasters.davalien.res.JsonHelper;
 import org.eomasters.davalien.res.Resources;
 import org.eomasters.davalien.res.testdef.ProductContent;
@@ -46,8 +48,12 @@ import org.esa.snap.core.dataio.ProductIO;
 import org.esa.snap.core.datamodel.Product;
 import org.esa.snap.core.gpf.main.CommandLineTool;
 
-public class ValidationEnv {
+/**
+ * The DAta VALIdataion ENvironment DAVALIEN.
+ */
+public class Davalien {
 
+  public static final Logger LOGGER = Logger.getLogger(Davalien.class.getName());
   private static final String TESTS_DIR = "tests";
   private static final String RESULTS_DIR = "results";
   private static final String PRODUCTS_DIR = "products";
@@ -63,32 +69,69 @@ public class ValidationEnv {
   private LocalDateTime date;
   private List<TestInst> testInstants;
 
-  public ValidationEnv(String envPath, String[] testNames, String[] tags) {
+  /**
+   * Create a new validation environment.
+   *
+   * @param envPath   the environment path
+   * @param testNames test names which should be executed
+   * @param tags      tags of tests which should be executed
+   */
+  public Davalien(String envPath, String[] testNames, String[] tags) {
     this.envPath = Paths.get(envPath);
     this.testNames = testNames != null ? List.of(testNames) : null;
     this.tags = tags != null ? List.of(tags) : null;
   }
 
+  /**
+   * Get the environment path.
+   *
+   * @return the environment path
+   */
   public Path getEnvPath() {
     return envPath;
   }
 
+  /**
+   * Get the test names.
+   *
+   * @return the test names
+   */
   public List<String> getTestNames() {
     return testNames;
   }
 
+  /**
+   * Get the tags.
+   *
+   * @return the tags
+   */
   public List<String> getTags() {
     return tags;
   }
 
+  /**
+   * Get the date.
+   *
+   * @return the date
+   */
   public LocalDateTime getDate() {
     return date;
   }
 
+  /**
+   * Get the all test definitions.
+   *
+   * @return the all test definitions
+   */
   public List<TestDefinition> getAllTestDefinitions() {
     return allTestDefinitions;
   }
 
+  /**
+   * Initialise the validation environment.
+   *
+   * @throws DavalienException in case of an error
+   */
   public void init() throws DavalienException {
     try {
       config = JsonHelper.getConfig(this.envPath.resolve("config.json"));
@@ -111,6 +154,11 @@ public class ValidationEnv {
     }
   }
 
+  /**
+   * Execute the validation tests.
+   *
+   * @return the test results
+   */
   public List<TestResult> execute() {
     ArrayList<TestResult> testResults = new ArrayList<>();
     if (!testInstants.isEmpty()) {
@@ -120,6 +168,12 @@ public class ValidationEnv {
     return testResults;
   }
 
+  /**
+   * Create the report.
+   *
+   * @param testResults the test results
+   * @throws IOException if an I/O error occurs
+   */
   public void createReport(List<TestResult> testResults) throws IOException {
     if (testResults.isEmpty()) {
       System.out.println("No tests executed.");
@@ -142,12 +196,12 @@ public class ValidationEnv {
   private void rollResults(Path resultsDir) throws IOException {
     if (Files.isDirectory(resultsDir)) {
       try (Stream<Path> resultDirList = Files.list(resultsDir)) {
-        Stream<Path> resultDirs = resultDirList.filter(path -> Files.isDirectory(path) && path.getFileName()
-                                                                                              .toString()
-                                                                                              .matches(
-                                                                                                  "\\d{8}_\\d{6}"));
+        Stream<Path> resultDirs = resultDirList.filter(path -> Files.isDirectory(path)
+            && path.getFileName().toString().matches("\\d{8}_\\d{6}"));
+
         List<Path> sorted = resultDirs.sorted(
-                                          Comparator.comparing(p -> LocalDateTime.parse(p.getFileName().toString(), DATE_FORMAT)))
+                                          Comparator.comparing(p -> LocalDateTime.parse(p.getFileName().toString(),
+                                              DATE_FORMAT)))
                                       .collect(Collectors.toList());
         if (sorted.size() >= config.getRollingResults()) {
           for (int i = 0; i <= sorted.size() - config.getRollingResults(); i++) {
@@ -173,7 +227,7 @@ public class ValidationEnv {
     ArrayList<TestResult> testResults = new ArrayList<>();
     for (TestInst test : tests) {
       String testName = test.getName();
-      TestResult result = new TestResult(testName, test.getDescription(), test.getDuration(), test.getTargetPath());
+      TestResult result = new TestResult(testName, test.getDescription(), test.getDuration(), test.getResultPath());
       testResults.add(result);
 
       Throwable exception = test.getException();
@@ -186,14 +240,14 @@ public class ValidationEnv {
         result.setException(new RuntimeException("No expectation found for test: " + testName));
       } else {
         try {
-          Product testProduct = ProductIO.readProduct(test.getTargetPath().toFile());
+          Product testProduct = ProductIO.readProduct(test.getResultPath().toFile());
           ProductValidator.testProduct(testProduct, expectation, result);
-          if (result.getStatus().equals(TestResult.STATUS.SUCCESS) && config.isDeleteResultAfterSuccess()) {
-            Files.walkFileTree(test.getTempProductDir(), new DeleteTreeVisitor());
+          if (result.getStatus().equals(Status.SUCCESS) && config.isDeleteResultAfterSuccess()) {
+            Files.walkFileTree(test.getResultDir(), new DeleteTreeVisitor());
           } else {
-            Files.walkFileTree(test.getTempProductDir(),
-                new CopyDirContentTreeVisitor(test.getTempProductDir(), resultProductDir));
-            result.setTargetPath(resultProductDir.resolve(test.getTargetPath().getFileName()));
+            Files.walkFileTree(test.getResultDir(),
+                new CopyDirContentTreeVisitor(test.getResultDir(), resultProductDir));
+            result.setTargetPath(resultProductDir.resolve(test.getResultPath().getFileName()));
           }
         } catch (Exception e) {
           result.setException(new Exception("Error executing test: " + testName, e));

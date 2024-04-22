@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import org.eomasters.davalien.DavalienException;
 import org.eomasters.davalien.res.testdef.Coding.Sample;
 import org.esa.snap.core.datamodel.FlagCoding;
 import org.esa.snap.core.datamodel.GeoCoding;
@@ -47,12 +48,22 @@ import org.esa.snap.core.datamodel.SampleCoding;
 import org.esa.snap.core.datamodel.Stx;
 import org.esa.snap.core.datamodel.VectorDataNode;
 
+/**
+ * A factor for creating {@link ProductContent} based on a {@link Product}.
+ */
 public class ProductContentFactory {
 
   private static final int NUM_PIXELS = 3;
   private static final int NUM_GEOLOCATIONS = 3;
 
-  public static ProductContent create(Product product) throws IOException {
+  /**
+   * Create a {@link ProductContent} based on a {@link Product}.
+   *
+   * @param product the product
+   * @return the {@link ProductContent}
+   * @throws DavalienException if something goes wrong
+   */
+  public static ProductContent create(Product product) throws DavalienException {
     ProductContent pc = new ProductContent();
     pc.setName(product.getName());
     pc.setDescription(product.getDescription());
@@ -61,8 +72,12 @@ public class ProductContentFactory {
     pc.setStartTime(product.getStartTime());
     pc.setEndTime(product.getEndTime());
     pc.setGeoLocations(createGeoLocations(product.getSceneGeoCoding(), product.getSceneRasterSize()));
-    pc.setRasters(createRasters(product.getRasterDataNodes()));
-    pc.setVectorData(createVectors(product.getVectorDataGroup()));
+    try {
+      pc.setRasters(createRasters(product.getRasterDataNodes()));
+      pc.setVectorData(createVectors(product.getVectorDataGroup()));
+    } catch (IOException e) {
+      throw new DavalienException(e);
+    }
     pc.setMetadata(createMetadata(product.getMetadataRoot()));
     pc.setSampleCoding(createCodings(product.getFlagCodingGroup(), product.getIndexCodingGroup()));
     return pc;
@@ -154,9 +169,7 @@ public class ProductContentFactory {
   }
 
   private static Raster createRaster(RasterDataNode rdn) throws IOException {
-    Raster raster = new Raster();
-    raster.setName(rdn.getName());
-    raster.setDescription(rdn.getDescription());
+    Raster raster = new Raster(rdn.getName(), rdn.getDescription());
     raster.setSize(rdn.getRasterSize());
     raster.setDataType(DataType.fromTypeValue(rdn.getDataType()));
     raster.setRasterType(RasterType.get(rdn));
@@ -180,7 +193,8 @@ public class ProductContentFactory {
     Random random = new Random(2);
     Pixel[] pixels = new Pixel[NUM_PIXELS];
     for (int i = 0; i < pixels.length; i++) {
-      PixelPos pos = new PixelPos(random.nextInt(rdn.getRasterWidth()) + 0.5, random.nextInt(rdn.getRasterHeight()) + 0.5);
+      PixelPos pos = new PixelPos(random.nextInt(rdn.getRasterWidth()) + 0.5,
+          random.nextInt(rdn.getRasterHeight()) + 0.5);
       double[] pix = new double[1];
       rdn.readPixels((int) pos.x, (int) pos.y, 1, 1, pix);
       pixels[i] = new Pixel(pos, pix[0]);

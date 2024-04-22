@@ -30,6 +30,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Random;
+import org.eomasters.davalien.DavalienException;
 import org.eomasters.davalien.res.testdef.Coding.Sample;
 import org.esa.snap.core.datamodel.FlagCoding;
 import org.esa.snap.core.datamodel.GeoPos;
@@ -77,7 +78,7 @@ class ProductContentFactoryTest {
   }
 
   @Test
-  public void testCreation() throws IOException, ParseException {
+  public void testCreation() throws DavalienException, ParseException {
     ProductContent pc = ProductContentFactory.create(testProduct);
     assertEquals("Test_Product_1", pc.getName());
     assertEquals("Test_Type_1", pc.getProductType());

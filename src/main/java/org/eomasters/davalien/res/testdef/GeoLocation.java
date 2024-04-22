@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,9 @@ import java.util.Objects;
 import org.esa.snap.core.datamodel.GeoPos;
 import org.esa.snap.core.datamodel.PixelPos;
 
+/**
+ * Defines a geographical location.
+ */
 public class GeoLocation {
 
   private static final double DEFAULT_EPS = 1.0e-8;
@@ -36,26 +39,54 @@ public class GeoLocation {
   private double invEps = DEFAULT_EPS;
 
 
+  /**
+   * Create a new instance. The allowed forward and inverse error are set to 1.0e-8 by default.
+   *
+   * @param pos    The pixel position
+   * @param geoPos The geographical position
+   */
   public GeoLocation(PixelPos pos, GeoPos geoPos) {
     pixel = pos;
     geo = geoPos;
   }
 
+  // for deserialization/serialization
+  @SuppressWarnings("unused")
   private GeoLocation() {
   }
 
+  /**
+   * Get the pixel position.
+   *
+   * @return The pixel position
+   */
   public PixelPos getPixelPos() {
     return pixel;
   }
 
+  /**
+   * Get the geographical position.
+   *
+   * @return The geographical position
+   */
   public GeoPos getGeoPos() {
     return geo;
   }
 
+  /**
+   * Get the allowed forward error.
+   *
+   * @return the forward error
+   */
   public double getFwdEps() {
     return fwdEps;
   }
 
+  /**
+   * Get the allowed inverse error.
+   *
+   * @return the inverse error
+   */
   public double getInvEps() {
     return invEps;
   }

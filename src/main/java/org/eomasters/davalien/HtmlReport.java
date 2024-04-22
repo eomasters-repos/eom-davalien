@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -35,10 +35,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Responsible for generating the HTML report.
+ */
 public class HtmlReport {
 
-  private final static String REPORT_TEMPLATE;
-  private final static String STD_ROWS_TEMPLATE;
+  private static final String REPORT_TEMPLATE;
+  private static final String STD_ROWS_TEMPLATE;
   private static final String TARGET_PATH_TEMPLATE;
   private static final String NO_TARGET_PATH_TEMPLATE;
   private static final String EXCEPTION_ROW_TEMPLATE;
@@ -95,6 +98,12 @@ public class HtmlReport {
     }
   }
 
+  /**
+   * Creates the HTML report.
+   *
+   * @param report the test report
+   * @return the HTML report as String
+   */
   public static String create(TestReport report) {
     HashMap<String, String> variables = new HashMap<>();
     variables.put("Date", report.getCreationTime().withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
@@ -105,7 +114,7 @@ public class HtmlReport {
     variables.put("EnvironmentPathUrl", report.getEnvPath().toAbsolutePath().toUri().toString());
     variables.put("EnvironmentPath", report.getEnvPath().toAbsolutePath().toString());
     variables.put("NumSelectedTests", String.valueOf(report.getTestResults().size()));
-    variables.put("NumAllTests", String.valueOf(report.getTestsExecuted()));
+    variables.put("NumAllTests", String.valueOf(report.getNumTestsExecuted()));
     variables.put("NumSuccess", String.valueOf(report.getNumSuccessTests()));
     variables.put("NumError", String.valueOf(report.getNumErrorTests()));
     variables.put("NumFailure", String.valueOf(report.getNumFailureTests()));
@@ -123,7 +132,8 @@ public class HtmlReport {
       variables.put("TestNumber", String.valueOf(i + 1));
       variables.put("TestName", testResult.getTestName());
       variables.put("TestStatus", String.valueOf(testResult.getStatus()));
-      variables.put("TestTime", Float.isNaN(testResult.getDuration()) ? "N/A" : String.valueOf(testResult.getDuration()));
+      variables.put("TestTime",
+          Float.isNaN(testResult.getDuration()) ? "N/A" : String.valueOf(testResult.getDuration()));
       ensureVariableValuesAreHtmlConform(variables);
       variables.put("TestDescription", createDescriptionElement(testResult.getDescription()));
       variables.put("TargetPathRow", createTargetPathRow(testResult.getTargetPath()));

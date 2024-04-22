@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * -> http://www.gnu.org/licenses/gpl-3.0.html
@@ -39,8 +39,11 @@ import org.openide.util.NbBundle;
 
 /**
  * Option processor for the --validate option.
+ *
  * <p>With this option, the Data Validation Environment (DAVALIEN) can be started.
- * <p>Example: <code>snap --validate C:\test\envPath</code></p>
+ *
+ * <p>Example: <code>snap --validate C:\test\envPath</code>
+ *
  * <p>To prevent the GUI and splash screen from showing, add also {@code --nogui} {@code --nosplash} <br>
  */
 @org.openide.util.lookup.ServiceProvider(service = OptionProcessor.class)
@@ -48,7 +51,8 @@ import org.openide.util.NbBundle;
     "DSC_Validate=Start the Data Validation Environment: snap --validate <envPath> [-N=<TestNameList>] [-T=<TagList>]."
         + "Add also --nogui --nosplash to prevent GUI and splash screen from showing.",
     "DSC_TestNames=Optional comma separated list of test names to execute. If not provided all tests will be executed.",
-    "DSC_TagNames=Optional comma separated list of tags associated with Tests to be executed. If not provided all tests will be executed."})
+    "DSC_TagNames=Optional comma separated list of tags associated with Tests to be executed. "
+        + "If not provided all tests will be executed."})
 public class ValidationOptionProcessor extends OptionProcessor {
 
   private static final String PROP_PLUGIN_MANAGER_CHECK_INTERVAL = "plugin.manager.check.interval";
@@ -77,58 +81,81 @@ public class ValidationOptionProcessor extends OptionProcessor {
       String actualUpdateInterval = System.getProperty(PROP_PLUGIN_MANAGER_CHECK_INTERVAL);
       try {
         System.setProperty(PROP_PLUGIN_MANAGER_CHECK_INTERVAL, "NEVER");
-        String envPath = getArgument(optionValues, gptTestsOpt);
-        String[] testNames = null;
-        String[] tags = null;
-        if (optionValues.containsKey(testNamesOpt)) {
-          testNames = argumentToArray(getArgument(optionValues, testNamesOpt));
-        }
-        if (optionValues.containsKey(tagNamesOpt)) {
-          tags = argumentToArray(getArgument(optionValues, tagNamesOpt));
-        }
-
         Locale.setDefault(Locale.ENGLISH); // Force usage of english locale
         // need to use a class from ceres-jai in order to get the defined JAI descriptors loaded
         SystemUtils.init3rdPartyLibs(ReinterpretDescriptor.class);
 
-        ValidationEnv validationEnv = new ValidationEnv(envPath, testNames, tags);
-        try {
-          validationEnv.init();
-        } catch (Exception e) {
-          CommandException exception = new CommandException(80010, "Data Validation Environment cannot be started.");
-          exception.initCause(e);
-          e.printStackTrace(env.getOutputStream());
-          throw exception;
-        }
-        List<TestResult> testResults = null;
-        try {
-          testResults = validationEnv.execute();
-        } catch (Exception e) {
-          CommandException commandException = new CommandException(80020, "Error while executing validation tests.");
-          commandException.initCause(e);
-          throw commandException;
-        }
+        String envPath = getArgument(optionValues, gptTestsOpt);
+        String[] testNames = getTestNames(optionValues);
+        String[] tags = getTags(optionValues);
+        Davalien davalien = new Davalien(envPath, testNames, tags);
 
-        try {
-          validationEnv.createReport(testResults);
-        } catch (IOException e) {
-          CommandException exception = new CommandException(80030, "Error while creating validation reports.");
-          exception.initCause(e);
-          e.printStackTrace(env.getErrorStream());
-          throw exception;
-        }
+        doInit(env, davalien);
+        List<TestResult> testResults = doExecute(davalien);
+        doReport(env, davalien, testResults);
 
       } catch (RuntimeException re) {
         env.getErrorStream().println("Error while executing validation tests.");
-        env.getErrorStream().println("Sorry, this should not have happened. Please help to fix this problem and report the issue to EOMasters (https://www.eomasters.org/forum).");
+        env.getErrorStream().println("Sorry, this should not have happened. Please help to fix this problem and "
+            + "report the issue to EOMasters (https://www.eomasters.org/forum).");
         re.printStackTrace(env.getErrorStream());
-      } finally{
+      } finally {
         if (actualUpdateInterval != null) {
           System.setProperty(PROP_PLUGIN_MANAGER_CHECK_INTERVAL, actualUpdateInterval);
         }
       }
       System.exit(0);
     }
+  }
+
+  private static void doReport(Env env, Davalien davalien, List<TestResult> testResults) throws CommandException {
+    try {
+      davalien.createReport(testResults);
+    } catch (IOException e) {
+      CommandException exception = new CommandException(80030, "Error while creating validation reports.");
+      exception.initCause(e);
+      e.printStackTrace(env.getErrorStream());
+      throw exception;
+    }
+  }
+
+  private static List<TestResult> doExecute(Davalien davalien) throws CommandException {
+    List<TestResult> testResults = null;
+    try {
+      testResults = davalien.execute();
+    } catch (Exception e) {
+      CommandException commandException = new CommandException(80020, "Error while executing validation tests.");
+      commandException.initCause(e);
+      throw commandException;
+    }
+    return testResults;
+  }
+
+  private static void doInit(Env env, Davalien davalien) throws CommandException {
+    try {
+      davalien.init();
+    } catch (Exception e) {
+      CommandException exception = new CommandException(80010, "Data Validation Environment cannot be started.");
+      exception.initCause(e);
+      e.printStackTrace(env.getOutputStream());
+      throw exception;
+    }
+  }
+
+  private static String[] getTestNames(Map<Option, String[]> optionValues) throws CommandException {
+    String[] testNames = null;
+    if (optionValues.containsKey(testNamesOpt)) {
+      testNames = argumentToArray(getArgument(optionValues, testNamesOpt));
+    }
+    return testNames;
+  }
+
+  private static String[] getTags(Map<Option, String[]> optionValues) throws CommandException {
+    String[] tags = null;
+    if (optionValues.containsKey(tagNamesOpt)) {
+      tags = argumentToArray(getArgument(optionValues, tagNamesOpt));
+    }
+    return tags;
   }
 
   private static String[] argumentToArray(String testNameString) {

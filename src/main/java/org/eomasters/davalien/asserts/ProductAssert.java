@@ -60,7 +60,7 @@ import org.esa.snap.core.datamodel.SampleCoding;
 public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
 
   /**
-   * Creates an assert for the given {@link Product}
+   * Creates an assert for the given {@link Product}.
    *
    * @param actual the {@link Product} to be verified
    */
@@ -229,27 +229,29 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
       for (int i = 0; i < expected.length; i++) {
         GeoLocation geoLocation = expected[i];
         assert sceneGeoCoding != null;
-        GeoPos actualGP = sceneGeoCoding.getGeoPos(geoLocation.getPixelPos(), null);
-        GeoPos expectedGP = geoLocation.getGeoPos();
-        if (!AssertionUtils.fuzzyEquals(expectedGP.getLat(), actualGP.getLat(), geoLocation.getFwdEps()) ||
-            !AssertionUtils.fuzzyEquals(expectedGP.getLon(), actualGP.getLon(), geoLocation.getFwdEps())) {
+        GeoPos actualGp = sceneGeoCoding.getGeoPos(geoLocation.getPixelPos(), null);
+        GeoPos expectedGp = geoLocation.getGeoPos();
+        if (!AssertionUtils.fuzzyEquals(expectedGp.getLat(), actualGp.getLat(), geoLocation.getFwdEps())
+            || !AssertionUtils.fuzzyEquals(expectedGp.getLon(), actualGp.getLon(), geoLocation.getFwdEps())) {
           failWithMessage(
-              "Geolocation[%d]: For pixel position [%.8f,%.8f] expected geo position [%.8f,%.8f] but was [%.8f,%.8f], with fwdEps %e",
+              "Geolocation[%d]: For pixel position [%.8f,%.8f] expected geo position [%.8f,%.8f] "
+                  + "but was [%.8f,%.8f], with fwdEps %e",
               i, geoLocation.getPixelPos().x, geoLocation.getPixelPos().y,
-              expectedGP.getLat(), expectedGP.getLon(),
-              actualGP.getLat(), actualGP.getLon(),
+              expectedGp.getLat(), expectedGp.getLon(),
+              actualGp.getLat(), actualGp.getLon(),
               geoLocation.getFwdEps());
         }
 
-        PixelPos actualPP = sceneGeoCoding.getPixelPos(geoLocation.getGeoPos(), null);
-        PixelPos expectedPP = geoLocation.getPixelPos();
-        if (!AssertionUtils.fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps()) ||
-            !AssertionUtils.fuzzyEquals(expectedPP.getX(), actualPP.getX(), geoLocation.getInvEps())) {
+        PixelPos actualPp = sceneGeoCoding.getPixelPos(geoLocation.getGeoPos(), null);
+        PixelPos expectedPp = geoLocation.getPixelPos();
+        if (!AssertionUtils.fuzzyEquals(expectedPp.getX(), actualPp.getX(), geoLocation.getInvEps())
+            || !AssertionUtils.fuzzyEquals(expectedPp.getX(), actualPp.getX(), geoLocation.getInvEps())) {
           failWithMessage(
-              "Geolocation[%d]: For geo position [%.8f,%.8f] expected pixel position [%.8f,%.8f] but was [%.8f,%.8f], with invEps %e",
+              "Geolocation[%d]: For geo position [%.8f,%.8f] expected pixel position [%.8f,%.8f] "
+                  + "but was [%.8f,%.8f], with invEps %e",
               i, geoLocation.getGeoPos().lat, geoLocation.getGeoPos().lon,
-              expectedPP.getX(), expectedPP.getY(),
-              actualPP.getX(), actualPP.getY(),
+              expectedPp.getX(), expectedPp.getY(),
+              actualPp.getX(), actualPp.getY(),
               geoLocation.getInvEps());
         }
       }
