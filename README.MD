@@ -3,7 +3,13 @@
 EOMasters - DAVALIEN
 ====================
 --------------------
-[![Maven Build](https://github.com/eomasters-repos/eom-davalien/actions/workflows/maven.yml/badge.svg?branch=master&event=push)](https://github.com/eomasters-repos/eom-davalien/actions/workflows/maven.yml)
+[![Maven Build](https://github.com/eomasters-repos/eom-davalien/actions/workflows/maven.yml/badge.svg?branch=master&event=push)](https://github.com/eomasters-repos/eom-davalien/actions/workflows/maven.yml) 
+
+![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/eomasters) 
+![Mastodon Follow](https://img.shields.io/mastodon/follow/109247513006034690?domain=https%3A%2F%2Fmastodon.green)
+
+
+
 
 DAVALIEN - the **DA**ta **VALI**dation **EN**vironment projects provides an environment for validating EO data. It is
 intended for quality assurance of EO data and data processing software. It is based on
@@ -17,7 +23,7 @@ files, one JSON and one HTML file. They are explained on
 the [Report File](https://github.com/eomasters-repos/eom-davalien/wiki/Report-File) page.
 
 The environment can be executed from your IDE where you develop your GPF operator or from an installed SNAP. Even the
-processing results of 3d party software can be tested, and it can be ensured that the result does not change
+processing results of 3rd party software can be tested, and it can be ensured that the result does not change
 accidentally while improving the processor. Only requirement is that SNAP can read the data.
 
 For details on how to use the environment see
