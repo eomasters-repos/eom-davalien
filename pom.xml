@@ -349,7 +349,24 @@
 
   </build>
 
+  <distributionManagement>
+    <repository>
+      <id>internal</id>
+      <url>file://${project.build.directory}/mvn-repo</url>
+    </repository>
+  </distributionManagement>
+
   <repositories>
+    <repository>
+      <id>mvn-repo</id>
+      <url>https://raw.githubusercontent.com/eomasters-repos/mvn-repo/main/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>snap-repo-public</id>
       <name>Public Maven Repository for SNAP</name>
