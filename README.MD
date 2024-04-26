@@ -3,7 +3,7 @@
 EOMasters - DAVALIEN
 ====================
 --------------------
-[![Maven Build](https://github.com/eomasters-repos/eom-davalien/actions/workflows/maven.yml/badge.svg?branch=master&event=push)](https://github.com/eomasters-repos/eom-davalien/actions/workflows/maven.yml)
+[![Maven Build](https://github.com/eomasters-repos/eom-davalien/actions/workflows/mvn-build.yml/badge.svg)](https://github.com/eomasters-repos/eom-davalien/actions/workflows/mvn-build.yml)
 [![Static Badge](https://img.shields.io/badge/FOR%20ESA%20SNAP-Version%2010-00AA89?labelColor=5A5A5A)](https://step.esa.int/main/)
 
 [![X Follow](https://img.shields.io/twitter/follow/eomasters)](https://twitter.com/eomasters)
