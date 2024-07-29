@@ -289,12 +289,13 @@ public class Davalien {
   static List<TestDefinition> filterTestDefinitions(List<TestDefinition> allTestDefinitions, List<String> testNames,
       List<String> tags) {
 
-    if ((testNames == null || testNames.isEmpty()) && (tags == null || tags.isEmpty())) {
-      return allTestDefinitions;
+    Stream<TestDefinition> activeTestDefinitions = allTestDefinitions.stream();
+    if ((testNames != null && !testNames.isEmpty()) || (tags != null && !tags.isEmpty())) {
+      activeTestDefinitions = activeTestDefinitions
+          .filter(testDefinition -> isFiltered(testDefinition, testNames, tags));
     }
+    return activeTestDefinitions.sorted(Comparator.comparing(TestDefinition::getTestName)).collect(Collectors.toList());
 
-    return allTestDefinitions.stream().filter(testDefinition -> isFiltered(testDefinition, testNames, tags)).collect(
-        Collectors.toList());
   }
 
   private static boolean isFiltered(TestDefinition testDefinition, List<String> testNames, List<String> tags) {
