@@ -163,7 +163,7 @@ public class Davalien {
     ArrayList<TestResult> testResults = new ArrayList<>();
     if (!testInstants.isEmpty()) {
       runGptTests(testInstants);
-      testResults = compareResults(testInstants);
+      testResults = createTestResults(testInstants);
     }
     return testResults;
   }
@@ -223,7 +223,7 @@ public class Davalien {
     Files.writeString(file, jsonString);
   }
 
-  private ArrayList<TestResult> compareResults(List<TestInst> tests) {
+  private ArrayList<TestResult> createTestResults(List<TestInst> tests) {
     ArrayList<TestResult> testResults = new ArrayList<>();
     for (TestInst test : tests) {
       String testName = test.getName();
