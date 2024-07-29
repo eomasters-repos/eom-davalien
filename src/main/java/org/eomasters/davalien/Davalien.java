@@ -176,7 +176,9 @@ public class Davalien {
    */
   public void createReport(List<TestResult> testResults) throws IOException {
     if (testResults.isEmpty()) {
-      System.out.println("No tests executed.");
+      System.out.printf("No tests executed. Filters[Test Names: %s, Tags: %s]%n",
+          testNames != null ? String.join(",", testNames) : "-",
+          tags != null ? String.join(",", tags) : "-");
     } else {
       TestReport testReport = new TestReport(testResults, this);
       System.out.println("Test Results:");
