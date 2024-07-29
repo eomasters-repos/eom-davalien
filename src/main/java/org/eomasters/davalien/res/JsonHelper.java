@@ -306,15 +306,15 @@ public class JsonHelper {
   }
 
   /**
-   * Ensures that multiple array elements are written on a single line. Pretty printing writes each element on a new
+   * Ensures that multiple (15) array elements are written on a single line. Pretty printing writes each element on a new
    * line, which is not desired.
    */
-  private static class IntArrayTypeAdapter extends TypeAdapter<int[]> {
+  static class IntArrayTypeAdapter extends TypeAdapter<int[]> {
 
     @Override
     public void write(JsonWriter out, int[] value) throws IOException {
       out.beginArray();
-      // split value array int chunks of 15
+      // split value array in chunks of 15
       for (int i = 0; i < value.length; i += 15) {
         int len = Math.min(15, value.length - i);
         int[] chunk = new int[len];
@@ -337,7 +337,7 @@ public class JsonHelper {
       in.beginArray();
       while (in.hasNext()) {
         String[] split = in.nextString().split(",");
-        Arrays.stream(split).forEach(i -> list.add(Integer.parseInt(i)));
+        Arrays.stream(split).forEach(i -> list.add(Integer.parseInt(i.trim())));
       }
       in.endArray();
       int[] arr = new int[list.size()];
