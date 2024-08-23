@@ -234,7 +234,7 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
         if (!AssertionUtils.fuzzyEquals(expectedGp.getLat(), actualGp.getLat(), geoLocation.getFwdEps())
             || !AssertionUtils.fuzzyEquals(expectedGp.getLon(), actualGp.getLon(), geoLocation.getFwdEps())) {
           failWithMessage(
-              "Geolocation[%d]: For pixel position [%.8f,%.8f] expected geo position [%.8f,%.8f] "
+              "Product Geolocation[%d]: For pixel position [%.8f,%.8f] expected geo position [%.8f,%.8f] "
                   + "but was [%.8f,%.8f], with fwdEps %e",
               i, geoLocation.getPixelPos().x, geoLocation.getPixelPos().y,
               expectedGp.getLat(), expectedGp.getLon(),
@@ -247,7 +247,7 @@ public class ProductAssert extends AbstractAssert<ProductAssert, Product> {
         if (!AssertionUtils.fuzzyEquals(expectedPp.getX(), actualPp.getX(), geoLocation.getInvEps())
             || !AssertionUtils.fuzzyEquals(expectedPp.getX(), actualPp.getX(), geoLocation.getInvEps())) {
           failWithMessage(
-              "Geolocation[%d]: For geo position [%.8f,%.8f] expected pixel position [%.8f,%.8f] "
+              "Product Geolocation[%d]: For geo position [%.8f,%.8f] expected pixel position [%.8f,%.8f] "
                   + "but was [%.8f,%.8f], with invEps %e",
               i, geoLocation.getGeoPos().lat, geoLocation.getGeoPos().lon,
               expectedPp.getX(), expectedPp.getY(),
