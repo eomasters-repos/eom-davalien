@@ -336,8 +336,8 @@ public class JsonHelper {
       List<Integer> list = new ArrayList<>();
       in.beginArray();
       while (in.hasNext()) {
-        String[] split = in.nextString().split(",");
-        Arrays.stream(split).forEach(i -> list.add(Integer.parseInt(i)));
+        String[] splits = in.nextString().split(",");
+        Arrays.stream(splits).forEach(numberStr -> list.add(Integer.parseInt(numberStr.trim())));
       }
       in.endArray();
       int[] arr = new int[list.size()];

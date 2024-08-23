@@ -29,7 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 class JsonHelperTest {
@@ -48,9 +50,18 @@ class JsonHelperTest {
   }
   @Test
   void jsonIntArrayConversion() {
-    String json = JsonHelper.toJson(IntStream.range(0, 50).toArray());
-    int[] data = (int[])JsonHelper.fromJson(json, int[].class);
+    String jsonStr;
+    int[] data;
+    jsonStr = JsonHelper.toJson(IntStream.range(0, 50).toArray());
+    data = (int[])JsonHelper.fromJson(jsonStr, int[].class);
     assertArrayEquals(IntStream.range(0, 50).toArray(), data);
+
+    jsonStr = "[\n"
+        + "  \"0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14\",\n"
+        + "  \"15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29\"\n"
+        + "]";
+    data = (int[])JsonHelper.fromJson(jsonStr, int[].class);
+    assertArrayEquals(IntStream.range(0, 30).toArray(), data);
   }
 
 }
