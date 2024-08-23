@@ -49,7 +49,7 @@ import org.esa.snap.core.datamodel.Product;
 import org.esa.snap.core.gpf.main.CommandLineTool;
 
 /**
- * The DAta VALIdataion ENvironment DAVALIEN.
+ * The DAta VALIdataion ENvironment - DAVALIEN.
  */
 public class Davalien {
 
