@@ -147,6 +147,20 @@
       <scope>test</scope>
     </dependency>
 
+    <!--
+    From some reason the junit dependency is necessary for SNAP 11. For SNAP 10 not.
+    If not present the following error occurs during maven build:
+      [INFO] Private classes referenced in module: [org.junit.runner.Description, org.hamcrest.BaseMatcher,
+        org.junit.runners.model.Statement, org.junit.ComparisonFailure, org.junit.runners.model.MultipleFailureException,
+        org.hamcrest.StringDescription, org.hamcrest.Matcher, org.junit.rules.TestRule, org.hamcrest.Description]
+      [ERROR] Project depends on packages not accessible at runtime in module org.esa.snap:snap-core:jar:11.0.0-SNAPSHOT
+    -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
