@@ -128,6 +128,15 @@ public class Davalien {
   }
 
   /**
+   * Returns the target format for the processed data products.
+   *
+   * @return the target format
+   */
+  public String getDefaultTargetFormat() {
+    return config.getDefaultTargetFormat();
+  }
+
+  /**
    * Initialise the validation environment.
    *
    * @throws DavalienException in case of an error

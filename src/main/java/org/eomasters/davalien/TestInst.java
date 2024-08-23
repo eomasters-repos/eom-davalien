@@ -184,7 +184,7 @@ public class TestInst {
   }
 
   private static String ensureFormat(List<String> paramList) {
-    String format = "ZNAP";
+    String format = davalien.getDefaultTargetFormat();
     int formatIndex = paramList.indexOf("-f");
     if (formatIndex >= 0) {
       format = paramList.get(formatIndex + 1);

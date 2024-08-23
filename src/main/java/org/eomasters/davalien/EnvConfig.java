@@ -23,17 +23,22 @@
 
 package org.eomasters.davalien;
 
+import java.nio.file.Path;
+
 /**
  * The configuration for the environment.
  *
- * <p>It is deserialised from JSON by {@link org.eomasters.davalien.res.JsonHelper}
+ * <p>It is deserialized from JSON by {@link org.eomasters.davalien.res.JsonHelper#getConfig(Path)}
  */
 @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
 public class EnvConfig {
 
+  private static final String DEFAULT_FORMAT = "ZNAP";
+
   private int rollingResults = 2;
   private boolean deleteResultAfterSuccess = true;
   private boolean openReport = false;
+  private String defaultTargetFormat = DEFAULT_FORMAT;
 
   /**
    * Returns how many results should be kept. After the limit is reached, the oldest results will be deleted.
@@ -60,5 +65,16 @@ public class EnvConfig {
    */
   public boolean isOpenReport() {
     return openReport;
+  }
+
+  /**
+   * Returns the target product format.
+   * <p>
+   * The target product format determines the format in which the products should be generated.
+   *
+   * @return the target product format as a string
+   */
+  public String getDefaultTargetFormat() {
+    return defaultTargetFormat;
   }
 }
