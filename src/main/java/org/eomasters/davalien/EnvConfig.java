@@ -69,7 +69,7 @@ public class EnvConfig {
 
   /**
    * Returns the target product format.
-   * <p>
+   *
    * The target product format determines the format in which the products should be generated.
    *
    * @return the target product format as a string
