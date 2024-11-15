@@ -28,7 +28,7 @@ import org.esa.snap.core.datamodel.ProductData;
 import org.esa.snap.core.datamodel.ProductData.UTC;
 
 /**
- * Class representing the content of a product.
+ * Class representing the content of a product. It is abstracting from an actual product.
  */
 public class ProductContent {
 
