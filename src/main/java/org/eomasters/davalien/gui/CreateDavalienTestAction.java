@@ -31,13 +31,11 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -91,10 +89,8 @@ public class CreateDavalienTestAction extends AbstractAction implements Presente
   public CreateDavalienTestAction() {
     putValue(Action.NAME, Bundle.TXT_CreateDavalienTestAction());
     putValue(Action.SHORT_DESCRIPTION, Bundle.DESCR_CreateDavalienTestAction());
-    putValue(SMALL_ICON, new ImageIcon(
-        Objects.requireNonNull(getClass().getResource("icons/davalien_16.png"))));
-    putValue(LARGE_ICON_KEY, new ImageIcon(
-        Objects.requireNonNull(getClass().getResource("icons/davalien_32.png"))));
+    putValue(SMALL_ICON, Icons.IMAGE_ICON_16);
+    putValue(LARGE_ICON_KEY, Icons.IMAGE_ICON_32);
     result = Utilities.actionsGlobalContext().lookupResult(ProductNode.class);
     this.lookupListener = ev -> EventQueue.invokeLater(() -> setEnabled(!result.allInstances().isEmpty()));
     result.addLookupListener(WeakListeners.create(LookupListener.class, this.lookupListener, result));
@@ -113,7 +109,8 @@ public class CreateDavalienTestAction extends AbstractAction implements Presente
       Product product = any.get().getProduct();
       final Window window = SnapApp.getDefault().getMainFrame();
       String testName = (String) JOptionPane.showInputDialog(window, "Name of Test: ", "Give the Test a Name",
-          JOptionPane.QUESTION_MESSAGE, null, null, product.getName());
+                                                             JOptionPane.QUESTION_MESSAGE, null, null,
+                                                             product.getName());
       if (testName == null || testName.isEmpty()) {
         return;
       }
@@ -122,7 +119,7 @@ public class CreateDavalienTestAction extends AbstractAction implements Presente
         return;
       }
       final ProgressMonitorSwingWorker<Void, Void> worker = new TestDefinitionSwingWorker(window, product, testName,
-          targetDir);
+                                                                                          targetDir);
       worker.executeWithBlocking();
     }
   }
@@ -175,7 +172,8 @@ public class CreateDavalienTestAction extends AbstractAction implements Presente
         boolean doWrite = true;
         if (Files.exists(outputFile)) {
           if (JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(window, "File already exists. Overwrite?",
-              "File exists", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)) {
+                                                                      "File exists", JOptionPane.YES_NO_OPTION,
+                                                                      JOptionPane.WARNING_MESSAGE)) {
             doWrite = false;
           }
         }
