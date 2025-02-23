@@ -32,5 +32,5 @@ the [Getting Started](https://github.com/eomasters-repos/eom-davalien/wiki/Getti
 
 | Release Notes                                                                                          | Feedback                                                                                                                                                                          |
 |--------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| The release notes can be found [here](https://github.com/eomasters-repos/eom-validation-env/releases). | Issues and suggestions can be posted in the [issue tracker](https://github.com/eomasters-repos/issue-tracker/issues) or in the [EOMasters forum](https://www.eomasters.org/forum). |
+| The release notes can be found [here](https://github.com/eomasters-repos/eom-validation-env/releases). | Issues and suggestions can be posted in the [issue tracker](https://github.com/eomasters-repos/eom-davalien/issues) or in the [EOMasters forum](https://www.eomasters.org/forum). |
 
