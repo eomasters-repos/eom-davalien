@@ -293,7 +293,7 @@ public class RasterAssert extends AbstractAssert<RasterAssert, RasterDataNode> {
       int[] actualBins = stx.getHistogram().getBins(0);
       if (!Arrays.equals(expectedBins, actualBins)) {
         failWithMessage("Raster[%s]: Histogram bins are not equal. Expected: %s, actual: %s",
-            Arrays.toString(expectedBins), Arrays.toString(actualBins));
+            actual.getName(), Arrays.toString(expectedBins), Arrays.toString(actualBins));
       }
     }
     return this;

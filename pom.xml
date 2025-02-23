@@ -19,7 +19,7 @@
   <packaging>nbm</packaging>
 
   <properties>
-    <snap.version>11.0.0</snap.version>
+    <snap.version>10.0.0</snap.version>
     <netbeans.version>RELEASE113</netbeans.version>
     <javahelp.version>2.0.05</javahelp.version>
     <maven.compiler.release>11</maven.compiler.release>
@@ -153,20 +153,13 @@
       <scope>test</scope>
     </dependency>
 
-    <!--
-    From some reason the junit dependency is necessary for SNAP 11. For SNAP 10 not.
-    If not present the following error occurs during maven build:
-      [INFO] Private classes referenced in module: [org.junit.runner.Description, org.hamcrest.BaseMatcher,
-        org.junit.runners.model.Statement, org.junit.ComparisonFailure, org.junit.runners.model.MultipleFailureException,
-        org.hamcrest.StringDescription, org.hamcrest.Matcher, org.junit.rules.TestRule, org.hamcrest.Description]
-      [ERROR] Project depends on packages not accessible at runtime in module org.esa.snap:snap-core:jar:11.0.0-SNAPSHOT
-    -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
+      <groupId>com.google.jimfs</groupId>
+      <artifactId>jimfs</artifactId>
+      <version>1.3.0</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -175,15 +168,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.4.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-resource-plugin</artifactId>
-          <version>3.3.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.7.1</version>
+          <version>3.3.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -193,23 +178,6 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.1.2</version>
         </plugin>
-        <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>3.1.3</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.1.3</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.1.3</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-help-plugin</artifactId>
-          <version>3.5.0</version>
-        </plugin>
-
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>license-maven-plugin</artifactId>
