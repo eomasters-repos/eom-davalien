@@ -120,15 +120,13 @@ public class ValidationOptionProcessor extends OptionProcessor {
   }
 
   private static List<TestResult> doExecute(Davalien davalien) throws CommandException {
-    List<TestResult> testResults = null;
     try {
-      testResults = davalien.execute();
+      return davalien.execute();
     } catch (Exception e) {
       CommandException commandException = new CommandException(80020, "Error while executing validation tests.");
       commandException.initCause(e);
       throw commandException;
     }
-    return testResults;
   }
 
   private static void doInit(Env env, Davalien davalien) throws CommandException {

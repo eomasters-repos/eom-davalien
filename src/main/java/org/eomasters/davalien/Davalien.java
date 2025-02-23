@@ -172,7 +172,7 @@ public class Davalien {
     ArrayList<TestResult> testResults = new ArrayList<>();
     if (!testInstants.isEmpty()) {
       runGptTests(testInstants);
-      testResults = compareResults(testInstants);
+      testResults = createTestResults(testInstants);
     }
     return testResults;
   }
@@ -185,7 +185,9 @@ public class Davalien {
    */
   public void createReport(List<TestResult> testResults) throws IOException {
     if (testResults.isEmpty()) {
-      System.out.println("No tests executed.");
+      System.out.printf("No tests executed. Filters[Test Names: %s, Tags: %s]%n",
+          testNames != null ? String.join(",", testNames) : "-",
+          tags != null ? String.join(",", tags) : "-");
     } else {
       TestReport testReport = new TestReport(testResults, this);
       System.out.println("Test Results:");
@@ -232,7 +234,7 @@ public class Davalien {
     Files.writeString(file, jsonString);
   }
 
-  private ArrayList<TestResult> compareResults(List<TestInst> tests) {
+  private ArrayList<TestResult> createTestResults(List<TestInst> tests) {
     ArrayList<TestResult> testResults = new ArrayList<>();
     for (TestInst test : tests) {
       String testName = test.getName();
@@ -298,12 +300,13 @@ public class Davalien {
   static List<TestDefinition> filterTestDefinitions(List<TestDefinition> allTestDefinitions, List<String> testNames,
       List<String> tags) {
 
-    if ((testNames == null || testNames.isEmpty()) && (tags == null || tags.isEmpty())) {
-      return allTestDefinitions;
+    Stream<TestDefinition> activeTestDefinitions = allTestDefinitions.stream();
+    if ((testNames != null && !testNames.isEmpty()) || (tags != null && !tags.isEmpty())) {
+      activeTestDefinitions = activeTestDefinitions
+          .filter(testDefinition -> isFiltered(testDefinition, testNames, tags));
     }
+    return activeTestDefinitions.sorted(Comparator.comparing(TestDefinition::getTestName)).collect(Collectors.toList());
 
-    return allTestDefinitions.stream().filter(testDefinition -> isFiltered(testDefinition, testNames, tags)).collect(
-        Collectors.toList());
   }
 
   private static boolean isFiltered(TestDefinition testDefinition, List<String> testNames, List<String> tags) {
