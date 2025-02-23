@@ -3,7 +3,7 @@
  * EOMasters DAVALIEN - The DAta VALIdation ENvironment for quality assurance of EO data.
  * -> https://www.eomasters.org/davalien
  * ======================================================================
- * Copyright (C) 2023 - 2024 Marco Peters
+ * Copyright (C) 2023 - 2025 Marco Peters
  * ======================================================================
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
