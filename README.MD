@@ -4,7 +4,7 @@ EOMasters - DAVALIEN
 ====================
 --------------------
 [![Maven Build](https://github.com/eomasters-repos/eom-davalien/actions/workflows/mvn-build.yml/badge.svg)](https://github.com/eomasters-repos/eom-davalien/actions/workflows/mvn-build.yml)
-[![Static Badge](https://img.shields.io/badge/FOR%20ESA%20SNAP-Version%2011-00AA89?labelColor=5A5A5A)](https://step.esa.int/main/)
+[![Static Badge](https://img.shields.io/badge/FOR%20ESA%20SNAP-Version%2012-00AA89?labelColor=5A5A5A)](https://step.esa.int/main/)
 
 [![ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/eomasters) 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/company/eomasters)
