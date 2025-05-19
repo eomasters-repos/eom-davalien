@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: true
 AutoUpdate-Essential-Module: false
-OpenIDE-Module-Java-Dependencies: Java > 11
+OpenIDE-Module-Java-Dependencies: Java > 21
 OpenIDE-Module-Display-Category: SNAP Community Plugins
 OpenIDE-Module-Long-Description: <h1>DAVALIEN- The DAta VALIdation ENvironment</h1>
  <p>DAVALIEN provides an environment for validating EO data. It is intended to be used for quality assurance
