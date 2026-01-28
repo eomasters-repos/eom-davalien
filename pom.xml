@@ -15,11 +15,11 @@
 
   <groupId>org.eomasters</groupId>
   <artifactId>eom-davalien</artifactId>
-  <version>1.2</version>
+  <version>1.2.1-SNAPSHOT</version>
   <packaging>nbm</packaging>
 
   <properties>
-    <snap.version>12.0.0</snap.version>
+    <snap.version>13.0.0</snap.version>
     <netbeans.version>RELEASE210</netbeans.version>
     <javahelp.version>2.0.05</javahelp.version>
     <maven.compiler.release>21</maven.compiler.release>
@@ -104,6 +104,11 @@
     </dependency>
     <dependency>
       <groupId>org.netbeans.api</groupId>
+      <artifactId>org-netbeans-api-annotations-common</artifactId>
+      <version>${netbeans.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
       <artifactId>org-netbeans-libs-asm</artifactId>
       <version>${netbeans.version}</version>
     </dependency>
@@ -138,7 +143,7 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.24.2</version>
+      <version>3.27.7</version>
     </dependency>
 
     <dependency>
