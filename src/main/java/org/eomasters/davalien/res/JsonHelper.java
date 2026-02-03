@@ -83,7 +83,7 @@ public class JsonHelper {
     builder.registerTypeAdapter(ProductData.UTC.class, new UtcAdapter());
     builder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
     builder.registerTypeHierarchyAdapter(Throwable.class, new ThrowableAdapter());
-    builder.registerTypeAdapter(Path.class, new PathAdapter());
+    builder.registerTypeHierarchyAdapter(Path.class, new PathAdapter());
     builder.registerTypeAdapter(int[].class, new IntArrayTypeAdapter());
     builder.serializeSpecialFloatingPointValues();
     builder.setPrettyPrinting();
@@ -289,11 +289,17 @@ public class JsonHelper {
     }
   }
 
-  private static class PathAdapter implements JsonSerializer<Path> {
+  private static class PathAdapter implements JsonSerializer<Path>, JsonDeserializer<Path> {
 
     @Override
     public JsonElement serialize(Path path, Type typeOfSrc, JsonSerializationContext context) {
       return context.serialize(path.toAbsolutePath().toString());
+    }
+
+    @Override
+    public Path deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      return Paths.get(json.getAsString());
     }
   }
 
